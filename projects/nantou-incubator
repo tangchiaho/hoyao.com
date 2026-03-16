@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>回鄉造材｜進駐申請簡報</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Arial','Microsoft JhengHei',sans-serif;background:#111;color:#1A1A1A;overflow:hidden}
+
+/* ── 簡報容器 ── */
+.deck{width:100vw;height:100vh;position:relative}
+.slide{position:absolute;top:0;left:0;width:100%;height:100%;display:none;flex-direction:column}
+.slide.active{display:flex}
+
+/* ── 導航 ── */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(26,61,40,.95);display:flex;align-items:center;justify-content:space-between;padding:10px 24px;height:48px}
+.nav-btn{background:rgba(255,255,255,.15);border:none;color:white;padding:6px 20px;border-radius:4px;cursor:pointer;font-size:13px;font-family:Arial,sans-serif;transition:background .2s}
+.nav-btn:hover{background:rgba(255,255,255,.3)}
+.nav-dots{display:flex;gap:7px;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:all .2s}
+.dot.active{background:#7BE495;transform:scale(1.3)}
+.nav-counter{color:rgba(255,255,255,.6);font-size:12px;min-width:60px;text-align:center}
+
+/* ── 共用色系 ── */
+:root{
+  --dark:#1A3D28;--mid:#2E6B3E;--light:#3E8E53;
+  --pale:#EAF5EC;--paleB:#E3F2FD;--accent:#F5A623;
+  --white:#FFFFFF;--off:#F7F9F7;--gray:#666666;
+  --blue:#1565C0;--text:#1A1A1A
+}
+
+/* ── Slide 1 封面 ── */
+#s1{background:var(--dark);position:relative;justify-content:center}
+#s1 .left-bar{position:absolute;left:0;top:0;width:6px;height:100%;background:var(--mid)}
+#s1 .right-panel{position:absolute;right:0;top:0;width:30%;height:100%;background:#1F4A30;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px}
+#s1 .content{padding:0 5% 0 3%;width:70%}
+#s1 h1{font-size:clamp(48px,7vw,80px);color:white;font-weight:900;letter-spacing:.12em;line-height:1;margin-bottom:16px}
+#s1 .sub{font-size:clamp(14px,1.8vw,20px);color:#AADDBB;margin-bottom:28px}
+#s1 .tags{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px}
+#s1 .tag{background:var(--mid);color:white;padding:5px 14px;border-radius:3px;font-size:12px}
+#s1 .by{color:#AADDBB;font-size:13px;margin-bottom:4px}
+#s1 .date{color:#7CAA8A;font-size:11px}
+#s1 .right-label{color:#AADDBB;font-size:13px}
+#s1 .right-title{color:white;font-size:clamp(16px,2vw,22px);font-weight:900;text-align:center}
+#s1 .right-sub{color:#7CAA8A;font-size:12px}
+
+/* ── 通用佈局 ── */
+.slide-inner{flex:1;padding:28px 40px 16px;display:flex;flex-direction:column;overflow:hidden;background:var(--off)}
+.slide-footer{height:36px;background:var(--dark);display:flex;align-items:center;padding:0 20px;flex-shrink:0}
+.slide-footer span{color:#AADDBB;font-size:10px}
+.section-tag{display:inline-block;background:var(--mid);color:white;padding:3px 14px;border-radius:2px;font-size:10px;font-weight:700;margin-bottom:10px;letter-spacing:1px}
+.slide-title{font-size:clamp(18px,2.8vw,32px);color:var(--dark);font-weight:900;margin-bottom:16px;line-height:1.2}
+
+/* ── Slide 2 核心敘事 ── */
+.flow-row{display:flex;gap:0;align-items:stretch;margin-bottom:14px;flex:1}
+.flow-card{flex:1;background:white;border-radius:8px;padding:18px 14px;box-shadow:0 2px 10px rgba(0,0,0,.08);border-top:4px solid var(--mid);text-align:center;display:flex;flex-direction:column;align-items:center}
+.flow-card.blue{border-top-color:var(--blue)}
+.flow-card.amber{border-top-color:#E65100}
+.flow-icon{font-size:32px;margin-bottom:8px}
+.flow-title{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:8px}
+.flow-desc{font-size:11px;color:var(--gray);line-height:1.6}
+.flow-arrow{display:flex;align-items:center;padding:0 8px;color:var(--mid);font-size:22px;font-weight:900}
+.core-box{background:var(--pale);border:1px solid #C8E6C9;border-radius:6px;padding:10px 16px;font-size:11.5px;color:var(--dark);line-height:1.6}
+
+/* ── Slide 3 數據 ── */
+.stats-row{display:flex;gap:10px;margin-bottom:14px}
+.stat-card{flex:1;background:white;border-radius:8px;padding:14px 10px;box-shadow:0 2px 10px rgba(0,0,0,.08);border-top:4px solid var(--mid);text-align:center}
+.stat-card.blue{border-top-color:var(--blue)}
+.stat-num{font-size:clamp(22px,3vw,34px);font-weight:900;color:var(--mid);line-height:1}
+.stat-card.blue .stat-num{color:var(--blue)}
+.stat-unit{font-size:10px;color:var(--gray);margin:3px 0}
+.stat-label{font-size:10px;color:#444;line-height:1.4}
+.pain-row{display:flex;gap:12px}
+.pain-card{flex:1;border-radius:8px;padding:14px 16px;border:1.5px solid}
+.pain-card.h{background:#FFF3E0;border-color:#E65100}
+.pain-card.c{background:#FFEBEE;border-color:#C62828}
+.pain-title{font-size:13px;font-weight:800;margin-bottom:8px}
+.pain-card.h .pain-title{color:#E65100}
+.pain-card.c .pain-title{color:#C62828}
+.pain-item{font-size:11px;color:#444;margin-bottom:4px;padding-left:14px;position:relative;line-height:1.4}
+.pain-item::before{content:'✗';position:absolute;left:0;font-weight:700}
+.pain-card.h .pain-item::before{color:#E65100}
+.pain-card.c .pain-item::before{color:#C62828}
+
+/* ── Slide 4 競品 ── */
+.comp-wrap{flex:1;overflow:auto}
+.comp-table{width:100%;border-collapse:collapse;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.comp-table th{background:var(--dark);color:white;padding:9px 10px;font-size:11px;text-align:center}
+.comp-table td{padding:9px 10px;font-size:11px;border-bottom:1px solid #EEE;text-align:center}
+.comp-table td:first-child{text-align:left;font-weight:700;font-size:12px}
+.comp-table tr:nth-child(even) td{background:#F9F9F9}
+.comp-table tr:last-child td{background:#1A3D28!important;color:white!important;font-weight:700}
+.ck{color:#2E6B3E;font-weight:900;font-size:15px}
+.cx{color:#C62828;font-weight:900;font-size:15px}
+.cd{color:#E65100;font-weight:900;font-size:15px}
+
+/* ── Slide 5 商業模式 ── */
+.biz-flow{display:flex;gap:0;margin-bottom:14px;align-items:stretch}
+.biz-card{flex:1;border-radius:8px;padding:14px;border:1.5px solid;text-align:center;display:flex;flex-direction:column}
+.biz-card.g{background:#EAF5EC;border-color:var(--mid)}
+.biz-card.b{background:#E8F0FE;border-color:var(--blue)}
+.biz-card.a{background:#FEF9E7;border-color:#E65100}
+.biz-card.r{background:#FEF0F0;border-color:#C62828}
+.biz-icon{font-size:26px;margin-bottom:6px}
+.biz-title{font-size:13px;font-weight:800;color:var(--dark);margin-bottom:6px}
+.biz-desc{font-size:10px;color:var(--gray);line-height:1.6}
+.biz-arrow{display:flex;align-items:center;padding:0 6px;color:var(--mid);font-size:20px;font-weight:900}
+.rev-table{width:100%;border-collapse:collapse;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.rev-table th{background:var(--dark);color:white;padding:8px 10px;font-size:11px;text-align:left}
+.rev-table td{padding:8px 10px;font-size:11px;border-bottom:1px solid #EEE}
+.rev-table tr:nth-child(even) td{background:#F5FAF6}
+.badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700}
+.by1{background:#C8E6C9;color:#1B5E20}
+.by2{background:#BBDEFB;color:#0D47A1}
+
+/* ── Slide 6 產品路線 ── */
+.prod-row{display:flex;gap:14px;flex:1}
+.prod-card{flex:1;border-radius:10px;padding:18px;border:2px solid;display:flex;flex-direction:column}
+.prod-card.p1{background:#E8F5E9;border-color:#4CAF50}
+.prod-card.p2{background:#E3F2FD;border-color:#42A5F5}
+.prod-card.p3{background:#F3E5F5;border-color:#AB47BC}
+.prod-stage{font-size:10px;font-weight:800;letter-spacing:1px;margin-bottom:6px}
+.prod-card.p1 .prod-stage{color:#2E6B3E}
+.prod-card.p2 .prod-stage{color:#1565C0}
+.prod-card.p3 .prod-stage{color:#7B1FA2}
+.prod-title{font-size:18px;font-weight:900;color:var(--text);margin-bottom:12px}
+.prod-item{font-size:12px;color:#444;margin-bottom:7px;padding-left:16px;position:relative;line-height:1.4}
+.prod-item::before{content:'▸';position:absolute;left:0;font-weight:700}
+.prod-card.p1 .prod-item::before{color:#2E6B3E}
+.prod-card.p2 .prod-item::before{color:#1565C0}
+.prod-card.p3 .prod-item::before{color:#7B1FA2}
+.prod-goal{margin-top:auto;padding:6px 10px;border-radius:4px;font-size:10px;font-weight:700;text-align:center}
+.prod-card.p1 .prod-goal{background:#4CAF50;color:white}
+.prod-card.p2 .prod-goal{background:#42A5F5;color:white}
+.prod-card.p3 .prod-goal{background:#AB47BC;color:white}
+
+/* ── Slide 7 碳足跡（深色） ── */
+#s7 .slide-inner{background:var(--dark)}
+#s7 .slide-title{color:white}
+#s7 .section-tag{background:var(--light)}
+#s7 .sub-line{color:#AADDBB;font-size:14px;margin-bottom:16px;margin-top:-8px}
+.carbon-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1}
+.carbon-card{background:#1F4A30;border:1px solid var(--mid);border-radius:10px;padding:18px;display:flex;gap:12px}
+.carbon-icon{font-size:26px;flex-shrink:0}
+.carbon-title{font-size:13px;font-weight:800;color:white;margin-bottom:6px}
+.carbon-desc{font-size:11px;color:#AADDBB;line-height:1.6}
+#s7 .slide-footer{background:#0F2A1A}
+
+/* ── Slide 8 技術合作 ── */
+.partner-row{display:flex;gap:14px;flex:1}
+.partner-left,.partner-right{flex:1;background:white;border-radius:10px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.partner-name{font-size:17px;font-weight:900;color:var(--dark);margin-bottom:4px}
+.partner-sub{font-size:10px;color:var(--gray);margin-bottom:12px}
+.pstats{display:flex;gap:16px;margin-bottom:12px}
+.pstat-num{font-size:20px;font-weight:900;color:var(--mid)}
+.pstat-lbl{font-size:9px;color:#888}
+.cert-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.cert{background:var(--pale);color:var(--dark);padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700}
+.award-item{font-size:11px;color:#333;margin-bottom:7px;padding-left:18px;position:relative;line-height:1.4}
+.award-item::before{content:'🏆';position:absolute;left:0;font-size:10px}
+.award-item.top{font-weight:800;color:var(--dark)}
+.divider-box{background:var(--pale);border:1px solid #C8E6C9;border-radius:6px;padding:10px 14px;font-size:11px;color:var(--dark)}
+
+/* ── Slide 9 時程 ── */
+.gantt-wrap{flex:1;overflow:auto}
+.gantt-table{width:100%;border-collapse:collapse}
+.gantt-table th,.gantt-table td{border:1px solid #DDD;font-size:10px;text-align:center;padding:5px 4px}
+.gantt-table th.lbl,.gantt-table td.lbl{text-align:left;padding-left:8px;font-weight:700;font-size:10.5px;background:#FAFAFA;width:170px}
+.yr1{background:#2E6B3E;color:white;font-weight:700}
+.yr2{background:#1565C0;color:white;font-weight:700}
+.qh1{background:#4CAF50;color:white;font-weight:700}
+.qh2{background:#42A5F5;color:white;font-weight:700}
+.on1{background:#C8E6C9}
+.on2{background:#BBDEFB}
+.off2{background:#F5F5F5}
+.dot-g{color:#2E6B3E;font-size:14px;font-weight:900}
+.dot-b{color:#1565C0;font-size:14px;font-weight:900}
+
+/* ── Slide 10 里程碑 ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex:1}
+.kpi-card{background:white;border-radius:8px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.08);border-left:4px solid var(--mid);display:flex;flex-direction:column}
+.kpi-card.sp{border-left-color:var(--blue)}
+.kpi-badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:9px;font-weight:800;color:white;background:var(--mid);margin-bottom:8px;width:fit-content}
+.kpi-card.sp .kpi-badge{background:var(--blue)}
+.kpi-title{font-size:12px;font-weight:800;color:var(--dark);margin-bottom:6px;line-height:1.3}
+.kpi-desc{font-size:10px;color:var(--gray);line-height:1.5}
+
+/* ── Slide 11 團隊 ── */
+.team-row{display:flex;gap:14px;flex:1}
+.team-card{flex:1;background:white;border-radius:10px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.team-card.t1{border-top:5px solid var(--mid)}
+.team-card.t2{border-top:5px solid var(--blue)}
+.team-role{font-size:9px;font-weight:800;letter-spacing:2px;margin-bottom:6px}
+.team-card.t1 .team-role{color:var(--mid)}
+.team-card.t2 .team-role{color:var(--blue)}
+.team-name{font-size:28px;font-weight:900;color:var(--dark);margin-bottom:4px}
+.team-pos{font-size:10.5px;color:var(--gray);margin-bottom:12px;line-height:1.5}
+.team-skill{font-size:11px;color:#333;margin-bottom:7px;padding-left:16px;position:relative;line-height:1.4}
+.team-skill::before{content:'▸';position:absolute;left:0;font-weight:700;color:var(--mid)}
+.root-tags{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:10px}
+.root-tag{background:var(--pale);color:var(--dark);padding:4px 8px;border-radius:4px;font-size:9.5px;text-align:center;border:1px solid #C8E6C9}
+.root-tag.b{background:#E3F2FD;border-color:#BBDEFB}
+
+/* ── Slide 12 結語（深色） ── */
+#s12{background:var(--dark);justify-content:center;position:relative}
+#s12 .left-bar{position:absolute;left:0;top:0;width:6px;height:100%;background:var(--mid)}
+#s12 .bottom-bar{position:absolute;bottom:0;left:0;right:0;height:80px;background:#1F4A30}
+#s12 .content{padding:0 5% 0 3%;position:relative;z-index:1}
+#s12 h1{font-size:clamp(40px,6vw,68px);color:white;font-weight:900;letter-spacing:.1em;margin-bottom:10px}
+#s12 .sub{font-size:clamp(13px,1.6vw,18px);color:#AADDBB;margin-bottom:28px}
+#s12 .pts{display:flex;flex-direction:column;gap:8px}
+#s12 .pt{font-size:clamp(11px,1.3vw,14px);color:#D4EDD9;padding-left:4px}
+#s12 .by2{color:#7CAA8A;font-size:11px;margin-top:20px}
+
+/* ── 鍵盤提示 ── */
+.kb-hint{position:fixed;top:12px;right:16px;color:rgba(255,255,255,.4);font-size:10px;pointer-events:none}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<!-- S1 封面 -->
+<div class="slide" id="s1">
+  <div class="left-bar"></div>
+  <div class="right-panel">
+    <div class="right-label">竹材切入點</div>
+    <div class="right-title">天然植物纖維建材</div>
+    <div class="right-sub">探索 × 品牌 × 通路</div>
+  </div>
+  <div class="content">
+    <h1>回鄉造材</h1>
+    <div class="sub">南投農林剩餘資源天然建材創生計畫</div>
+    <div class="tags">
+      <span class="tag">科技創生</span>
+      <span class="tag">地方創生執行團隊</span>
+      <span class="tag">實體進駐</span>
+      <span class="tag">1＋1 年計畫</span>
+    </div>
+    <div class="by">和曜建材科技籌備團隊</div>
+    <div class="date">中興新村地方創生育成村 第六期進駐申請　中華民國 114 年 3 月</div>
+  </div>
+</div>
+
+<!-- S2 核心敘事 -->
+<div class="slide" id="s2">
+  <div class="slide-inner">
+    <div class="section-tag">計畫核心</div>
+    <div class="slide-title">以竹材為切入點，探索天然植物纖維建材</div>
+    <div class="flow-row">
+      <div class="flow-card">
+        <div class="flow-icon">🌿</div>
+        <div class="flow-title">在地原料</div>
+        <div class="flow-desc">南投竹山・鹿谷<br>竹材加工廢料<br>農林剩餘資源升級再造</div>
+      </div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-card blue">
+        <div class="flow-icon">⚙️</div>
+        <div class="flow-title">技術合作</div>
+        <div class="flow-desc">先進材股份有限公司<br>完整成熟竹纖維技術<br>AI選竹配方系統</div>
+      </div>
+      <div class="flow-arrow">▶</div>
+      <div class="flow-card amber">
+        <div class="flow-icon">🏗️</div>
+        <div class="flow-title">品牌・市場</div>
+        <div class="flow-desc">天然植物纖維建材探索<br>品牌建立・通路開發<br>附產品碳足跡數據</div>
+      </div>
+    </div>
+    <div class="core-box">
+      <strong>核心敘事：</strong>兩位南投返鄉青年，看見竹廢料被低度利用的現實，以竹材為切入點，探索天然植物纖維建材的產品應用與市場可能性。和曜負責品牌・產品開發・市場通路；先進材提供材料技術底層支撐。
+    </div>
+  </div>
+  <div class="slide-footer"><span>回鄉造材——南投農林剩餘資源天然建材創生計畫</span></div>
+</div>
+
+<!-- S3 場域數據 -->
+<div class="slide" id="s3">
+  <div class="slide-inner">
+    <div class="section-tag">場域背景</div>
+    <div class="slide-title">南投竹產業現況與市場機會</div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num">75,275</div><div class="stat-unit">公頃</div><div class="stat-label">台灣竹林總面積<br>南投為主產區</div></div>
+      <div class="stat-card"><div class="stat-num">1,000萬</div><div class="stat-unit">支/年</div><div class="stat-label">黃金時代年產量<br>今日大面積荒廢</div></div>
+      <div class="stat-card"><div class="stat-num">47.36</div><div class="stat-unit">噸CO₂/公頃·年</div><div class="stat-label">竹林年固碳量<br>一般林木3–6倍</div></div>
+      <div class="stat-card blue"><div class="stat-num">3,461億</div><div class="stat-unit">美元（2025）</div><div class="stat-label">全球綠建材市場<br>CAGR 10.2%</div></div>
+      <div class="stat-card blue"><div class="stat-num">60–75%</div><div class="stat-unit">法規要求</div><div class="stat-label">室內綠建材使用率<br>台北市2024年起75%</div></div>
+    </div>
+    <div class="pain-row">
+      <div class="pain-card h">
+        <div class="pain-title">🧪 健康痛點</div>
+        <div class="pain-item">甲醛・塑化劑・有毒氣體</div>
+        <div class="pain-item">夾板、集成板、塑合板普遍含有</div>
+        <div class="pain-item">消費端健康意識持續升高</div>
+      </div>
+      <div class="pain-card c">
+        <div class="pain-title">🏭 碳排痛點</div>
+        <div class="pain-item">砂石・石材・水泥類建材碳排極高</div>
+        <div class="pain-item">建設業面臨ESG與淨零政策壓力</div>
+        <div class="pain-item">和曜提供附碳足跡數據的解決方案</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>回鄉造材——南投農林剩餘資源天然建材創生計畫</span></div>
+</div>
+
+<!-- S4 競品分析 -->
+<div class="slide" id="s4">
+  <div class="slide-inner">
+    <div class="section-tag">競品分析</div>
+    <div class="slide-title">現有建材痛點與替代機會</div>
+    <div class="comp-wrap">
+      <table class="comp-table">
+        <thead><tr>
+          <th style="text-align:left">建材類型</th>
+          <th>無甲醛</th><th>低碳排</th><th>防潮</th><th>加工性</th><th>天然來源</th>
+          <th style="text-align:left">主要痛點</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>夾板／集成板</td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td>高甲醛、受潮膨脹、蟲蛀風險</td></tr>
+          <tr><td>石膏板</td><td><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td><span class="cd">△</span></td><td><span class="cx">✗</span></td><td>易碎、防潮差、遇水粉化</td></tr>
+          <tr><td>矽酸鈣板</td><td><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td>質感冷硬、加工性差、重量偏重</td></tr>
+          <tr><td>塑合板／美耐板</td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td><span class="cd">△</span></td><td><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td>含塑化劑、燃燒產生有毒氣體</td></tr>
+          <tr style="background:#1A3D28"><td style="color:white;font-weight:800">天然植物纖維板材</td><td><span style="color:#7BE495;font-weight:900;font-size:15px">✓</span></td><td><span style="color:#7BE495;font-weight:900;font-size:15px">✓</span></td><td><span style="color:#7BE495;font-weight:900;font-size:15px">✓</span></td><td><span style="color:#7BE495;font-weight:900;font-size:15px">✓</span></td><td><span style="color:#7BE495;font-weight:900;font-size:15px">✓</span></td><td style="color:#7BE495;font-weight:700">農林廢料升級再造，附碳足跡數據 ✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="slide-footer"><span>回鄉造材——南投農林剩餘資源天然建材創生計畫</span></div>
+</div>
+
+<!-- S5 商業模式 -->
+<div class="slide" id="s5">
+  <div class="slide-inner">
+    <div class="section-tag">商業模式</div>
+    <div class="slide-title">品牌・產品開發・多元市場通路</div>
+    <div class="biz-flow" style="margin-bottom:12px">
+      <div class="biz-card g"><div class="biz-icon">🌿</div><div class="biz-title">在地原料</div><div class="biz-desc">南投竹山/鹿谷<br>竹材加工廢料<br>竹粉・竹屑・殘料</div></div>
+      <div class="biz-arrow">▶</div>
+      <div class="biz-card b"><div class="biz-icon">⚙️</div><div class="biz-title">技術支援</div><div class="biz-desc">先進材<br>完整竹纖維技術<br>AI選竹配方</div></div>
+      <div class="biz-arrow">▶</div>
+      <div class="biz-card a"><div class="biz-icon">🏗️</div><div class="biz-title">產品開發</div><div class="biz-desc">天然植物纖維板材<br>品牌商品・訂製・共研<br>附碳足跡數據</div></div>
+      <div class="biz-arrow">▶</div>
+      <div class="biz-card r"><div class="biz-icon">🏢</div><div class="biz-title">多元市場</div><div class="biz-desc">一般消費者<br>建設/設計師<br>工程商/公共工程</div></div>
+    </div>
+    <table class="rev-table">
+      <thead><tr><th>收入來源</th><th>內容</th><th>目標客戶</th><th>啟動階段</th></tr></thead>
+      <tbody>
+        <tr><td><strong>品牌商品販售</strong></td><td>天然植物纖維板材・文創生活商品</td><td>一般消費者・零售通路</td><td><span class="badge by1">第一年起</span></td></tr>
+        <tr><td><strong>訂製產品</strong></td><td>依規格訂製建材板材</td><td>建設公司・室內設計師</td><td><span class="badge by1">第一年起</span></td></tr>
+        <tr><td><strong>共同研發合作</strong></td><td>與廠商共同開發替代型新款產品</td><td>板材廠・系統家具廠・工程商</td><td><span class="badge by2">第二年起</span></td></tr>
+        <tr><td><strong>公共工程標案</strong></td><td>與工程商・環保公司共同參與標案</td><td>工程商・環保公司</td><td><span class="badge by2">第二年起</span></td></tr>
+        <tr><td><strong>研發補助 SBIR</strong></td><td>政府研發補助計畫</td><td>經濟部・國科會</td><td><span class="badge" style="background:#7B1FA2;color:white">第二年申請</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="slide-footer"><span>回鄉造材——南投農林剩餘資源天然建材創生計畫</span></div>
+</div>
+
+<!-- S6 產品路線 -->
+<div class="slide" id="s6">
+  <div class="slide-inner">
+    <div class="section-tag">產品方向</div>
+    <div class="slide-title">由入門到深化的三階段產品路線</div>
+    <div class="prod-row">
+      <div class="prod-card p1">
+        <div class="prod-stage">第一階段  親民入市</div>
+        <div class="prod-title">文創建材・生活用品</div>
+        <div class="prod-item">天然植物纖維板材</div>
+        <div class="prod-item">桌板・層板・小家具</div>
+        <div class="prod-item">文創設計商品</div>
+        <div class="prod-item">南投在地文化元素應用</div>
+        <div class="prod-goal">目標：品牌建立・消費者端驗證</div>
+      </div>
+      <div class="prod-card p2">
+        <div class="prod-stage">第二階段  技術進階</div>
+        <div class="prod-title">聲學材料</div>
+        <div class="prod-item">吸音板・擴散板</div>
+        <div class="prod-item">低頻陷阱</div>
+        <div class="prod-item">錄音室・辦公室・住宅</div>
+        <div class="prod-item">聲學設計整合服務</div>
+        <div class="prod-goal">目標：B2B通路・設計師合作</div>
+      </div>
+      <div class="prod-card p3">
+        <div class="prod-stage">第三階段  高端工程</div>
+        <div class="prod-title">防火建材</div>
+        <div class="prod-item">防火板材 60A–180A</div>
+        <div class="prod-item">防火門芯材料</div>
+        <div class="prod-item">公共工程・建案應用</div>
+        <div class="prod-item">標案參與</div>
+        <div class="prod-goal">目標：工程端・公共工程</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>回鄉造材——南投農林剩餘資源天然建材創生計畫</span></div>
+</div>
+
+<!-- S7 碳足跡 -->
+<div class="slide" id="s7">
+  <div class="slide-inner">
+    <div class="section-tag">差異化優勢</div>
+    <div class="slide-title">碳足跡數據——我們的核心差異化</div>
+    <div class="sub-line">買建材，同時達成減碳 KPI</div>
+    <div class="carbon-grid">
+      <div class="carbon-card">
+        <div class="carbon-icon">🌿</div>
+        <div><div class="carbon-title">原料本身近零碳排</div><div class="carbon-desc">農林廢料升級再造，無需額外砍伐，生產過程幾乎零額外碳排，原料本身即低碳起點</div></div>
+      </div>
+      <div class="carbon-card">
+        <div class="carbon-icon">🌱</div>
+        <div><div class="carbon-title">植物纖維持續封存碳</div><div class="carbon-desc">天然植物纖維在產品中持續固碳，每塊板材都是碳封存的載體，使用期間碳不釋放</div></div>
+      </div>
+      <div class="carbon-card">
+        <div class="carbon-icon">📊</div>
+        <div><div class="carbon-title">產品碳足跡報告</div><div class="carbon-desc">和曜為每項產品建立完整碳足跡計算數據，清楚呈現從竹廢料到成品的碳排放量</div></div>
+      </div>
+      <div class="carbon-card">
+        <div class="carbon-icon">🏢</div>
+        <div><div class="carbon-title">對應ESG採購需求</div><div class="carbon-desc">建設業者、設計師採購時能直接換算減碳效益，對應企業ESG報告與綠建材法規要求</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer" style="background:#0F2A1A"><span>回鄉造材——南投農林剩餘資源天然建材創生計畫</span></div>
+</div>
+
+<!-- S8 技術合作 -->
+<div class="slide" id="s8">
+  <div class="slide-inner">
+    <div class="section-tag">技術合作</div>
+    <div class="slide-title">先進材股份有限公司｜完整成熟技術底層</div>
+    <div class="partner-row">
+      <div class="partner-left">
+        <div class="partner-name">先進材股份有限公司</div>
+        <div class="partner-sub">Advanced Materials Co., Ltd.｜台灣竹纖維負碳材料領導廠商</div>
+        <div class="pstats">
+          <div><div class="pstat-num">9,500萬</div><div class="pstat-lbl">登記資本額</div></div>
+          <div><div class="pstat-num">27人</div><div class="pstat-lbl">員工數</div></div>
+          <div><div class="pstat-num">2020</div><div class="pstat-lbl">成立年份</div></div>
+        </div>
+        <div class="cert-row">
+          <span class="cert">DIN</span><span class="cert">SGS</span><span class="cert">FDA</span>
+          <span class="cert">LFGB</span><span class="cert">ISO 9001</span><span class="cert">ISO 22000</span><span class="cert">BPI</span>
+        </div>
+        <div class="divider-box">
+          <strong>合作分工：</strong>和曜負責品牌・產品應用開發・市場通路；先進材提供完整成熟竹纖維技術底層・AI選竹配方・測試驗證支援
+        </div>
+      </div>
+      <div class="partner-right">
+        <div style="font-size:12px;font-weight:800;color:var(--mid);margin-bottom:10px">得獎紀錄</div>
+        <div class="award-item top">2025年　經濟部新創事業獎</div>
+        <div class="award-item">2025年　第九屆創業之星選秀大賽　冠軍</div>
+        <div class="award-item">2024年　IMV科技創新獎　冠軍</div>
+        <div class="award-item">2023年　創業歸故里競賽　全國季軍</div>
+        <div class="award-item">媒體　商業周刊1951期・經濟日報「隱形冠軍」專題</div>
+        <div style="font-size:12px;font-weight:800;color:var(--mid);margin:12px 0 8px">外部合作</div>
+        <div class="award-item" style="padding-left:12px">&#8226; 台灣大學三年產學合作計畫</div>
+        <div class="award-item" style="padding-left:12px">&#8226; 工研院合作開發計畫</div>
+        <div class="award-item" style="padding-left:12px">&#8226; 國科會核准進駐中部科學園區（台中區）</div>
+        <div class="award-item" style="padding-left:12px">&#8226; 新加坡OPS・馬來西亞USM MOU</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>回鄉造材——南投農林剩餘資源天然建材創生計畫</span></div>
+</div>
+
+<!-- S9 時程 -->
+<div class="slide" id="s9">
+  <div class="slide-inner">
+    <div class="section-tag">計畫時程</div>
+    <div class="slide-title">兩年進駐計畫時程</div>
+    <div class="gantt-wrap">
+      <table class="gantt-table">
+        <thead>
+          <tr>
+            <th class="lbl" rowspan="2"></th>
+            <th colspan="4" class="yr1">第一年　115年7月 – 116年6月</th>
+            <th colspan="4" class="yr2">第二年　116年7月 – 117年6月</th>
+          </tr>
+          <tr>
+            <th class="qh1">Q1</th><th class="qh1">Q2</th><th class="qh1">Q3</th><th class="qh1">Q4</th>
+            <th class="qh2">Q1</th><th class="qh2">Q2</th><th class="qh2">Q3</th><th class="qh2">Q4</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="lbl">公司商業登記</td><td class="on1"><span class="dot-g">●</span></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td></tr>
+          <tr><td class="lbl">技術合作合約升級</td><td class="on1"><span class="dot-g">●</span></td><td class="on1"><span class="dot-g">●</span></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td></tr>
+          <tr><td class="lbl">競品分析・產品定義</td><td class="on1"><span class="dot-g">●</span></td><td class="on1"><span class="dot-g">●</span></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td></tr>
+          <tr><td class="lbl">板材樣品研發製作</td><td class="off2"></td><td class="on1"><span class="dot-g">●</span></td><td class="on1"><span class="dot-g">●</span></td><td class="on1"><span class="dot-g">●</span></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td></tr>
+          <tr><td class="lbl">材料展示空間建立</td><td class="off2"></td><td class="off2"></td><td class="on1"><span class="dot-g">●</span></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td></tr>
+          <tr><td class="lbl">品牌官網・碳足跡框架</td><td class="off2"></td><td class="on1"><span class="dot-g">●</span></td><td class="off2"></td><td class="on1"><span class="dot-g">●</span></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td></tr>
+          <tr><td class="lbl">產業交流與意向書</td><td class="on1"><span class="dot-g">●</span></td><td class="on1"><span class="dot-g">●</span></td><td class="on1"><span class="dot-g">●</span></td><td class="on1"><span class="dot-g">●</span></td><td class="on2"><span class="dot-b">●</span></td><td class="on2"><span class="dot-b">●</span></td><td class="on2"><span class="dot-b">●</span></td><td class="on2"><span class="dot-b">●</span></td></tr>
+          <tr><td class="lbl">SBIR申請・碳足跡報告</td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="on1"><span class="dot-g">●</span></td><td class="on2"><span class="dot-b">●</span></td><td class="on2"><span class="dot-b">●</span></td><td class="off2"></td><td class="off2"></td></tr>
+          <tr><td class="lbl">產品認證・商業化</td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="off2"></td><td class="on2"><span class="dot-b">●</span></td><td class="on2"><span class="dot-b">●</span></td><td class="on2"><span class="dot-b">●</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="slide-footer"><span>回鄉造材——南投農林剩餘資源天然建材創生計畫</span></div>
+</div>
+
+<!-- S10 里程碑 -->
+<div class="slide" id="s10">
+  <div class="slide-inner">
+    <div class="section-tag">進駐里程碑</div>
+    <div class="slide-title">8項里程碑｜深耕先於擴張，以質取勝</div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-badge">M 01</div><div class="kpi-title">創業主體正式成立</div><div class="kpi-desc">完成和曜建材科技股份有限公司商業登記，取得統一編號</div></div>
+      <div class="kpi-card"><div class="kpi-badge">M 02</div><div class="kpi-title">技術合作正式確立</div><div class="kpi-desc">公司對公司技術合作合約或共同開發協議簽署</div></div>
+      <div class="kpi-card"><div class="kpi-badge">M 03</div><div class="kpi-title">市場研究報告完成</div><div class="kpi-desc">完成建材競品分析，定義首款產品目標應用場景與規格</div></div>
+      <div class="kpi-card"><div class="kpi-badge">M 04</div><div class="kpi-title">首款樣品研發完成</div><div class="kpi-desc">天然植物纖維板材樣品完成，取得基礎材料測試紀錄</div></div>
+      <div class="kpi-card"><div class="kpi-badge">M 05</div><div class="kpi-title">品牌據點正式建立</div><div class="kpi-desc">育成村材料展示空間建置完成，實體品牌基地啟動</div></div>
+      <div class="kpi-card"><div class="kpi-badge">M 06</div><div class="kpi-title">產業合作網絡啟動</div><div class="kpi-desc">至少2個產業端完成實質交流，取得合作交流紀錄或意向書</div></div>
+      <div class="kpi-card"><div class="kpi-badge">M 07</div><div class="kpi-title">品牌數位佈局完成</div><div class="kpi-desc">品牌官網上線，建立完整數位形象與ESG訴求</div></div>
+      <div class="kpi-card sp"><div class="kpi-badge">M 08</div><div class="kpi-title">碳足跡框架建立</div><div class="kpi-desc">確立計算方法論與數據來源，為後續碳足跡報告奠定基礎</div></div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>回鄉造材——南投農林剩餘資源天然建材創生計畫</span></div>
+</div>
+
+<!-- S11 團隊 -->
+<div class="slide" id="s11">
+  <div class="slide-inner">
+    <div class="section-tag">團隊介紹</div>
+    <div class="slide-title">兩位南投返鄉青年・深厚在地根基</div>
+    <div class="team-row">
+      <div class="team-card t1">
+        <div class="team-role">TEAM LEAD ／ 計畫主持人</div>
+        <div class="team-name">唐加和</div>
+        <div class="team-pos">和聲文化音樂股份有限公司 創辦人／執行長<br>和曜建材科技 計畫主持人（籌備中）</div>
+        <div class="team-skill">建材市場需求洞察與競品分析</div>
+        <div class="team-skill">品牌建立・產品應用開發</div>
+        <div class="team-skill">在地創生活動推動與資源整合</div>
+        <div class="team-skill">產品認證・碳足跡數據建立</div>
+        <div class="root-tags">
+          <div class="root-tag">南投在地成長</div>
+          <div class="root-tag">國立中興高中校友</div>
+          <div class="root-tag">中興新村活化計畫</div>
+          <div class="root-tag">家族幼兒園（南投）</div>
+        </div>
+      </div>
+      <div class="team-card t2">
+        <div class="team-role">INDUSTRY PARTNER ／ 產業合作夥伴</div>
+        <div class="team-name">唐加恩</div>
+        <div class="team-pos">加恩倍國際股份有限公司 負責人／執行長<br>ISBM 國際利他企業商會 會長</div>
+        <div class="team-skill" style="--c:#1565C0">建設／建築業廣泛產業採購人脈</div>
+        <div class="team-skill" style="--c:#1565C0">企業管理顧問・資源整合</div>
+        <div class="team-skill" style="--c:#1565C0">ISBM商會跨業媒合</div>
+        <div class="team-skill" style="--c:#1565C0">客戶端採購洽談與通路開發</div>
+        <div class="root-tags">
+          <div class="root-tag b">南投返鄉青年</div>
+          <div class="root-tag b">在地教會網絡</div>
+          <div class="root-tag b">建設業採購人脈</div>
+          <div class="root-tag b">ISBM商會資源</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer"><span>回鄉造材——南投農林剩餘資源天然建材創生計畫</span></div>
+</div>
+
+<!-- S12 結語 -->
+<div class="slide" id="s12">
+  <div class="left-bar"></div>
+  <div class="bottom-bar"></div>
+  <div class="content">
+    <h1>回鄉造材</h1>
+    <div class="sub">以竹材為切入點，探索天然植物纖維建材</div>
+    <div class="pts">
+      <div class="pt">🌿　南投農林剩餘資源・竹廢料升級再造</div>
+      <div class="pt">⚙️　先進材完整成熟技術支撐</div>
+      <div class="pt">🏗️　品牌建立・產品應用開發・通路拓展</div>
+      <div class="pt">📊　附碳足跡數據・對應ESG採購需求</div>
+      <div class="pt">🌱　兩位南投返鄉青年・真實在地根基</div>
+    </div>
+    <div class="by2">和曜建材科技籌備團隊｜中興新村地方創生育成村 第六期進駐申請</div>
+  </div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- 導航 -->
+<nav class="nav">
+  <button class="nav-btn" id="prevBtn" onclick="go(-1)">← 上一頁</button>
+  <div class="nav-dots" id="dots"></div>
+  <span class="nav-counter" id="counter"></span>
+  <button class="nav-btn" id="nextBtn" onclick="go(1)">下一頁 →</button>
+</nav>
+
+<div class="kb-hint">← → 方向鍵切換　Space 下一頁</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const dotsEl = document.getElementById('dots');
+const counter = document.getElementById('counter');
+let cur = 0;
+
+// 建立 dots
+slides.forEach((_,i)=>{
+  const d = document.createElement('div');
+  d.className='dot';
+  d.onclick=()=>show(i);
+  dotsEl.appendChild(d);
+});
+
+function show(n){
+  slides[cur].classList.remove('active');
+  dotsEl.children[cur].classList.remove('active');
+  cur = Math.max(0,Math.min(n,slides.length-1));
+  slides[cur].classList.add('active');
+  dotsEl.children[cur].classList.add('active');
+  counter.textContent = (cur+1)+' / '+slides.length;
+  document.getElementById('prevBtn').disabled = cur===0;
+  document.getElementById('nextBtn').disabled = cur===slides.length-1;
+}
+
+function go(d){ show(cur+d); }
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' ') go(1);
+  if(e.key==='ArrowLeft') go(-1);
+});
+
+show(0);
+</script>
+</body>
+</html>

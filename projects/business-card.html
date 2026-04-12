@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>名片系統 — 唐加和</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+
+:root {
+–paper: #faf9f7;
+–ink: #1a1a18;
+–ink-mid: #4a4a46;
+–ink-light: #8a8a84;
+–rule: #d8d5cf;
+–hoyao-green: #3d5a47;
+–card-w: 90mm;
+–card-h: 54mm;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: #e8e5de;
+font-family: ‘Noto Serif TC’, serif;
+padding: 40px 24px 60px;
+min-height: 100vh;
+}
+
+.system-header {
+max-width: 760px;
+margin: 0 auto 48px;
+padding-bottom: 20px;
+border-bottom: 1px solid #c8c5be;
+display: flex;
+justify-content: space-between;
+align-items: flex-end;
+}
+
+.system-title {
+font-family: ‘EB Garamond’, serif;
+font-size: 22px;
+font-weight: 400;
+color: var(–ink);
+letter-spacing: 0.04em;
+}
+
+.system-sub {
+font-size: 11px;
+color: var(–ink-light);
+margin-top: 5px;
+letter-spacing: 0.06em;
+font-family: ‘EB Garamond’, serif;
+}
+
+.status-legend {
+font-size: 10px;
+color: var(–ink-light);
+letter-spacing: 0.06em;
+line-height: 1.8;
+text-align: right;
+font-family: ‘EB Garamond’, serif;
+}
+
+.card-section {
+max-width: 760px;
+margin: 0 auto 56px;
+}
+
+.section-label {
+font-family: ‘EB Garamond’, serif;
+font-size: 11px;
+letter-spacing: 0.16em;
+text-transform: uppercase;
+color: var(–ink-light);
+margin-bottom: 16px;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.status-badge {
+font-size: 9px;
+letter-spacing: 0.08em;
+padding: 2px 7px;
+border-radius: 2px;
+font-family: ‘EB Garamond’, serif;
+text-transform: none;
+}
+.status-badge.ready  { background: #e8f0eb; color: var(–hoyao-green); border: 0.5px solid #b8d0bc; }
+.status-badge.pending{ background: #f5f3ee; color: var(–ink-light);   border: 0.5px solid var(–rule); }
+
+.card-pair { display: flex; gap: 32px; flex-wrap: wrap; }
+
+/* ── Card ── */
+.card {
+width: var(–card-w);
+height: var(–card-h);
+background: var(–paper);
+padding: 7mm 7.5mm 6mm;
+position: relative;
+box-shadow:
+0 1px 3px rgba(0,0,0,0.06),
+0 4px 16px rgba(0,0,0,0.07),
+0 0 0 0.5px rgba(0,0,0,0.08);
+flex-shrink: 0;
+}
+
+.card-front-header {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+gap: 4mm;
+}
+
+.name-block { flex: 1; }
+
+.logo-placeholder {
+width: 14mm;
+height: 14mm;
+border: 0.6px dashed var(–rule);
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+}
+.logo-placeholder span {
+font-size: 5.5px;
+color: var(–ink-light);
+letter-spacing: 0.04em;
+text-align: center;
+line-height: 1.6;
+}
+
+.hoyao-logo-front { width: 20mm; height: auto; display: block; flex-shrink: 0; }
+
+.name-zh {
+font-family: ‘Noto Serif TC’, serif;
+font-size: 13.5px;
+font-weight: 500;
+color: var(–ink);
+letter-spacing: 0.08em;
+line-height: 1;
+}
+.name-en {
+font-family: ‘EB Garamond’, serif;
+font-size: 13px;
+font-weight: 400;
+color: var(–ink);
+letter-spacing: 0.06em;
+line-height: 1;
+}
+.title-line {
+font-size: 8.5px;
+color: var(–ink-mid);
+letter-spacing: 0.1em;
+margin-top: 1.5mm;
+font-weight: 300;
+}
+.divider { width: 10mm; height: 0.4px; background: var(–rule); margin: 3mm 0; }
+.org-zh { font-size: 8px; color: var(–ink); letter-spacing: 0.12em; line-height: 1.6; font-weight: 400; }
+.org-en { font-family: ‘EB Garamond’, serif; font-size: 8px; color: var(–ink-mid); letter-spacing: 0.08em; margin-top: 0.5mm; }
+.affil  { font-size: 7px; color: var(–ink-light); letter-spacing: 0.06em; margin-top: 1mm; line-height: 1.5; }
+
+.contact-block { position: absolute; bottom: 6mm; left: 7.5mm; right: 7.5mm; }
+.contact-row { font-family: ‘EB Garamond’, serif; font-size: 7.5px; color: var(–ink-mid); letter-spacing: 0.04em; line-height: 1.85; }
+.contact-row.addr { font-size: 7px; color: var(–ink-light); letter-spacing: 0.03em; line-height: 1.55; }
+.web { font-family: ‘EB Garamond’, serif; font-size: 7.5px; color: var(–ink-light); letter-spacing: 0.05em; position: absolute; bottom: 6mm; right: 7.5mm; }
+
+/* ── Back ── */
+.card-back { display: flex; align-items: center; justify-content: center; }
+.card-back.hoyao-back { background: var(–paper); }
+
+.back-inner { display: flex; flex-direction: column; align-items: center; gap: 3mm; }
+.back-logo-box {
+width: 22mm; height: 22mm;
+border: 0.6px dashed rgba(0,0,0,0.13);
+display: flex; align-items: center; justify-content: center;
+}
+.hoyao-back .back-logo-box { border-color: rgba(61,90,71,0.2); }
+.back-logo-box span { font-size: 6px; color: var(–ink-light); letter-spacing: 0.06em; text-align: center; line-height: 1.8; }
+.hoyao-back .back-logo-box span { color: var(–ink-light); }
+.back-label { font-family: ‘EB Garamond’, serif; font-size: 7px; color: var(–ink-light); letter-spacing: 0.1em; }
+.hoyao-back .back-label { color: var(–ink-light); }
+
+/* ── Captions ── */
+.card-wrap { flex-shrink: 0; }
+.card-caption { width: var(–card-w); margin-top: 10px; }
+.cap-tag { font-size: 9px; color: var(–ink-light); letter-spacing: 0.08em; line-height: 1.7; font-family: ‘EB Garamond’, serif; }
+.cap-tag em { font-style: normal; color: var(–ink-mid); }
+.cap-note {
+display: inline-block; font-size: 7.5px; letter-spacing: 0.1em;
+color: var(–ink-light); border: 0.5px solid var(–rule);
+padding: 1.5px 6px; margin-top: 4px; font-family: ‘EB Garamond’, serif;
+}
+.cap-note.ready { color: var(–hoyao-green); border-color: #b8d0bc; }
+
+.footnote {
+max-width: 760px; margin: 0 auto;
+padding-top: 24px; border-top: 1px solid #c8c5be;
+font-size: 10px; color: var(–ink-light);
+font-family: ‘EB Garamond’, serif; letter-spacing: 0.06em; line-height: 1.9;
+display: flex; justify-content: space-between;
+}
+</style>
+
+</head>
+<body>
+
+<div class="system-header">
+  <div>
+    <div class="system-title">名片系統 — 唐加和</div>
+    <div class="system-sub">三個對外身份入口　·　最終定稿版 v2</div>
+  </div>
+  <div class="status-legend">✅ 可送印 &ensp;·&ensp; ⏳ 待 Logo 設計</div>
+</div>
+
+<!-- ══ 01 和聲 ══ -->
+
+<div class="card-section">
+  <div class="section-label">01 · 和聲文化 / 在地入口 <span class="status-badge pending">⏳ 待 Logo</span></div>
+  <div class="card-pair">
+
+```
+<div class="card-wrap">
+  <div class="card">
+    <div class="card-front-header">
+      <div class="name-block">
+        <div class="name-zh">唐加和</div>
+        <div class="title-line">執行長</div>
+      </div>
+      <div class="logo-placeholder"><span>Logo<br>待設計</span></div>
+    </div>
+    <div class="divider"></div>
+    <div class="org-zh">和聲文化音樂股份有限公司</div>
+    <div class="affil">南投縣漳平溪文化藝術協會　理事</div>
+    <div class="contact-block">
+      <div class="contact-row">+886 4 3603 2036</div>
+      <div class="contact-row" data-em="thomas" data-dm="harmonyculture.art"></div>
+      <div class="contact-row addr">南投縣南投市中興路323巷2號</div>
+    </div>
+    <div class="web">harmonyculture.art</div>
+  </div>
+  <div class="card-caption">
+    <div class="cap-tag"><em>正面</em> · 穩定・在地・公部門友好</div>
+    <div class="cap-note">Logo 待重新設計</div>
+  </div>
+</div>
+
+<div class="card-wrap">
+  <div class="card card-back">
+    <div class="back-inner">
+      <div class="back-logo-box"><span>和聲<br>Logo<br>待設計</span></div>
+      <div class="back-label">置中</div>
+    </div>
+  </div>
+  <div class="card-caption">
+    <div class="cap-tag"><em>背面</em> · 和聲 Logo 置中，白底</div>
+    <div class="cap-note">Logo 完成後放入</div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ══ 02 和曜 ══ -->
+
+<div class="card-section">
+  <div class="section-label">02 · 和曜建材 / 產業主體 <span class="status-badge ready">✅ 可送印</span></div>
+  <div class="card-pair">
+
+```
+<div class="card-wrap">
+  <div class="card">
+    <div class="card-front-header">
+      <div class="name-block">
+        <div class="name-zh">唐加和</div>
+        <div class="title-line">總經理</div>
+      </div>
+      <!-- HOYAO Logo SVG -->
+      <svg class="hoyao-logo-front" viewBox="0 0 160 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="21" cy="21" r="14" stroke="#3d5a47" stroke-width="2.3" fill="none"/>
+        <line x1="7.5" y1="21" x2="34.5" y2="21" stroke="#3d5a47" stroke-width="2.3"/>
+        <text x="43" y="18" font-family="Georgia, serif" font-size="14" font-weight="600" fill="#3d5a47" letter-spacing="1.5">HOYAO</text>
+        <text x="44.5" y="30" font-family="Georgia, serif" font-size="7.5" fill="#3d5a47" letter-spacing="3">Materials</text>
+      </svg>
+    </div>
+    <div class="divider"></div>
+    <div class="org-zh">和曜建材科技股份有限公司</div>
+    <div class="org-en">HOYAO Materials</div>
+    <div class="contact-block">
+      <div class="contact-row">+886 4 3603 2036</div>
+      <div class="contact-row" data-em="thomas" data-dm="hoyao.com"></div>
+      <div class="contact-row addr">南投縣南投市光華路105號（松園三館）</div>
+    </div>
+    <div class="web">hoyao.com</div>
+  </div>
+  <div class="card-caption">
+    <div class="cap-tag"><em>正面</em> · 可合作・可落地・產業端窗口</div>
+    <div class="cap-note ready">Logo 已定案</div>
+  </div>
+</div>
+
+<div class="card-wrap">
+  <div class="card card-back hoyao-back">
+    <div class="back-inner">
+      <div class="back-logo-box">
+        <!-- HOYAO icon in green -->
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="14" stroke="#3d5a47" stroke-width="2.5" fill="none"/>
+          <line x1="6.5" y1="20" x2="33.5" y2="20" stroke="#3d5a47" stroke-width="2.5"/>
+        </svg>
+      </div>
+      <div class="back-label">HOYAO Materials</div>
+    </div>
+  </div>
+  <div class="card-caption">
+    <div class="cap-tag"><em>背面</em> · HOYAO Logo 置中，白底深綠字</div>
+    <div class="cap-note ready">已定案</div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- ══ 03 和平資本 ══ -->
+
+<div class="card-section">
+  <div class="section-label">03 · 和平資本 / 資本主軸 <span class="status-badge pending">⏳ 待 Logo</span></div>
+  <div class="card-pair">
+
+```
+<div class="card-wrap">
+  <div class="card">
+    <div class="card-front-header">
+      <div class="name-block">
+        <div class="name-en">Thomas Tang</div>
+        <div class="name-zh" style="font-size:11px;font-weight:300;letter-spacing:0.18em;color:var(--ink-mid);margin-top:1.2mm">唐加和</div>
+        <div class="title-line">管理合夥人 &nbsp;·&nbsp; Managing Partner</div>
+      </div>
+      <div class="logo-placeholder"><span>Logo<br>待設計</span></div>
+    </div>
+    <div class="divider"></div>
+    <div class="org-zh" style="letter-spacing:0.18em">和平資本股份有限公司</div>
+    <div class="org-en" style="font-size:9px;letter-spacing:0.14em">Peace Capital Co., Ltd.</div>
+    <div class="contact-block">
+      <div class="contact-row">+886 4 3603 2036</div>
+      <div class="contact-row" data-em="thomas" data-dm="peacecapital.io"></div>
+      <div class="contact-row addr">臺中市西屯區市政北二路236號20樓之2</div>
+    </div>
+    <div class="web">peacecapital.io</div>
+  </div>
+  <div class="card-caption">
+    <div class="cap-tag"><em>正面</em> · 投資人・資本方・平台</div>
+    <div class="cap-note">Logo 待設計　·　地址待更新</div>
+  </div>
+</div>
+
+<div class="card-wrap">
+  <div class="card card-back">
+    <div class="back-inner">
+      <div class="back-logo-box"><span>和平資本<br>Logo<br>待設計</span></div>
+      <div class="back-label">置中</div>
+    </div>
+  </div>
+  <div class="card-capti      </div>
+  <div class="card-caption">
+    <div class="cap-tag"><em>背面</em> · 和平資本 Logo 置中，白底</div>
+    <div class="cap-note">Logo 完成後放入</div>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<div class="footnote">
+  <span>名片保守，對話進攻。</span>
+  <span>和曜 ✅ 可送印 &ensp;·&ensp; 和聲 / 和平資本 ⏳ 待 Logo</span>
+</div>
+
+<script>
+  document.querySelectorAll('[data-em]').forEach(el => {
+    el.textContent = el.dataset.em + '\u0040' + el.dataset.dm;
+  });
+</script>
+
+</body>
+</html>

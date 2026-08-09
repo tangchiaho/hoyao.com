@@ -297,6 +297,29 @@ img{max-width:100%;display:block}
   padding:6px 10px;
 }
 .prose .update-figure{margin:32px 0}
+.update-context{
+  margin:28px 0 0;
+  padding:18px 0 0;
+  border-top:1px solid var(--line);
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.7;
+}
+.update-context h3{
+  margin:0 0 8px;
+  font-size:12px;
+  font-weight:500;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.update-context p{margin:0 0 8px}
+.update-context p:last-child{margin-bottom:0}
+.update-context a{
+  color:inherit;
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
 .ext-links{
   margin:24px 0 0;
   display:grid;

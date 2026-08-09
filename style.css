@@ -253,12 +253,50 @@ img{max-width:100%;display:block}
   height:auto;
   background:var(--surface);
 }
-.project-figure figcaption{
+.project-figure figcaption,
+.update-figure figcaption{
   margin-top:12px;
   font-size:13px;
   color:var(--muted);
   line-height:1.6;
 }
+.update-figure{
+  margin:28px 0;
+  padding:0;
+}
+.update-figure img{
+  width:100%;
+  max-width:100%;
+  height:auto;
+  background:var(--surface);
+}
+.update-figure--hero{
+  margin-top:8px;
+  padding-top:0;
+  border-top:0;
+}
+.update-figure--hero img{
+  max-height:min(72vh, 820px);
+  width:auto;
+  max-width:100%;
+  margin:0 auto;
+  object-fit:contain;
+}
+.update-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:0 0 20px;
+}
+.update-tags span{
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+  border:1px solid var(--line);
+  padding:6px 10px;
+}
+.prose .update-figure{margin:32px 0}
 .ext-links{
   margin:24px 0 0;
   display:grid;

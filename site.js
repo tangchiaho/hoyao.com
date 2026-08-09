@@ -3,6 +3,13 @@
   var panel = document.querySelector(".nav-mobile");
   if (!toggle || !panel) return;
 
+  if (!toggle.getAttribute("aria-label")) {
+    toggle.setAttribute("aria-label", "Menu");
+  }
+  if (!panel.getAttribute("aria-label")) {
+    panel.setAttribute("aria-label", "Menu");
+  }
+
   function setOpen(open) {
     toggle.setAttribute("aria-expanded", open ? "true" : "false");
     if (open) {
@@ -28,7 +35,10 @@
   });
 
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") setOpen(false);
+    if (e.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+      setOpen(false);
+      toggle.focus();
+    }
   });
 
   window.addEventListener("resize", function () {

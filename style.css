@@ -241,6 +241,36 @@ img{max-width:100%;display:block}
   padding:28px 0;
   border-top:1px solid var(--line);
 }
+.project-figure{
+  margin:28px 0 0;
+  padding:0;
+  border-top:1px solid var(--line);
+  padding-top:28px;
+}
+.project-figure img{
+  width:100%;
+  max-width:100%;
+  height:auto;
+  background:var(--surface);
+}
+.project-figure figcaption{
+  margin-top:12px;
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.6;
+}
+.ext-links{
+  margin:24px 0 0;
+  display:grid;
+  gap:10px;
+}
+.ext-links a{
+  display:inline-block;
+  min-height:44px;
+  padding:8px 0;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
 .progress-meta{
   font-size:12px;
   color:var(--muted);

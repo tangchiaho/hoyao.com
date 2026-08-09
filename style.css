@@ -321,6 +321,28 @@ img{max-width:100%;display:block}
 }
 .page-hero .lead{font-size:17px}
 
+.breadcrumb{
+  margin:0 0 20px;
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.7;
+  overflow-wrap:anywhere;
+}
+.breadcrumb a{
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+.breadcrumb a:hover{opacity:.7}
+.breadcrumb a:focus-visible{
+  outline:2px solid var(--ink);
+  outline-offset:3px;
+}
+.breadcrumb [aria-current="page"]{
+  color:var(--ink);
+  font-weight:500;
+}
+.breadcrumb-sep{color:var(--muted)}
+
 .work-meta{
   display:flex;
   flex-wrap:wrap;
@@ -334,6 +356,53 @@ img{max-width:100%;display:block}
   color:var(--muted);
   border:1px solid var(--line);
   padding:6px 10px;
+}
+
+.work-pager{
+  margin-top:40px;
+  padding-top:28px;
+  border-top:1px solid var(--line);
+  display:grid;
+  gap:16px;
+}
+.work-pager-back{
+  justify-self:start;
+}
+.work-pager-nav{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.work-pager-link{
+  display:block;
+  padding:16px 18px;
+  border:1px solid var(--line);
+  min-height:72px;
+  background:var(--bg);
+}
+.work-pager-link:hover{
+  opacity:1;
+  background:var(--surface);
+}
+.work-pager-link:focus-visible{
+  outline:2px solid var(--ink);
+  outline-offset:3px;
+}
+.work-pager-label{
+  display:block;
+  font-size:11px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:8px;
+}
+.work-pager-title{
+  display:block;
+  font-size:15px;
+  font-weight:500;
+  color:var(--ink);
+  line-height:1.5;
+  overflow-wrap:anywhere;
 }
 
 .cta-band{
@@ -551,12 +620,16 @@ img{max-width:100%;display:block}
     outline:2px solid var(--ink);
     outline-offset:2px;
   }
-  .nav-mobile a.is-active{
+  .nav-mobile a.is-active,
+  .nav-mobile a[aria-current="page"]{
     font-weight:600;
+    box-shadow:inset 3px 0 0 var(--ink);
+    padding-left:12px;
   }
   .nav-mobile .lang{
     font-weight:500;
   }
+  .work-pager-nav{grid-template-columns:1fr}
 
   .hero{padding:40px 0 32px}
   .claim,

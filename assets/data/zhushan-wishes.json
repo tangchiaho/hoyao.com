@@ -1,40 +1,74 @@
 {
-  "totalCount": 6,
+  "totalCount": 10,
   "approved": [
     {
       "id": "W001",
       "message": "希望竹山越來越好，大家有空都常回來走走。",
-      "relation": "作品團隊・開展前留言",
+      "relation": "開展前祝福",
+      "source": "seed",
       "createdAt": "2026-08-30"
     },
     {
       "id": "W002",
       "message": "希望大家平安健康，也希望這裡一直熱熱鬧鬧的。",
-      "relation": "作品團隊・開展前留言",
+      "relation": "開展前祝福",
+      "source": "seed",
       "createdAt": "2026-08-30"
     },
     {
       "id": "W003",
       "message": "希望年輕人想回來的時候，在竹山也找得到自己的位置。",
-      "relation": "作品團隊・開展前留言",
+      "relation": "開展前祝福",
+      "source": "seed",
       "createdAt": "2026-08-30"
     },
     {
       "id": "W004",
       "message": "希望竹子可以變出更多有趣的東西，讓更多人重新認識竹山。",
-      "relation": "作品團隊・開展前留言",
+      "relation": "開展前祝福",
+      "source": "seed",
       "createdAt": "2026-08-30"
     },
     {
       "id": "W005",
       "message": "希望來到這裡的人，都能帶一點好心情回家。",
-      "relation": "作品團隊・開展前留言",
+      "relation": "開展前祝福",
+      "source": "seed",
       "createdAt": "2026-08-30"
     },
     {
       "id": "W006",
       "message": "希望這個老車站以後還會有很多人來，也有很多新的故事。",
-      "relation": "作品團隊・開展前留言",
+      "relation": "開展前祝福",
+      "source": "seed",
+      "createdAt": "2026-08-30"
+    },
+    {
+      "id": "W007",
+      "message": "祝大家都順順利利，也祝竹山越來越有活力。",
+      "relation": "開展前祝福",
+      "source": "seed",
+      "createdAt": "2026-08-30"
+    },
+    {
+      "id": "W008",
+      "message": "希望下次再來的時候，這裡又多了一點新的東西可以看。",
+      "relation": "開展前祝福",
+      "source": "seed",
+      "createdAt": "2026-08-30"
+    },
+    {
+      "id": "W009",
+      "message": "希望竹山一直保有現在這種慢慢的、舒服的感覺。",
+      "relation": "開展前祝福",
+      "source": "seed",
+      "createdAt": "2026-08-30"
+    },
+    {
+      "id": "W010",
+      "message": "希望可以多一點適合一家人一起來走走、坐坐的地方。",
+      "relation": "開展前祝福",
+      "source": "seed",
       "createdAt": "2026-08-30"
     }
   ],

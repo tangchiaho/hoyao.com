@@ -85,3 +85,17 @@ window.ZHUSHAN_CONFIG = {
 
   gaMeasurementId: "",
 };
+
+/* V4.3 polish layer: keeps production truthful while allowing a private visual-data preview via ?preview=1 */
+(function () {
+  var v = "20260830-v43";
+  var css = document.createElement("link");
+  css.rel = "stylesheet";
+  css.href = "/assets/css/zhushan-polish.css?v=" + v;
+  document.head.appendChild(css);
+
+  var js = document.createElement("script");
+  js.src = "/assets/js/zhushan-polish.js?v=" + v;
+  js.async = false;
+  document.head.appendChild(js);
+})();

@@ -1,0 +1,212 @@
+/* 竹山開飯了 V4.3 — desktop performance + exhibition polish */
+
+html.zs-page { scroll-behavior: auto !important; }
+
+/* The perceived “scroll bars” were repeated divider growth animations.
+   Keep dividers quiet and let content carry the motion. */
+.zs-rule,
+.zs-rule.is-in {
+  transform: none !important;
+  opacity: .28 !important;
+  transition: opacity 420ms var(--zs-ease) !important;
+}
+
+/* Multiple masked infinite background animations can make desktop scrolling feel sticky.
+   Keep ambient motion only in the hero. */
+.zs-fiber::before { animation: none !important; }
+.zs-hero.zs-fiber::before { animation: zs-fiber-drift 34s var(--zs-ease) infinite !important; }
+
+/* General sections: short, light entrance; hero keeps the cinematic treatment. */
+.zs-reveal.is-pending,
+.zs-reveal-child.is-pending {
+  opacity: 0;
+  transform: translateY(7px) !important;
+  filter: none !important;
+}
+.zs-reveal.is-in,
+.zs-reveal-child.is-in {
+  transition: opacity 720ms var(--zs-ease), transform 720ms var(--zs-ease) !important;
+  filter: none !important;
+}
+.zs-reveal.is-pending .zs-section__title { letter-spacing: .01em !important; }
+.zs-reveal.is-in .zs-section__label,
+.zs-reveal.is-in .zs-section__title,
+.zs-reveal.is-in .zs-section__lead {
+  transition: opacity 680ms var(--zs-ease), transform 680ms var(--zs-ease) !important;
+}
+.zs-reveal.is-in .zs-section__label { transition-delay: 0ms !important; }
+.zs-reveal.is-in .zs-section__title { transition-delay: 60ms !important; }
+.zs-reveal.is-in .zs-section__lead { transition-delay: 120ms !important; }
+
+.zs-wishes__quote,
+.zs-wishes__quote.is-visible,
+.zs-wishes__quote.is-leaving { filter: none !important; }
+
+.zs-hero__figure img,
+.zs-venue__figure img { will-change: auto !important; }
+
+/* Abstract bamboo rhythm: visual presence without pretending to be a photograph of the work. */
+.zs-hero { position: relative; min-height: 430px; isolation: isolate; }
+.zs-hero__text { position: relative; z-index: 2; }
+.zs-bamboo-field {
+  position: absolute;
+  right: -2%;
+  top: 22px;
+  width: min(42vw, 360px);
+  height: 360px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: .42;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 78%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 78%, transparent 100%);
+}
+.zs-bamboo-field span {
+  position: absolute;
+  bottom: 0;
+  width: 1px;
+  height: var(--h);
+  left: var(--x);
+  background: rgba(61,74,58,.22);
+  transform-origin: bottom center;
+  animation: zs-bamboo-breathe var(--d) ease-in-out infinite alternate;
+}
+.zs-bamboo-field span::before,
+.zs-bamboo-field span::after {
+  content: "";
+  position: absolute;
+  left: -3px;
+  width: 7px;
+  height: 1px;
+  background: rgba(61,74,58,.26);
+}
+.zs-bamboo-field span::before { top: 32%; }
+.zs-bamboo-field span::after { top: 67%; }
+@keyframes zs-bamboo-breathe {
+  from { transform: translateY(0) rotate(-.18deg); opacity: .72; }
+  to { transform: translateY(-4px) rotate(.18deg); opacity: 1; }
+}
+
+/* Harmony credit should be discoverable, not a second hero. */
+.zs-sig {
+  padding: 42px 0 6px !important;
+  border-top: 0 !important;
+}
+.zs-sig__label {
+  margin-bottom: 8px !important;
+  font-size: 10px !important;
+  letter-spacing: .10em !important;
+  text-transform: none !important;
+}
+.zs-sig__kicker { display: none !important; }
+.zs-sig__name {
+  font-family: var(--zs-sans) !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: var(--zs-muted) !important;
+}
+
+/* Participation / outcomes — editorial, not a corporate dashboard. */
+.zs-outcomes {
+  max-width: var(--zs-wide) !important;
+  padding-top: 72px !important;
+}
+.zs-outcomes[hidden] { display: none !important; }
+.zs-preview-note {
+  margin: -10px 0 28px;
+  font-size: 11px;
+  color: var(--zs-warm);
+  letter-spacing: .04em;
+}
+.zs-impact-lead {
+  max-width: 700px;
+  margin: 0 0 34px;
+  font-family: var(--zs-serif);
+  font-size: clamp(1.08rem, 2.2vw, 1.32rem);
+  line-height: 1.75;
+}
+.zs-impact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  border-top: 1px solid var(--zs-rule);
+  border-left: 1px solid var(--zs-rule);
+}
+.zs-impact-metric {
+  min-height: 132px;
+  padding: 22px 18px 20px;
+  border-right: 1px solid var(--zs-rule);
+  border-bottom: 1px solid var(--zs-rule);
+}
+.zs-impact-number {
+  font-family: var(--zs-serif);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  line-height: 1;
+  letter-spacing: -.025em;
+}
+.zs-impact-unit { margin-left: 4px; font-size: 12px; color: var(--zs-warm); }
+.zs-impact-label { margin-top: 12px; font-size: 12px; color: var(--zs-muted); line-height: 1.6; }
+
+.zs-impact-block { margin-top: 48px; }
+.zs-impact-kicker {
+  margin: 0 0 14px;
+  font-size: 11px;
+  letter-spacing: .12em;
+  color: var(--zs-warm);
+  text-transform: uppercase;
+}
+.zs-region-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  padding: 22px 0;
+  border-top: 1px solid var(--zs-rule);
+  border-bottom: 1px solid var(--zs-rule);
+}
+.zs-region-item { font-family: var(--zs-serif); font-size: 15px; white-space: nowrap; }
+.zs-region-item small { margin-left: 5px; font-family: var(--zs-sans); font-size: 11px; color: var(--zs-warm); }
+
+.zs-insight-grid { display: grid; gap: 16px; }
+.zs-insight {
+  padding: 18px 0 18px 18px;
+  border-left: 1px solid var(--zs-accent);
+}
+.zs-insight strong { display: block; font-family: var(--zs-serif); font-size: 1.55rem; font-weight: 500; }
+.zs-insight span { display: block; margin-top: 4px; font-size: 13px; color: var(--zs-muted); }
+
+.zs-voice-list { border-top: 1px solid var(--zs-rule); }
+.zs-voice {
+  margin: 0;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--zs-rule);
+}
+.zs-voice p { margin: 0; font-family: var(--zs-serif); font-size: 16px; line-height: 1.75; }
+.zs-voice footer { margin-top: 8px; font-size: 11px; color: var(--zs-warm); }
+
+.zs-interest-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.zs-interest-list span {
+  padding: 7px 10px;
+  border: 1px solid var(--zs-rule);
+  font-size: 12px;
+  color: var(--zs-muted);
+}
+
+.zs-preview-wish-status {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--zs-muted);
+}
+
+@media (min-width: 760px) {
+  .zs-impact-grid { grid-template-columns: repeat(4, minmax(0,1fr)); }
+  .zs-impact-metric { min-height: 150px; padding: 26px 22px; }
+  .zs-insight-grid { grid-template-columns: repeat(3, minmax(0,1fr)); gap: 24px; }
+}
+
+@media (max-width: 759px) {
+  .zs-hero { min-height: auto; }
+  .zs-bamboo-field { right: -18%; top: 4px; width: 58vw; height: 280px; opacity: .28; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zs-hero.zs-fiber::before,
+  .zs-bamboo-field span { animation: none !important; }
+}

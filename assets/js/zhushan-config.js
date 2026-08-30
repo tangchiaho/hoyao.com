@@ -1,11 +1,8 @@
 /**
- * 竹山開飯了 — 作品專頁集中設定
- * 替換照片、表單、社群資料時，優先修改此檔。
+ * 竹山開飯了 — 作品專頁集中設定（V5 Participation）
  *
- * 正式照片就緒後：
- * 1. 將 images.*.src 改為正式路徑
- * 2. 移除或設 placeholder: false
- * 3. 可將 placeholders.enabled 設為 false
+ * 換正式照片：改 images.*，placeholder: false
+ * 短期公開彈幕：部署 docs/zhushan-ephemeral-apps-script.js 後填 ephemeralApiUrl
  */
 window.ZHUSHAN_CONFIG = {
   slug: "zhushan",
@@ -13,12 +10,32 @@ window.ZHUSHAN_CONFIG = {
 
   dataMode: "static",
 
+  /* 正式竹願表單（審核後進竹願牆） */
   googleFormUrl: "",
   googleFormWishEntry: "",
   wishesApiUrl: "",
   staticWishesUrl: "/assets/data/zhushan-wishes.json",
   outcomesUrl: "/assets/data/zhushan-outcomes.json",
+  bambooPhrasesUrl: "/assets/data/zhushan-bamboo-phrases.json",
 
+  /* 短期公開彈幕 API（Apps Script Web App URL）；空＝僅本機可見 */
+  ephemeralApiUrl: "",
+  ephemeral: {
+    ttlMinutes: 20,
+    maxLength: 40,
+    pollMs: 8000,
+    maxVisible: 6,
+  },
+
+  /* 問卷／研究（與彈幕、竹願分開） */
+  surveyFormUrl: "",
+  surveyPrizeText: "",
+
+  /* 社群挑戰 */
+  communityHashtag: "#竹山開飯了",
+  communityMention: "",
+  communityPrizeText: "",
+  communitySubmissionFormUrl: "",
   communityShareFormUrl: "",
   communityDataUrl: "/assets/data/zhushan-community.json",
 
@@ -35,25 +52,19 @@ window.ZHUSHAN_CONFIG = {
     maxLength: 70,
     hashtag: "#竹山開飯了",
     url: "https://hoyao.com/zhushan/",
-    format: "square",
-    size: 1080,
-    shareText:
-      "我在《竹山開飯了》留下了一張竹願卡。\n從竹林到餐桌，再從餐桌回到土地。\nhttps://hoyao.com/zhushan",
+    format: "story",
+    width: 1080,
+    height: 1920,
   },
 
-  /* 竹願卡展示牆範例（生活化口語；僅供版面審視） */
-  wishGallery: [
-    { message: "希望竹山越來越好，大家有空都常回來走走。", signer: "開展前" },
-    { message: "想帶家人再來一次，慢慢走走看看。", signer: "匿名" },
-    { message: "原來竹子可以變成這樣，覺得好神奇。", signer: "" },
-    { message: "希望年輕人想回來的時候，在竹山也找得到自己的位置。", signer: "開展前" },
-    { message: "祝大家都順順利利，也祝竹山越來越有活力。", signer: "匿名" },
-    { message: "這個老車站以後還會有很多人來，也有很多新的故事。", signer: "" },
-  ],
-
-  animations: {
+  bambooCard: {
     enabled: true,
+    width: 1080,
+    height: 1920,
+    url: "https://hoyao.com/zhushan/",
   },
+
+  animations: { enabled: true },
 
   video: {
     type: "youtube",

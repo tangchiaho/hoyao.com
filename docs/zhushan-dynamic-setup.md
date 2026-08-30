@@ -148,3 +148,24 @@ useMockWishes: false,
 | 場域圖 | `images.venue.src: ""` |
 
 系統層 `prefers-reduced-motion: reduce` 會取消動畫與輪播。
+
+## K. 短期公開彈幕（V5）
+
+1. 在同一 Google Sheet 部署 `docs/zhushan-ephemeral-apps-script.js`（可與竹願共用專案，或獨立）
+2. 部署為網頁應用程式（所有人可存取）
+3. 把 Web App URL 貼到 `ephemeralApiUrl`
+4. TTL 預設 20 分鐘；超過不再回傳
+
+若 `ephemeralApiUrl` 為空：飄過僅本機可見（optimistic），不會跨裝置。
+
+## L. 問卷／社群挑戰
+
+```js
+surveyFormUrl: "https://docs.google.com/forms/d/e/XXXX/viewform",
+surveyPrizeText: "完成問卷可參加抽獎", // 空字串則不顯示
+communitySubmissionFormUrl: "https://docs.google.com/forms/d/e/YYYY/viewform",
+communityMention: "@your_account",
+communityPrizeText: "",
+```
+
+抽獎個資請用獨立表單或獨立區段，勿與研究答題混為公開資料。

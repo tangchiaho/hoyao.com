@@ -31,7 +31,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
 <link rel="preload" href="/assets/data/zhushan-outcomes.json" as="fetch" crossorigin>
-<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v47">
+<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v51">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -75,7 +75,7 @@
   }
 }
 </script>
-<script src="/assets/js/zhushan-config.js?v=20260830-v47"></script>
+<script src="/assets/js/zhushan-config.js?v=20260830-v51"></script>
 <script>
 /* Early outcomes fetch — reduce mid-scroll layout insertion */
 window.__ZS_OUTCOMES_P = (function () {
@@ -250,41 +250,61 @@ window.__ZS_OUTCOMES_P = (function () {
 <p class="zs-loop__note">「帶走・留下・歸還——觀看之外，每一次參與，也成為作品的一部分。」</p>
 </section>
 
+<div class="zs-divider" id="bamboo-speak-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
+
+<section class="zs-section" id="bamboo-speak" aria-labelledby="bamboo-speak-title">
+<p class="zs-section__label">Bamboo Phrase</p>
+<h2 class="zs-section__title" id="bamboo-speak-title">竹語｜帶走一句話</h2>
+<p class="zs-section__lead">抽一支竹語，讓一句話陪你離開竹山。</p>
+
+<div class="zs-slip" id="zs-slip">
+<div class="zs-slip__frame" aria-live="polite">
+<p class="zs-slip__placeholder" id="zs-slip-placeholder">按下方按鈕，抽出一句竹語</p>
+<p class="zs-slip__text" id="zs-slip-text" hidden></p>
+</div>
+</div>
+
+<div class="zs-slip-actions">
+<button type="button" class="zs-btn" id="zs-draw-phrase">抽一句竹語</button>
+<button type="button" class="zs-btn zs-btn-ghost" id="zs-redraw-phrase" hidden>再抽一句</button>
+<button type="button" class="zs-btn zs-btn-ghost" id="zs-phrase-card-btn" hidden>做成竹語卡</button>
+</div>
+
+<div id="zs-phrase-card-result" class="zs-card-result zs-card-result--story" hidden>
+<div class="zs-card-result__preview">
+<img id="zs-phrase-card-preview" class="zs-card-preview zs-card-preview--story" alt="你的竹語卡預覽" width="1080" height="1920">
+<canvas id="zs-phrase-card-canvas" width="1080" height="1920" hidden aria-hidden="true"></canvas>
+<p class="zs-card-save-hint">長按卡片也可以儲存圖片</p>
+</div>
+<div class="zs-card-actions">
+<button type="button" class="zs-btn" id="zs-phrase-card-share">分享竹語卡</button>
+<button type="button" class="zs-btn zs-btn-ghost" id="zs-phrase-card-download">儲存圖片</button>
+</div>
+<p class="zs-form-note" id="zs-phrase-card-status" hidden></p>
+</div>
+</section>
+
 <div class="zs-divider" id="participate-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section" id="participate" aria-labelledby="participate-title">
-<p class="zs-section__label">Participation</p>
-<h2 class="zs-section__title" id="participate-title">留下一句話</h2>
-<p class="zs-section__lead">現在想到什麼？<br>讓它飄過，或帶走。</p>
+<section class="zs-section zs-wish-unit" id="participate" aria-labelledby="participate-title">
+<p class="zs-section__label">Wish</p>
+<h2 class="zs-section__title" id="participate-title">竹願</h2>
+<p class="zs-section__lead">留一句話給竹山</p>
 
-<div class="zs-stage" id="zs-reaction-stage" aria-hidden="true">
-<div class="zs-stage__fiber" aria-hidden="true"></div>
-</div>
-<p class="zs-live-status" id="zs-ephemeral-live" aria-live="polite"></p>
-
-<div class="zs-composer">
-<label class="zs-composer__label" for="zs-thought-input">留一句話給竹山</label>
-<textarea id="zs-thought-input" class="zs-composer__field" maxlength="70" rows="4" placeholder="留一句話給竹山……"></textarea>
+<div class="zs-wish-unit__core">
+<div class="zs-composer zs-composer--compact">
+<label class="zs-composer__label zs-visually-hidden" for="zs-thought-input">留一句話給竹山</label>
+<textarea id="zs-thought-input" class="zs-composer__field zs-composer__field--compact" maxlength="70" rows="3" placeholder="留一句話給竹山……"></textarea>
 <p class="zs-composer__count"><span id="zs-thought-count">0</span> / 70</p>
 
-<label class="zs-composer__label zs-composer__label--soft" for="zs-signer-input">署名（可留空＝匿名）</label>
-<input type="text" id="zs-signer-input" class="zs-composer__signer" maxlength="20" placeholder="你的名字，或不填">
-
-<div class="zs-thought-actions">
-<div class="zs-thought-action">
+<div class="zs-wish-actions" role="group" aria-label="竹願操作">
 <button type="button" class="zs-btn zs-btn-ghost" id="zs-ephemeral-btn">讓它飄過</button>
-<p class="zs-thought-hint">只在你的畫面出現片刻，不會保存。</p>
-<p class="zs-thought-status" id="zs-ephemeral-status" hidden>已經飄過了，不會被保存。</p>
-</div>
-<div class="zs-thought-action" id="zs-keep-wrap" hidden aria-hidden="true">
 <button type="button" class="zs-btn" id="zs-keep-wish-btn">留下竹願</button>
-<p class="zs-thought-hint">留下這句話，經整理後可能收錄於作品紀錄。</p>
+<button type="button" class="zs-btn zs-btn-ghost" id="zs-to-card-btn">做成竹願卡</button>
 </div>
-<div class="zs-thought-action">
-<button type="button" class="zs-btn-link" id="zs-to-card-btn">做成竹願卡 <span aria-hidden="true">→</span></button>
-<p class="zs-thought-hint">在你的裝置產生一張可以保存與分享的圖片。</p>
-</div>
-</div>
+<p class="zs-thought-status" id="zs-ephemeral-status" hidden></p>
+<p class="zs-thought-status" id="zs-keep-status" hidden></p>
+<p class="zs-thought-hint zs-thought-hint--inline">飄過＝短時間公開｜留下＝正式竹願｜做卡＝只在你的裝置</p>
 </div>
 
 <p class="zs-quick__lead">或者，按一下現在的感覺</p>
@@ -297,42 +317,50 @@ window.__ZS_OUTCOMES_P = (function () {
 <button type="button" data-reaction-id="R06">祝竹山越來越好</button>
 </div>
 
-<div id="zs-card-result" class="zs-card-result" hidden>
+<div class="zs-live-field">
+<p class="zs-live-field__label">此刻正在飄過的話</p>
+<div class="zs-stage zs-stage--live" id="zs-reaction-stage" aria-hidden="true">
+<div class="zs-stage__fiber" aria-hidden="true"></div>
+</div>
+<p class="zs-live-status" id="zs-ephemeral-live" aria-live="polite"></p>
+</div>
+</div>
+
+<div id="zs-card-result" class="zs-card-result zs-card-result--story" hidden>
 <div class="zs-card-result__preview">
-<img id="zs-card-preview" class="zs-card-preview" alt="你的竹願卡預覽" width="1080" height="1080">
-<canvas id="zs-card-canvas" width="1080" height="1080" hidden aria-hidden="true"></canvas>
-<p class="zs-card-save-hint">長按卡片即可儲存圖片<br>或點擊下方「下載 PNG」</p>
+<img id="zs-card-preview" class="zs-card-preview zs-card-preview--story" alt="你的竹願卡預覽" width="1080" height="1920">
+<canvas id="zs-card-canvas" width="1080" height="1920" hidden aria-hidden="true"></canvas>
+<p class="zs-card-save-hint">長按卡片也可以儲存圖片</p>
 </div>
 <p class="zs-card-text" id="zs-card-text"></p>
 <div class="zs-card-actions">
-<button type="button" class="zs-btn" id="zs-card-download">下載 PNG</button>
-<button type="button" class="zs-btn zs-btn-ghost" id="zs-card-share">分享</button>
-<button type="button" class="zs-btn zs-btn-ghost" id="zs-card-copy-link">複製連結</button>
-<button type="button" class="zs-btn zs-btn-ghost" id="zs-card-copy-text">複製文案</button>
+<button type="button" class="zs-btn" id="zs-card-share">分享竹願卡</button>
+<button type="button" class="zs-btn zs-btn-ghost" id="zs-card-download">儲存圖片</button>
 </div>
 <p class="zs-form-note" id="zs-card-action-status" hidden></p>
 <p class="zs-form-note">分享卡只在你的裝置產生，不會自動公開。</p>
-<p class="zs-form-note zs-form-note--share">可長按儲存圖片後，分享至 IG 限動、Facebook 或 LINE</p>
 </div>
 </section>
 
 <div class="zs-divider" id="wishes-live-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
 <section class="zs-section" id="wishes-live" aria-labelledby="wishes-live-title">
-<p class="zs-section__label">Wishes</p>
-<h2 class="zs-section__title" id="wishes-live-title">竹願</h2>
-<p class="zs-section__lead">有人把願望留在竹片上，<br>有些話，也留在這裡。</p>
-<div id="zs-wishes-wall" class="zs-wishes__display"></div>
+<p class="zs-section__label">Approved Wishes</p>
+<h2 class="zs-section__title" id="wishes-live-title">大家留下的竹願</h2>
+<p class="zs-section__lead">經整理後公開的正式竹願。<br>與上方「此刻飄過」不同——這裡是作品檔案。</p>
+<div id="zs-wishes-wall" class="zs-wishes__display zs-wishes__display--approved"></div>
 <div id="zs-wish-stats" class="zs-stats" hidden></div>
 </section>
 
-<div class="zs-divider" id="wish-gallery-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
+<div class="zs-divider" id="survey-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section zs-section--wide" id="wish-gallery" aria-labelledby="wish-gallery-title">
-<p class="zs-section__label">Wishes Gallery</p>
-<h2 class="zs-section__title" id="wish-gallery-title">竹願卡展示</h2>
-<p class="zs-section__lead">先看看竹願卡的整體質感。<br>正式收錄內容會持續更新。</p>
-<div class="zs-wish-gallery" id="zs-wish-gallery"></div>
+<section class="zs-section" id="survey" aria-labelledby="survey-title" hidden>
+<p class="zs-section__label">Survey</p>
+<h2 class="zs-section__title" id="survey-title">再多留一點想法</h2>
+<p class="zs-section__lead">如果你願意，<br>我們也想知道你怎麼看竹山、竹材與這個空間。</p>
+<button type="button" class="zs-btn" id="zs-survey-btn">參與 2 分鐘問卷</button>
+<p class="zs-form-note" id="zs-survey-prize" hidden></p>
+<p class="zs-thought-hint">問卷是研究用資料來源，與短暫飄過的文字、正式竹願分開。</p>
 </section>
 
 <div class="zs-divider" id="outcomes-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
@@ -340,7 +368,7 @@ window.__ZS_OUTCOMES_P = (function () {
 <section class="zs-section zs-section--data zs-outcomes-reserve" id="outcomes" aria-labelledby="outcomes-title">
 <p class="zs-section__label">Observation</p>
 <h2 class="zs-section__title" id="outcomes-title">參與觀察</h2>
-<p class="zs-section__lead">作品不只被觀看，也透過竹語、竹願與歸土，<br>留下人與材料、場域及竹山之間的關係。</p>
+<p class="zs-section__lead">主要來自問卷與現場觀察。<br>竹願文本另作質性整理，不作為主要人次證據。</p>
 <div id="zs-outcomes-root" class="zs-outcomes-root" aria-busy="true"></div>
 </section>
 
@@ -376,15 +404,19 @@ window.__ZS_OUTCOMES_P = (function () {
 <div class="zs-divider" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
 <section class="zs-section" id="share" aria-labelledby="share-title">
-<p class="zs-section__label">Share</p>
+<p class="zs-section__label">Community Challenge</p>
 <h2 class="zs-section__title" id="share-title">分享你的竹山片刻</h2>
-<div class="zs-share">
-<p>「如果你也拍下了作品、竹願，<br>或一個屬於你的竹山片刻，<br>歡迎分享。」</p>
-<p class="zs-share__tag">
-<span class="zs-glyph zs-glyph--inline" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="18" cy="5" r="2.2"/><circle cx="6" cy="12" r="2.2"/><circle cx="18" cy="19" r="2.2"/><path d="M8 11.2l8-5.2M8 12.8l8 5.2"/></svg></span>
-#竹山開飯了
-</p>
-<button type="button" class="zs-btn" id="zs-community-share-btn" hidden>分享我的竹山片刻</button>
+<div class="zs-share zs-challenge">
+<p>拍下作品、竹願，或你眼中的竹山。<br>分享至社群，再把你的分享留給我們。</p>
+<ol class="zs-challenge__steps">
+<li>分享至 Instagram／Facebook／其他社群</li>
+<li>使用 <span id="zs-challenge-hashtag">#竹山開飯了</span></li>
+<li id="zs-challenge-mention-wrap" hidden>標記 <span id="zs-challenge-mention"></span></li>
+<li>回網站送出分享資訊</li>
+</ol>
+<p class="zs-form-note" id="zs-challenge-prize" hidden></p>
+<p class="zs-challenge__note">IG 限動若沒有永久網址，可改上傳截圖（經表單）。</p>
+<button type="button" class="zs-btn" id="zs-community-share-btn" hidden>送出我的分享</button>
 </div>
 </section>
 
@@ -451,6 +483,7 @@ window.__ZS_OUTCOMES_P = (function () {
 </footer>
 </div>
 
-<script src="/assets/js/zhushan.js?v=20260830-v47"></script>
+<script src="/assets/js/zhushan.js?v=20260830-v51"></script>
+<script src="/assets/js/zhushan-participation.js?v=20260830-v51"></script>
 </body>
 </html>

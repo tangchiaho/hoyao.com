@@ -1,5 +1,5 @@
 /**
- * 竹山開飯了 V4.7 — Visual completion
+ * 竹山開飯了 V5 — core archive (participation in companion module)
  * Native scroll only. Analytics scroll depth does not mutate visuals.
  */
 (function () {
@@ -243,176 +243,7 @@
   }
 
   function initComposer() {
-    var input = document.getElementById("zs-thought-input");
-    var signer = document.getElementById("zs-signer-input");
-    var count = document.getElementById("zs-thought-count");
-    var ephemeralBtn = document.getElementById("zs-ephemeral-btn");
-    var keepBtn = document.getElementById("zs-keep-wish-btn");
-    var keepWrap = document.getElementById("zs-keep-wrap");
-    var toCard = document.getElementById("zs-to-card-btn");
-    var canvas = document.getElementById("zs-card-canvas");
-    var result = document.getElementById("zs-card-result");
-    var textEl = document.getElementById("zs-card-text");
-    var shareBtn = document.getElementById("zs-card-share");
-    var dlBtn = document.getElementById("zs-card-download");
-    var copyLinkBtn = document.getElementById("zs-card-copy-link");
-    var copyTextBtn = document.getElementById("zs-card-copy-text");
-    var passedOnce = false;
-    var cardEnabled = cfg.wishCard && cfg.wishCard.enabled !== false;
-
-    if (input && count) {
-      input.setAttribute("maxlength", String(MAX_LEN));
-      input.addEventListener("input", function () {
-        count.textContent = String(input.value.length);
-      });
-    }
-
-    if (ephemeralBtn && input) {
-      ephemeralBtn.addEventListener("click", function () {
-        var text = input.value.trim();
-        if (!text) {
-          input.focus();
-          return;
-        }
-        if (!spawnPassingLine(text)) return;
-        announcePassed();
-        track("passing_thought", { page: "zhushan", action: "ephemeral_sent" });
-        if (!passedOnce) {
-          passedOnce = true;
-          ephemeralBtn.textContent = "再飄一次";
-        }
-      });
-    }
-
-    if (keepWrap && keepBtn) {
-      var formUrl = cfg.googleFormUrl;
-      if (!isSafeHttpUrl(formUrl)) {
-        keepWrap.hidden = true;
-      } else {
-        keepWrap.hidden = false;
-        keepWrap.removeAttribute("aria-hidden");
-        keepBtn.addEventListener("click", function () {
-          var url = formUrl;
-          var entry = cfg.googleFormWishEntry;
-          var thought = input ? input.value.trim() : "";
-          if (entry && /^entry\.\d+$/.test(entry) && thought) {
-            url +=
-              (url.indexOf("?") >= 0 ? "&" : "?") +
-              entry +
-              "=" +
-              encodeURIComponent(thought);
-          }
-          if (!isSafeHttpUrl(url)) return;
-          track("wish_form_open", { page: "zhushan" });
-          window.open(url, "_blank", "noopener,noreferrer");
-        });
-      }
-    }
-
-    function generateCard() {
-      if (!input || !canvas || !result) return;
-      var msg = input.value.trim();
-      if (!msg) {
-        input.focus();
-        return;
-      }
-      var name = signer ? signer.value.trim() : "";
-      drawWishCard(canvas, msg, name).then(function () {
-        syncCardPreview(canvas);
-        result.hidden = false;
-        result.classList.remove("is-ready");
-        void result.offsetWidth;
-        result.classList.add("is-ready");
-        if (textEl) {
-          textEl.textContent =
-            "「" + msg + "」 — 我的竹願" + (name ? "・" + name : "") + "，2026・竹山";
-        }
-        setCardStatus("", false);
-        track("wish_card_generate", { page: "zhushan" });
-        result.scrollIntoView({ behavior: "auto", block: "nearest" });
-      });
-    }
-
-    if (toCard) {
-      if (!cardEnabled) {
-        toCard.hidden = true;
-      } else {
-        toCard.addEventListener("click", generateCard);
-      }
-    }
-
-    if (shareBtn) {
-      shareBtn.addEventListener("click", function () {
-        shareWishCard(canvas);
-      });
-    }
-    if (dlBtn) {
-      dlBtn.addEventListener("click", function () {
-        downloadWishCard(canvas);
-        setCardStatus("已開始下載 PNG。也可長按上方卡片儲存。", true);
-      });
-    }
-    if (copyLinkBtn) {
-      copyLinkBtn.addEventListener("click", function () {
-        var url = (cfg.wishCard && cfg.wishCard.url) || "https://hoyao.com/zhushan/";
-        copyText(url).then(function (ok) {
-          setCardStatus(ok ? "已複製連結" : "無法複製，請手動選取連結", true);
-          if (ok) track("wish_card_copy_link", { page: "zhushan" });
-        });
-      });
-    }
-    if (copyTextBtn) {
-      copyTextBtn.addEventListener("click", function () {
-        copyText(defaultShareText()).then(function (ok) {
-          setCardStatus(ok ? "已複製分享文案" : "無法複製，請手動選取文案", true);
-          if (ok) track("wish_card_copy_text", { page: "zhushan" });
-        });
-      });
-    }
-
-    var quick = document.getElementById("zs-quick-reactions");
-    if (quick) {
-      quick.addEventListener("click", function (e) {
-        var btn = e.target.closest && e.target.closest("button[data-reaction-id]");
-        if (!btn) return;
-        var label = (btn.textContent || "").trim();
-        if (!label) return;
-        if (!spawnPassingLine(label)) return;
-        announcePassed();
-        track("quick_reaction", {
-          page: "zhushan",
-          reaction_id: btn.getAttribute("data-reaction-id"),
-          reaction_text: label,
-        });
-      });
-    }
-  }
-
-  function copyText(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      return navigator.clipboard.writeText(text).then(
-        function () { return true; },
-        function () { return fallbackCopy(text); }
-      );
-    }
-    return Promise.resolve(fallbackCopy(text));
-  }
-
-  function fallbackCopy(text) {
-    try {
-      var ta = document.createElement("textarea");
-      ta.value = text;
-      ta.setAttribute("readonly", "");
-      ta.style.position = "fixed";
-      ta.style.left = "-9999px";
-      document.body.appendChild(ta);
-      ta.select();
-      var ok = document.execCommand("copy");
-      document.body.removeChild(ta);
-      return ok;
-    } catch (e) {
-      return false;
-    }
+    /* V5: handled by zhushan-participation.js */
   }
 
   function wishesSourceUrl() {
@@ -456,44 +287,75 @@
       });
   }
 
+  function weightedItems(items) {
+    var out = [];
+    items.forEach(function (it) {
+      var w = 1;
+      if (it.boost || it.featured) w = 3;
+      if (it.recent) w = 4;
+      var i;
+      for (i = 0; i < w; i++) out.push(it);
+    });
+    return out;
+  }
+
   function renderWishesRotation(container, items) {
+    var groupSize = items.length >= 3 ? 3 : items.length >= 2 ? 2 : 1;
     var round = nextRound(items, null);
     var index = 0;
-    var lastItem = null;
+    var lastGroupTail = null;
 
-    function paint(item) {
-      var prev = container.querySelector(".zs-wishes__quote:not(.is-leaving)");
-      if (prev) {
-        prev.classList.remove("is-visible");
-        prev.classList.add("is-leaving");
-        window.setTimeout(function () {
-          if (prev.parentNode) prev.parentNode.removeChild(prev);
-        }, 750);
-      }
-      var block = document.createElement("blockquote");
-      block.className = "zs-wishes__quote";
-      block.innerHTML = "<p>「" + escapeHtml(item.message) + "」</p>";
-      container.appendChild(block);
+    function leaveGroup() {
+      var prev = container.querySelector(".zs-wishes__group:not(.is-leaving)");
+      if (!prev) return;
+      prev.classList.remove("is-visible");
+      prev.classList.add("is-leaving");
+      window.setTimeout(function () {
+        if (prev.parentNode) prev.parentNode.removeChild(prev);
+      }, 700);
+    }
+
+    function paintGroup(batch) {
+      leaveGroup();
+      var group = document.createElement("div");
+      group.className = "zs-wishes__group";
+      group.innerHTML = batch
+        .map(function (item) {
+          return (
+            '<blockquote class="zs-wishes__quote zs-wishes__quote--approved"><p>「' +
+            escapeHtml(item.message) +
+            "」</p></blockquote>"
+          );
+        })
+        .join("");
+      container.appendChild(group);
       requestAnimationFrame(function () {
         requestAnimationFrame(function () {
-          block.classList.add("is-visible");
+          group.classList.add("is-visible");
         });
       });
     }
 
     function showNext() {
       if (index >= round.length) {
-        lastItem = round[round.length - 1];
-        round = nextRound(items, lastItem);
+        lastGroupTail = round[round.length - 1];
+        round = nextRound(items, lastGroupTail);
         index = 0;
       }
-      paint(round[index]);
-      index += 1;
+      var batch = [];
+      var i;
+      for (i = 0; i < groupSize && index < round.length; i++) {
+        batch.push(round[index]);
+        index += 1;
+      }
+      /* if short leftover at end of cycle, still show */
+      if (!batch.length) return;
+      paintGroup(batch);
     }
 
     showNext();
-    if (items.length > 1) {
-      window.setInterval(showNext, 8000);
+    if (items.length > groupSize) {
+      window.setInterval(showNext, 7000);
     }
   }
 
@@ -698,18 +560,7 @@
   }
 
   function initCommunityShare() {
-    var btn = document.getElementById("zs-community-share-btn");
-    if (!btn) return;
-    var url = cfg.communityShareFormUrl;
-    if (!isSafeHttpUrl(url)) {
-      btn.hidden = true;
-      return;
-    }
-    btn.hidden = false;
-    btn.addEventListener("click", function () {
-      track("community_post_submit", { page: "zhushan" });
-      window.open(url, "_blank", "noopener,noreferrer");
-    });
+    /* V5: community challenge in zhushan-participation.js */
   }
 
   function initCommunityMoments() {
@@ -918,42 +769,6 @@
         img.alt = venue.alt || "";
       }
     }
-  }
-
-  function initWishGallery() {
-    var root = document.getElementById("zs-wish-gallery");
-    var section = document.getElementById("wish-gallery");
-    if (!root || !section) return;
-    var items = (cfg.wishGallery || []).filter(function (it) {
-      return it && it.message;
-    }).slice(0, 8);
-    if (!items.length) {
-      showSection("wish-gallery", false);
-      return;
-    }
-    showSection("wish-gallery", true);
-    root.innerHTML = items
-      .map(function (it) {
-        var signer = it.signer || "匿名";
-        return (
-          '<article class="zs-wish-card" aria-label="竹願卡範例">' +
-          '<p class="zs-wish-card__brand">竹山開飯了</p>' +
-          '<p class="zs-wish-card__sub">竹子重生的永續花園</p>' +
-          '<p class="zs-wish-card__wish">「' +
-          escapeHtml(it.message) +
-          "」</p>" +
-          '<p class="zs-wish-card__signer">' +
-          escapeHtml(signer) +
-          "</p>" +
-          '<div class="zs-wish-card__foot">' +
-          "<span>hoyao.com/zhushan</span>" +
-          '<span class="zs-wish-card__meta">竹語・竹願・歸土</span>' +
-          "</div>" +
-          '<span class="zs-wish-card__ring" aria-hidden="true"></span>' +
-          "</article>"
-        );
-      })
-      .join("");
   }
 
   function initExternalLinks() {
@@ -1505,7 +1320,6 @@
     initHeroMedia();
     initComposer();
     initWishesWall();
-    initWishGallery();
     initCommunityMoments();
     initCommunityShare();
     initProcess();

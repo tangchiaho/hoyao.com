@@ -142,30 +142,45 @@
     var hero = document.getElementById("zs-hero-img");
     var header = document.querySelector(".zs-hero");
     var visual = document.getElementById("zs-hero-visual");
+    var caption = document.getElementById("zs-hero-caption");
     var h = cfg.images && cfg.images.hero;
-    var show = h && canDisplayImage(h);
-    var isPh = !!(h && h.placeholder);
+    if (visual) visual.hidden = false;
+    if (!h || !h.src || h.placeholder || !isRealSrc(h.src)) {
+      if (figure) figure.hidden = true;
+      if (caption) caption.hidden = true;
+      return;
+    }
 
-    if (figure && hero && show) {
-      figure.hidden = false;
-      hero.src = h.src;
-      hero.alt = h.alt || "";
-      if (h.width) hero.width = h.width;
-      if (h.height) hero.height = h.height;
-      var cap = document.getElementById("zs-hero-caption");
-      if (cap && h.caption) {
-        cap.hidden = false;
-        cap.textContent = h.caption;
+    var probe = new Image();
+    probe.onload = function () {
+      if (figure && hero) {
+        figure.hidden = false;
+        hero.src = h.src;
+        hero.alt = h.alt || "";
+        if (h.width) hero.width = h.width;
+        if (h.height) hero.height = h.height;
       }
       if (header) {
         header.classList.add("zs-hero--has-photo");
-        if (isPh) header.classList.add("zs-hero--placeholder");
+        header.classList.remove("zs-hero--placeholder");
       }
-      if (visual) visual.hidden = false;
-    } else {
+      if (visual) visual.classList.add("zs-hero__visual--photo");
+      if (caption) {
+        var capText = String(h.caption || "").trim();
+        if (capText && !/placeholder|待替換|預覽|測試|展前/i.test(capText)) {
+          caption.hidden = false;
+          caption.textContent = capText;
+        } else {
+          caption.hidden = true;
+        }
+      }
+    };
+    probe.onerror = function () {
       if (figure) figure.hidden = true;
-      if (visual) visual.hidden = false;
-    }
+      if (caption) caption.hidden = true;
+      if (header) header.classList.remove("zs-hero--has-photo");
+    };
+    probe.src = h.src;
   }
 
   function spawnPassingLine(text) {
@@ -607,118 +622,148 @@
     var grid = document.getElementById("zs-process-grid");
     if (!section || !grid) return;
 
-    var items = ((cfg.images && cfg.images.process) || []).filter(canDisplayImage);
+    var configured = ((cfg.images && cfg.images.process) || []).filter(function (it) {
+      return it && it.src && !it.placeholder && isRealSrc(it.src);
+    });
     var youtubeId = cfg.video && cfg.video.youtubeId;
     var videoUrl = cfg.video && cfg.video.url;
     var hasYt = youtubeIdSafe(youtubeId);
     var hasMp4 = isSafeHttpUrl(videoUrl);
 
-    if (!items.length && !hasYt && !hasMp4) {
-      showSection("process", false);
+    function paint(items) {
+      if (!items.length && !hasYt && !hasMp4) {
+        showSection("process", false);
+        return;
+      }
+      showSection("process", true);
+      grid.innerHTML = items
+        .map(function (it, idx) {
+          var num = escapeHtml(it.id || String(idx + 1).padStart(2, "0"));
+          var stage = escapeHtml(it.stage || "");
+          var layout = escapeHtml(it.layout || "standard");
+          return (
+            '<figure class="zs-process-item zs-process-item--' +
+            layout +
+            '">' +
+            '<span class="zs-process-item__num">' +
+            num +
+            (stage ? "｜" + stage : "") +
+            "</span>" +
+            '<img src="' +
+            escapeHtml(it.src) +
+            '" width="' +
+            (it.width || 1500) +
+            '" height="' +
+            (it.height || 1000) +
+            '" alt="' +
+            escapeHtml(it.alt || it.stage || "") +
+            '" loading="lazy" decoding="async">' +
+            "<figcaption>" +
+            escapeHtml(it.label || "") +
+            "</figcaption></figure>"
+          );
+        })
+        .join("");
+      paintVideo();
+    }
+
+    function paintVideo() {
+      var videoWrap = document.getElementById("zs-video");
+      if (!videoWrap) return;
+      if (hasYt) {
+        videoWrap.hidden = false;
+        var title = cfg.video.title || "播放影片";
+        videoWrap.innerHTML =
+          '<button type="button" class="zs-video__poster" id="zs-yt-play"><span>播放「' +
+          escapeHtml(title) +
+          "」</span></button>";
+        var play = document.getElementById("zs-yt-play");
+        if (play) {
+          play.addEventListener("click", function () {
+            videoWrap.innerHTML =
+              '<iframe src="https://www.youtube-nocookie.com/embed/' +
+              youtubeId +
+              '?autoplay=1" title="' +
+              escapeHtml(title) +
+              '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+            track("process_video_play", { page: "zhushan", type: "youtube" });
+          });
+        }
+        return;
+      }
+      if (hasMp4) {
+        videoWrap.hidden = false;
+        videoWrap.innerHTML =
+          '<video class="zs-video__player" controls preload="metadata" playsinline' +
+          (cfg.video.poster && isRealSrc(cfg.video.poster)
+            ? ' poster="' + escapeHtml(cfg.video.poster) + '"'
+            : "") +
+          ' width="1280" height="720"><source src="' +
+          escapeHtml(videoUrl) +
+          '" type="video/mp4"></video>';
+      }
+    }
+
+    if (!configured.length) {
+      paint([]);
       return;
     }
 
-    showSection("process", true);
-    grid.innerHTML = items
-      .map(function (it, idx) {
-        var num = escapeHtml(it.id || String(idx + 1).padStart(2, "0"));
-        var stage = it.stage ? escapeHtml(it.stage) + " ・ " : "";
-        var ph = it.placeholder ? ' data-placeholder="true"' : "";
-        return (
-          '<figure class="zs-process-item' +
-          (it.placeholder ? " is-placeholder" : "") +
-          '"' +
-          ph +
-          ">" +
-          (num ? '<span class="zs-process-item__num">' + num + "</span>" : "") +
-          '<img src="' +
-          escapeHtml(it.src) +
-          '" width="' +
-          (it.width || 800) +
-          '" height="' +
-          (it.height || 600) +
-          '" alt="' +
-          escapeHtml(it.alt || it.label || "") +
-          '" loading="lazy" decoding="async">' +
-          "<figcaption>" +
-          stage +
-          escapeHtml(it.label || "") +
-          "</figcaption></figure>"
-        );
-      })
-      .join("");
-
-    var videoWrap = document.getElementById("zs-video");
-    if (!videoWrap) return;
-
-    if (hasYt) {
-      videoWrap.hidden = false;
-      var poster = cfg.video.poster && canDisplayImage({ src: cfg.video.poster, placeholder: false })
-        ? cfg.video.poster
-        : cfg.video.poster && placeholdersOn()
-        ? cfg.video.poster
-        : "";
-      if (cfg.video.poster && isRealSrc(cfg.video.poster)) poster = cfg.video.poster;
-      else poster = "";
-      var title = cfg.video.title || "播放影片";
-      videoWrap.innerHTML =
-        '<button type="button" class="zs-video__poster" id="zs-yt-play">' +
-        (poster ? '<img src="' + escapeHtml(poster) + '" alt="">' : "") +
-        "<span>播放「" +
-        escapeHtml(title) +
-        "」</span></button>";
-      var play = document.getElementById("zs-yt-play");
-      if (play) {
-        play.addEventListener("click", function () {
-          videoWrap.innerHTML =
-            '<iframe src="https://www.youtube-nocookie.com/embed/' +
-            youtubeId +
-            '?autoplay=1" title="' +
-            escapeHtml(title) +
-            '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
-          track("process_video_play", { page: "zhushan", type: "youtube" });
-        });
-      }
-      return;
-    }
-
-    if (hasMp4) {
-      videoWrap.hidden = false;
-      videoWrap.innerHTML =
-        '<video class="zs-video__player" controls preload="metadata" playsinline' +
-        (cfg.video.poster && isRealSrc(cfg.video.poster)
-          ? ' poster="' + escapeHtml(cfg.video.poster) + '"'
-          : "") +
-        ' width="1280" height="720"><source src="' +
-        escapeHtml(videoUrl) +
-        '" type="video/mp4"></video>';
-      var video = videoWrap.querySelector("video");
-      if (video) {
-        video.addEventListener("play", function () {
-          track("process_video_play", { page: "zhushan", type: "mp4" });
-        });
-      }
-    }
+    var pending = configured.length;
+    var ok = [];
+    configured.forEach(function (it, index) {
+      var probe = new Image();
+      probe.onload = function () {
+        ok[index] = it;
+        pending -= 1;
+        if (pending === 0) paint(ok.filter(Boolean));
+      };
+      probe.onerror = function () {
+        pending -= 1;
+        if (pending === 0) paint(ok.filter(Boolean));
+      };
+      probe.src = it.src;
+    });
   }
 
   function initVenue() {
     var gallery = document.getElementById("zs-venue-gallery");
-    var items = ((cfg.images && cfg.images.venueGallery) || []).filter(canDisplayImage);
-    if (gallery && items.length) {
+    var configured = ((cfg.images && cfg.images.venueGallery) || []).filter(function (it) {
+      return it && it.src && !it.placeholder && isRealSrc(it.src);
+    });
+    var single = cfg.images && cfg.images.venue;
+    if (
+      !configured.length &&
+      single &&
+      !single.placeholder &&
+      isRealSrc(single.src)
+    ) {
+      configured = [single];
+    }
+
+    function paint(items) {
+      var fig = document.getElementById("zs-venue-figure");
+      if (fig) fig.hidden = true;
+      if (!gallery) return;
+      if (!items.length) {
+        gallery.innerHTML = "";
+        gallery.hidden = true;
+        return;
+      }
+      gallery.hidden = false;
       gallery.innerHTML = items
         .map(function (it) {
-          var size = it.size || "medium";
+          var size = it.size || "large";
           return (
             '<figure class="zs-venue-shot zs-venue-shot--' +
             escapeHtml(size) +
-            (it.placeholder ? " is-placeholder" : "") +
             '">' +
             '<img src="' +
             escapeHtml(it.src) +
             '" width="' +
-            (it.width || 1200) +
+            (it.width || 1600) +
             '" height="' +
-            (it.height || 900) +
+            (it.height || 1200) +
             '" alt="' +
             escapeHtml(it.alt || "") +
             '" loading="lazy" decoding="async">' +
@@ -729,16 +774,27 @@
           );
         })
         .join("");
-    } else {
-      var fig = document.getElementById("zs-venue-figure");
-      var img = document.getElementById("zs-venue-img");
-      var venue = cfg.images && cfg.images.venue;
-      if (fig && img && venue && canDisplayImage(venue)) {
-        fig.hidden = false;
-        img.src = venue.src;
-        img.alt = venue.alt || "";
-      }
     }
+
+    if (!configured.length) {
+      paint([]);
+      return;
+    }
+    var pending = configured.length;
+    var ok = [];
+    configured.forEach(function (it, index) {
+      var probe = new Image();
+      probe.onload = function () {
+        ok[index] = it;
+        pending -= 1;
+        if (pending === 0) paint(ok.filter(Boolean));
+      };
+      probe.onerror = function () {
+        pending -= 1;
+        if (pending === 0) paint(ok.filter(Boolean));
+      };
+      probe.src = it.src;
+    });
   }
 
   function initExternalLinks() {
@@ -1067,113 +1123,31 @@
 
   function renderWishConstellation(items, title, disclaimer) {
     if (!items.length) return "";
-    var max = items[0].count;
-    var angles = [-72, 18, 108, 198];
-    var cx = 260;
-    var cy = 250;
-    var baseR = 118;
-
-    var clusters = items.slice(0, 4).map(function (it, i) {
-      var ang = (angles[i] * Math.PI) / 180;
-      var r = baseR + (i % 2) * 8;
-      var x = cx + Math.cos(ang) * r;
-      var y = cy + Math.sin(ang) * r;
-      var size = 14 + (max > 0 ? (it.count / max) * 22 : 0);
-      var labelY = y + size / 2 + 18;
-      return (
-        '<g class="zs-constellation__cluster">' +
-        '<line x1="' +
-        cx +
-        '" y1="' +
-        cy +
-        '" x2="' +
-        x.toFixed(1) +
-        '" y2="' +
-        y.toFixed(1) +
-        '" stroke="currentColor" stroke-width="0.6" opacity="0.28"/>' +
-        '<circle cx="' +
-        x.toFixed(1) +
-        '" cy="' +
-        y.toFixed(1) +
-        '" r="' +
-        (size / 2).toFixed(1) +
-        '" fill="none" stroke="currentColor" stroke-width="1" opacity="0.55"/>' +
-        '<circle cx="' +
-        x.toFixed(1) +
-        '" cy="' +
-        y.toFixed(1) +
-        '" r="' +
-        (size / 4).toFixed(1) +
-        '" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.4"/>' +
-        '<circle cx="' +
-        x.toFixed(1) +
-        '" cy="' +
-        y.toFixed(1) +
-        '" r="2.2" fill="currentColor" opacity="0.5"/>' +
-        '<text class="zs-constellation__label" x="' +
-        x.toFixed(1) +
-        '" y="' +
-        labelY.toFixed(1) +
-        '" text-anchor="middle">' +
-        escapeHtml(it.name) +
-        "</text>" +
-        '<text class="zs-constellation__count" x="' +
-        x.toFixed(1) +
-        '" y="' +
-        (labelY + 14).toFixed(1) +
-        '" text-anchor="middle">' +
-        it.count +
-        "</text></g>"
-      );
-    });
-
-    var legend =
-      '<ul class="zs-constellation__legend" aria-label="竹願主題">' +
+    var marks =
+      '<ul class="zs-wish-obs" aria-label="竹願主題觀察">' +
       items
+        .slice(0, 4)
         .map(function (it) {
           return (
-            "<li><span>" +
+            '<li class="zs-wish-obs__item"><span class="zs-wish-obs__node" aria-hidden="true"></span><span class="zs-wish-obs__name">' +
             escapeHtml(it.name) +
-            "</span><em>" +
+            '</span><span class="zs-wish-obs__n">' +
             it.count +
-            "</em></li>"
+            "</span></li>"
           );
         })
         .join("") +
       "</ul>";
-
     return (
-      '<div class="zs-obs-block"><h3 class="zs-obs-h">' +
+      '<div class="zs-obs-block zs-obs-block--quiet"><h3 class="zs-obs-h">' +
       escapeHtml(title || "竹願裡，看見什麼？") +
       '</h3><p class="zs-obs-disc">' +
       escapeHtml(
         disclaimer ||
-          "依目前公開竹願內容進行主題整理；屬內容觀察，不代表參與人次。"
+          "依目前公開竹願內容整理，屬質性內容觀察。"
       ) +
-      '</p><figure class="zs-constellation"><svg class="zs-constellation__svg" viewBox="0 0 520 520" role="img" aria-hidden="true">' +
-      '<circle cx="' +
-      cx +
-      '" cy="' +
-      cy +
-      '" r="28" fill="none" stroke="currentColor" stroke-width="0.9" opacity="0.4"/>' +
-      '<circle cx="' +
-      cx +
-      '" cy="' +
-      cy +
-      '" r="14" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.3"/>' +
-      '<circle cx="' +
-      cx +
-      '" cy="' +
-      cy +
-      '" r="3" fill="currentColor" opacity="0.45"/>' +
-      '<text class="zs-constellation__center-label" x="' +
-      cx +
-      '" y="' +
-      (cy + 5) +
-      '" text-anchor="middle">竹山</text>' +
-      clusters.join("") +
-      "</svg></figure>" +
-      legend +
+      "</p>" +
+      marks +
       "</div>"
     );
   }

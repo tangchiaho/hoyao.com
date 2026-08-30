@@ -388,6 +388,338 @@
   margin-bottom: 0;
 }
 
+/* —— Material Cycle (editorial, not diagram) —— */
+.zs-material {
+  position: relative;
+  margin: 28px 0 8px;
+  max-width: 40rem;
+  padding: 8px 0 8px 1.25rem;
+}
+
+.zs-material__spine {
+  position: absolute;
+  left: 0.55rem;
+  top: 1.2rem;
+  bottom: 1.2rem;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--zs-accent) 12%,
+    var(--zs-accent) 88%,
+    transparent
+  );
+  opacity: 0.35;
+}
+
+.zs-material__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 18px;
+}
+
+@media (min-width: 760px) {
+  .zs-material {
+    padding-left: 0;
+    max-width: none;
+  }
+
+  .zs-material__spine {
+    display: none;
+  }
+
+  .zs-material__list {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px 18px;
+    align-items: start;
+  }
+
+  .zs-material__node--timber { margin-top: 28px; }
+  .zs-material__node--table { margin-top: 8px; }
+  .zs-material__node--work { margin-top: 36px; }
+  .zs-material__node--join { margin-top: 14px; }
+  .zs-material__node--soil { margin-top: 42px; }
+}
+
+.zs-material__node {
+  position: relative;
+  padding-left: 0;
+}
+
+.zs-material__ring {
+  display: inline-block;
+  width: 11px;
+  height: 11px;
+  margin-right: 10px;
+  border-radius: 50%;
+  border: 1.2px solid var(--zs-accent);
+  background:
+    radial-gradient(circle at center, transparent 30%, var(--zs-accent) 31%, var(--zs-accent) 38%, transparent 39%);
+  vertical-align: middle;
+  opacity: 0.75;
+}
+
+.zs-material__node--accent .zs-material__ring {
+  width: 14px;
+  height: 14px;
+  opacity: 0.95;
+}
+
+.zs-material__name {
+  font-family: var(--zs-serif);
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--zs-ink);
+  vertical-align: middle;
+}
+
+.zs-material__note {
+  display: block;
+  margin: 8px 0 0 1.5rem;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--zs-warm);
+  max-width: 12em;
+}
+
+.zs-material__center {
+  margin: 28px 0 0;
+  font-family: var(--zs-serif);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: var(--zs-muted);
+}
+
+/* —— Hero photo + bamboo overlay —— */
+.zs-hero__photo {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  z-index: 0;
+}
+
+.zs-hero__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.zs-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(245, 243, 236, 0.2), transparent 40%),
+    linear-gradient(0deg, rgba(245, 243, 236, 0.18), transparent 35%);
+}
+
+.zs-hero__visual--photo .zs-hero__bamboo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  opacity: 0.28;
+  mix-blend-mode: multiply;
+}
+
+.zs-hero__visual--photo .zs-stem {
+  animation: none !important;
+}
+
+.zs-hero--has-photo .zs-hero__visual {
+  opacity: 1;
+  min-height: 280px;
+  border: 1px solid var(--zs-rule);
+}
+
+@media (min-width: 900px) {
+  .zs-hero--has-photo .zs-hero__visual {
+    min-height: 100%;
+  }
+}
+
+.zs-hero__caption {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--zs-warm);
+  letter-spacing: 0.04em;
+}
+
+.zs-section__idx {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 600px) {
+  .zs-section__label {
+    font-size: 11px;
+    opacity: 0.75;
+  }
+}
+
+/* Process editorial sequence */
+.zs-process-seq {
+  display: grid;
+  gap: 40px 28px;
+}
+
+@media (min-width: 860px) {
+  .zs-process-seq {
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+
+  .zs-process-item--hero,
+  .zs-process-item--wide,
+  .zs-process-item--finale {
+    grid-column: 1 / -1;
+  }
+
+  .zs-process-item--pair-right {
+    margin-top: 56px;
+  }
+
+  .zs-process-item--detail {
+    max-width: 22rem;
+    justify-self: center;
+  }
+
+  .zs-process-item--finale img {
+    aspect-ratio: 16 / 10;
+  }
+}
+
+.zs-process-item img {
+  aspect-ratio: 4 / 3;
+  border: none;
+  background: var(--zs-paper-deep);
+}
+
+.zs-process-item--detail img {
+  aspect-ratio: 5 / 4;
+}
+
+.zs-process-item--wide img,
+.zs-process-item--hero img {
+  aspect-ratio: 16 / 10;
+}
+
+.zs-process-item figcaption {
+  max-width: 36em;
+  line-height: 1.65;
+}
+
+.zs-process-item__num {
+  font-family: var(--zs-serif);
+  letter-spacing: 0.04em;
+}
+
+/* Light wish observation */
+.zs-obs-block--quiet {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--zs-rule);
+}
+
+.zs-wish-obs {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 28px;
+}
+
+.zs-wish-obs__item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.zs-wish-obs__node {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid var(--zs-accent);
+  opacity: 0.7;
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+.zs-wish-obs__name {
+  font-family: var(--zs-serif);
+  color: var(--zs-ink);
+}
+
+.zs-wish-obs__n {
+  font-size: 12px;
+  color: var(--zs-warm);
+  font-variant-numeric: tabular-nums;
+}
+
+.zs-research__topics {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--zs-warm);
+}
+
+.zs-research__topics li::before {
+  content: "·";
+  margin-right: 6px;
+  opacity: 0.5;
+}
+
+.zs-slip__glyph {
+  position: absolute;
+  left: 18px;
+  top: 24px;
+  bottom: 24px;
+  width: 10px;
+  border-left: 1px solid var(--zs-accent);
+  border-right: 1px solid var(--zs-accent);
+  opacity: 0.22;
+}
+
+.zs-slip__glyph::before,
+.zs-slip__glyph::after {
+  content: "";
+  position: absolute;
+  left: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--zs-accent);
+}
+
+.zs-slip__glyph::before { top: 18%; }
+.zs-slip__glyph::after { bottom: 22%; }
+
+.zs-slip.is-drawn .zs-slip__frame {
+  animation: zs-slip-draw 520ms var(--zs-ease) both;
+}
+
+@keyframes zs-slip-draw {
+  from { transform: translateY(10px); opacity: 0.4; }
+  to { transform: none; opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zs-slip.is-drawn .zs-slip__frame {
+    animation: none;
+  }
+}
+
 /* —— Material Cycle —— */
 .zs-cycle {
   margin: 8px 0 0;
@@ -2002,7 +2334,7 @@
 
 .zs-stage--wish {
   position: relative;
-  height: 300px;
+  height: 320px;
   margin: 0;
   overflow: hidden;
   border-top: 1px solid var(--zs-rule);
@@ -2011,7 +2343,7 @@
 
 @media (min-width: 760px) {
   .zs-stage--wish {
-    height: 380px;
+    height: 390px;
   }
 }
 

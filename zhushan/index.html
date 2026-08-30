@@ -31,7 +31,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
 <link rel="preload" href="/assets/data/zhushan-outcomes.json" as="fetch" crossorigin>
-<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v54">
+<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v55">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -75,7 +75,7 @@
   }
 }
 </script>
-<script src="/assets/js/zhushan-config.js?v=20260830-v54"></script>
+<script src="/assets/js/zhushan-config.js?v=20260830-v55"></script>
 <script>
 /* Early outcomes fetch — reduce mid-scroll layout insertion */
 window.__ZS_OUTCOMES_P = (function () {
@@ -100,8 +100,12 @@ window.__ZS_OUTCOMES_P = (function () {
 <blockquote class="zs-hero__quote zs-hero-anim" data-hero-delay="420">「從竹林到餐桌，再從餐桌回到土地。」</blockquote>
 </div>
 
-<div class="zs-hero__visual" aria-hidden="true" id="zs-hero-visual">
-<div class="zs-hero__leaf"></div>
+<div class="zs-hero__visual" id="zs-hero-visual">
+<figure class="zs-hero__photo" id="zs-hero-figure" hidden>
+<img width="1600" height="1200" alt="竹山開飯了－作品預組裝紀錄" fetchpriority="high" decoding="async" id="zs-hero-img">
+</figure>
+<div class="zs-hero__leaf" aria-hidden="true"></div>
+<div class="zs-hero__overlay" aria-hidden="true"></div>
 <svg class="zs-hero__bamboo" viewBox="0 0 420 520" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
 <g class="zs-stem zs-stem--a" opacity="0.28">
 <path d="M48 520 V92" stroke="currentColor" stroke-width="1.25"/>
@@ -150,17 +154,13 @@ window.__ZS_OUTCOMES_P = (function () {
 </svg>
 </div>
 </div>
-
-<figure class="zs-hero__figure" id="zs-hero-figure" hidden>
-<img width="1600" height="900" alt="竹山開飯了－竹子重生的永續花園" fetchpriority="high" decoding="async" id="zs-hero-img">
-<figcaption class="zs-hero__caption" id="zs-hero-caption" hidden></figcaption>
-</figure>
+<p class="zs-hero__caption" id="zs-hero-caption" hidden></p>
 </header>
 
 <main id="main">
 
 <section class="zs-section" id="concept" aria-labelledby="concept-title">
-<p class="zs-section__label">Concept</p>
+<p class="zs-section__label"><span class="zs-section__idx">01</span> / Concept</p>
 <h2 class="zs-section__title" id="concept-title">作品理念</h2>
 <div class="zs-prose">
 <p>竹子長久存在於竹山的產業、生活與地方風景之中。</p>
@@ -174,45 +174,51 @@ window.__ZS_OUTCOMES_P = (function () {
 <div class="zs-divider" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
 <section class="zs-section zs-section--cycle" id="cycle" aria-labelledby="cycle-title">
-<p class="zs-section__label">Material Cycle</p>
+<p class="zs-section__label"><span class="zs-section__idx">02</span> / Material</p>
 <h2 class="zs-section__title" id="cycle-title">材料回到地方</h2>
 <p class="zs-section__lead">從竹林到餐桌，再從餐桌回到土地。</p>
-<figure class="zs-cycle" aria-label="材料循環：竹林、竹材、餐桌、作品、參與、土地">
-<svg class="zs-cycle__svg" viewBox="0 0 520 520" role="img" focusable="false">
-<title>材料循環</title>
-<circle class="zs-cycle__ring" cx="260" cy="260" r="168" fill="none" stroke="currentColor" stroke-width="0.75" opacity="0.35"/>
-<circle class="zs-cycle__ring zs-cycle__ring--inner" cx="260" cy="260" r="72" fill="none" stroke="currentColor" stroke-width="0.9" opacity="0.28"/>
-<circle class="zs-cycle__core-ring" cx="260" cy="260" r="18" fill="none" stroke="currentColor" stroke-width="1" opacity="0.45"/>
-<circle class="zs-cycle__core-ring" cx="260" cy="260" r="10" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.35"/>
-<circle class="zs-cycle__core-ring" cx="260" cy="260" r="3.5" fill="currentColor" opacity="0.4"/>
-<text class="zs-cycle__center" x="260" y="264" text-anchor="middle" font-size="12" font-family="Noto Serif TC, serif">竹山開飯了</text>
-<!-- nodes around the circle -->
-<g class="zs-cycle__node" transform="translate(260 78)">
-<circle r="4.5" fill="currentColor" opacity="0.55"/><text y="-14" text-anchor="middle">竹林</text>
-</g>
-<g class="zs-cycle__node" transform="translate(410 160)">
-<circle r="4.5" fill="currentColor" opacity="0.55"/><text y="-14" text-anchor="middle">竹材</text>
-</g>
-<g class="zs-cycle__node" transform="translate(430 320)">
-<circle r="4.5" fill="currentColor" opacity="0.55"/><text y="22" text-anchor="middle">餐桌</text>
-</g>
-<g class="zs-cycle__node" transform="translate(260 442)">
-<circle r="4.5" fill="currentColor" opacity="0.55"/><text y="22" text-anchor="middle">作品</text>
-</g>
-<g class="zs-cycle__node" transform="translate(90 320)">
-<circle r="4.5" fill="currentColor" opacity="0.55"/><text y="22" text-anchor="middle">參與</text>
-</g>
-<g class="zs-cycle__node" transform="translate(110 160)">
-<circle r="4.5" fill="currentColor" opacity="0.55"/><text y="-14" text-anchor="middle">土地</text>
-</g>
-</svg>
-</figure>
+<div class="zs-material" aria-label="材料循環：竹林、竹材、餐桌、作品、參與、土地">
+<div class="zs-material__spine" aria-hidden="true"></div>
+<ol class="zs-material__list">
+<li class="zs-material__node zs-material__node--forest">
+<span class="zs-material__ring" aria-hidden="true"></span>
+<span class="zs-material__name">竹林</span>
+<span class="zs-material__note">地方風景與產業根源</span>
+</li>
+<li class="zs-material__node zs-material__node--timber zs-material__node--accent">
+<span class="zs-material__ring" aria-hidden="true"></span>
+<span class="zs-material__name">竹材</span>
+<span class="zs-material__note">竹管、竹片與結構單元</span>
+</li>
+<li class="zs-material__node zs-material__node--table zs-material__node--accent">
+<span class="zs-material__ring" aria-hidden="true"></span>
+<span class="zs-material__name">餐桌</span>
+<span class="zs-material__note">竹纖維餐具的日常用途</span>
+</li>
+<li class="zs-material__node zs-material__node--work zs-material__node--accent">
+<span class="zs-material__ring" aria-hidden="true"></span>
+<span class="zs-material__name">作品</span>
+<span class="zs-material__note">材料重新成為竹林風景</span>
+</li>
+<li class="zs-material__node zs-material__node--join">
+<span class="zs-material__ring" aria-hidden="true"></span>
+<span class="zs-material__name">參與</span>
+<span class="zs-material__note">帶走、留下、歸還</span>
+</li>
+<li class="zs-material__node zs-material__node--soil">
+<span class="zs-material__ring" aria-hidden="true"></span>
+<span class="zs-material__name">土地</span>
+<span class="zs-material__note">材料回到地方</span>
+</li>
+</ol>
+<p class="zs-material__center" aria-hidden="true">材料回到地方</p>
+</div>
 </section>
 
 <div class="zs-divider" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
 <section class="zs-section zs-section--wide" id="interactions" aria-labelledby="interactions-title">
-<p class="zs-section__label">On Site</p>
+<p class="zs-section__label"><span class="zs-section__idx">03</span> / Participation</p>
 <h2 class="zs-section__title" id="interactions-title">參與式互動</h2>
 <p class="zs-section__lead zs-loop-lead">帶走 → 留下 → 歸還 ↺</p>
 
@@ -253,12 +259,13 @@ window.__ZS_OUTCOMES_P = (function () {
 <div class="zs-divider" id="bamboo-speak-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
 <section class="zs-section" id="bamboo-speak" aria-labelledby="bamboo-speak-title">
-<p class="zs-section__label">Bamboo Phrase</p>
+<p class="zs-section__label"><span class="zs-section__idx">04</span> / Phrase</p>
 <h2 class="zs-section__title" id="bamboo-speak-title">竹語｜帶走一句話</h2>
 <p class="zs-section__lead">抽一支竹語，讓一句話陪你離開竹山。</p>
 
 <div class="zs-slip" id="zs-slip">
 <div class="zs-slip__frame" aria-live="polite">
+<span class="zs-slip__glyph" aria-hidden="true"></span>
 <p class="zs-slip__placeholder" id="zs-slip-placeholder">按下方按鈕，抽出一句竹語</p>
 <p class="zs-slip__text" id="zs-slip-text" hidden></p>
 </div>
@@ -287,9 +294,9 @@ window.__ZS_OUTCOMES_P = (function () {
 <div class="zs-divider" id="participate-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
 <section class="zs-section zs-wish-unit" id="participate" aria-labelledby="participate-title">
-<p class="zs-section__label">Wish</p>
+<p class="zs-section__label"><span class="zs-section__idx">05</span> / Wish</p>
 <h2 class="zs-section__title" id="participate-title">竹願</h2>
-<p class="zs-section__lead">留一句話給竹山</p>
+<p class="zs-section__lead">留一句話給竹山。</p>
 
 <div class="zs-wish-unit__core">
 <div class="zs-composer zs-composer--compact">
@@ -318,7 +325,7 @@ window.__ZS_OUTCOMES_P = (function () {
 </div>
 
 <div class="zs-wishes-field" id="zs-wishes-field">
-<p class="zs-wishes-field__label">竹願舞台 · 有些話留下，有些話飄過</p>
+<p class="zs-wishes-field__label">有些話留下，有些話只是飄過。</p>
 <div class="zs-stage zs-stage--wish" id="zs-reaction-stage">
 <div class="zs-stage__fiber" aria-hidden="true"></div>
 <div class="zs-stage__formal" id="zs-formal-layer" aria-live="polite"></div>
@@ -342,45 +349,22 @@ window.__ZS_OUTCOMES_P = (function () {
 </div>
 </section>
 
-<div class="zs-divider" id="survey-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
-
-<section class="zs-section zs-research" id="survey" aria-labelledby="survey-title" hidden>
-<p class="zs-section__label">Research</p>
-<h2 class="zs-section__title" id="survey-title">再多留一點想法</h2>
-<p class="zs-research__identity">竹材新應用與地方參與觀察</p>
-<p class="zs-research__en">Bamboo Applications &amp; Local Participation Study</p>
-<p class="zs-section__lead">如果你願意，<br>我們也想知道你怎麼看竹山、<br>竹材與這個空間。</p>
-<p class="zs-research__meta">《竹山開飯了》參與研究 · 約 2–3 分鐘</p>
-<button type="button" class="zs-btn" id="zs-survey-btn">參與問卷</button>
-<p class="zs-survey-prize" id="zs-survey-prize" hidden></p>
-<p class="zs-thought-hint">探索性參與觀察。問卷是研究用資料來源，與短暫飄過的文字、正式竹願分開。</p>
-</section>
-
-<div class="zs-divider" id="outcomes-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
-
-<section class="zs-section zs-section--data zs-outcomes-reserve" id="outcomes" aria-labelledby="outcomes-title">
-<p class="zs-section__label">Observation</p>
-<h2 class="zs-section__title" id="outcomes-title">參與觀察</h2>
-<p class="zs-section__lead">探索性結果，來自本次參與者的有效回覆。<br>竹願文本另作質性內容觀察，不作為正式調查證據。</p>
-<div id="zs-outcomes-root" class="zs-outcomes-root" aria-busy="true"></div>
-</section>
-
 <div class="zs-divider" id="process-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
 <section class="zs-section zs-section--wide zs-section--editorial" id="process" aria-labelledby="process-title">
-<p class="zs-section__label">Process</p>
+<p class="zs-section__label"><span class="zs-section__idx">06</span> / Process</p>
 <h2 class="zs-section__title" id="process-title">從材料到作品</h2>
-<p class="zs-section__lead">從竹材整理到進場布置——先以抽象視覺呈現工序節奏。<br><span class="zs-ph-note">圖像為 placeholder，可直接替換正式照片。</span></p>
-<div class="zs-process-grid" id="zs-process-grid"></div>
+<p class="zs-section__lead">從竹構插桿到預組裝——材料如何一步步形成作品。</p>
+<div class="zs-process-seq" id="zs-process-grid"></div>
 <div class="zs-video" id="zs-video" hidden></div>
 </section>
 
 <div class="zs-divider" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
 <section class="zs-section zs-section--wide zs-section--editorial" id="venue" aria-labelledby="venue-title">
-<p class="zs-section__label">Site</p>
+<p class="zs-section__label"><span class="zs-section__idx">07</span> / Site</p>
 <h2 class="zs-section__title" id="venue-title">一個被重新使用的場域</h2>
-<p class="zs-section__lead">台西客運竹山站／竹青庭人文空間。<br><span class="zs-ph-note">場域圖像為 placeholder，待替換正式現場照片。</span></p>
+<p class="zs-section__lead">台西客運竹山站／竹青庭人文空間。<br>以下為作品進場紀錄；正式定裝照之後替換。</p>
 <div class="zs-venue-gallery" id="zs-venue-gallery"></div>
 <figure class="zs-venue__figure" id="zs-venue-figure" hidden>
 <img id="zs-venue-img" width="1600" height="900" alt="" loading="lazy" decoding="async">
@@ -394,10 +378,40 @@ window.__ZS_OUTCOMES_P = (function () {
 </p>
 </section>
 
+<div class="zs-divider" id="survey-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
+
+<section class="zs-section zs-research" id="survey" aria-labelledby="survey-title" hidden>
+<p class="zs-section__label"><span class="zs-section__idx">08</span> / Research</p>
+<h2 class="zs-section__title" id="survey-title">竹材新應用與地方參與觀察</h2>
+<p class="zs-research__en">Bamboo Applications &amp; Local Participation Study</p>
+<p class="zs-section__lead">除了留下竹願，<br>我們也想知道人們如何理解竹材、<br>在意哪些性能，<br>以及期待竹山未來出現哪些新的材料應用。</p>
+<ul class="zs-research__topics" aria-label="研究方向">
+<li>竹材認知</li>
+<li>材料疑慮</li>
+<li>材料信任</li>
+<li>採用意願</li>
+<li>地方來源</li>
+<li>竹山期待</li>
+</ul>
+<p class="zs-research__meta">《竹山開飯了》參與研究 · 探索性參與觀察</p>
+<button type="button" class="zs-btn" id="zs-survey-btn">參與 2–3 分鐘問卷</button>
+<p class="zs-survey-prize" id="zs-survey-prize" hidden></p>
+<p class="zs-thought-hint">問卷是研究用資料來源，與短暫飄過的文字、正式竹願分開。</p>
+</section>
+
+<div class="zs-divider" id="outcomes-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
+
+<section class="zs-section zs-section--data zs-outcomes-reserve" id="outcomes" aria-labelledby="outcomes-title">
+<p class="zs-section__label"><span class="zs-section__idx">09</span> / Observation</p>
+<h2 class="zs-section__title" id="outcomes-title">參與觀察</h2>
+<p class="zs-section__lead">有正式問卷結果時才會顯示。竹願文本另作輕量質性觀察。</p>
+<div id="zs-outcomes-root" class="zs-outcomes-root" aria-busy="true"></div>
+</section>
+
 <div class="zs-divider" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
 <section class="zs-section" id="share" aria-labelledby="share-title">
-<p class="zs-section__label">Community Challenge</p>
+<p class="zs-section__label"><span class="zs-section__idx">10</span> / Share</p>
 <h2 class="zs-section__title" id="share-title">分享你的竹山片刻</h2>
 <div class="zs-share zs-challenge">
 <p>拍下作品、竹願，或你眼中的竹山。<br>分享至社群，再把你的分享留給我們。</p>
@@ -424,7 +438,7 @@ window.__ZS_OUTCOMES_P = (function () {
 <div class="zs-divider" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
 <section class="zs-section" id="credits" aria-labelledby="credits-title">
-<p class="zs-section__label">Credits</p>
+<p class="zs-section__label"><span class="zs-section__idx">11</span> / Credits</p>
 <h2 class="zs-section__title" id="credits-title">作品資訊</h2>
 <dl class="zs-credits">
 <dt>創作企劃／統籌</dt><dd>唐加和</dd>
@@ -476,7 +490,7 @@ window.__ZS_OUTCOMES_P = (function () {
 </footer>
 </div>
 
-<script src="/assets/js/zhushan.js?v=20260830-v54"></script>
-<script src="/assets/js/zhushan-participation.js?v=20260830-v54"></script>
+<script src="/assets/js/zhushan.js?v=20260830-v55"></script>
+<script src="/assets/js/zhushan-participation.js?v=20260830-v55"></script>
 </body>
 </html>

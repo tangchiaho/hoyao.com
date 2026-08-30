@@ -70,106 +70,25 @@
     return round;
   }
 
-  function initRevealAnimations() {
-    if (!animOn || !("IntersectionObserver" in window)) {
-      document.querySelectorAll(".zs-reveal, .zs-reveal-child, .zs-hero-anim").forEach(function (el) {
-        el.classList.add("is-in");
-      });
-      return;
-    }
-
-    document.querySelectorAll(".zs-reveal, .zs-reveal-child").forEach(function (el) {
-      el.classList.add("is-pending");
-    });
-
-    var io = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          var el = entry.target;
-          el.classList.add("is-in");
-          el.classList.remove("is-pending");
-          var children = el.querySelectorAll(".zs-reveal-child.is-pending");
-          children.forEach(function (child, i) {
-            window.setTimeout(function () {
-              child.classList.add("is-in");
-              child.classList.remove("is-pending");
-            }, 80 * i);
-          });
-          io.unobserve(el);
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
-    );
-
-    document.querySelectorAll(".zs-reveal").forEach(function (el) {
-      io.observe(el);
-    });
-  }
-
-  function initRuleReveal() {
-    var rules = document.querySelectorAll(".zs-rule");
-    if (!animOn || !("IntersectionObserver" in window)) {
-      rules.forEach(function (el) {
-        el.classList.add("is-in");
-      });
-      return;
-    }
-    var io = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("is-in");
-          io.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.2 }
-    );
-    rules.forEach(function (el) {
-      if (!el.hidden) io.observe(el);
-    });
-  }
-
-  function initImageReveal() {
-    var figs = document.querySelectorAll(".zs-img-reveal");
-    if (!animOn || !("IntersectionObserver" in window)) {
-      figs.forEach(function (el) {
-        if (!el.hidden) el.classList.add("is-in");
-      });
-      return;
-    }
-    var io = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("is-in");
-          io.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.18 }
-    );
-    figs.forEach(function (el) {
-      if (!el.hidden) io.observe(el);
-    });
-  }
-
-  function initHeroMotion() {
+  function initHeroEntrance() {
     var nodes = document.querySelectorAll(".zs-hero-anim");
     if (!animOn) {
       nodes.forEach(function (el) {
         el.classList.add("is-in");
       });
-    } else {
-      nodes.forEach(function (el) {
-        el.classList.add("is-pending");
-        var delay = parseInt(el.getAttribute("data-hero-delay") || "0", 10);
-        window.setTimeout(function () {
-          el.classList.add("is-in");
-          el.classList.remove("is-pending");
-        }, delay);
-      });
+      return;
     }
+    nodes.forEach(function (el) {
+      el.classList.add("is-pending");
+      var delay = parseInt(el.getAttribute("data-hero-delay") || "0", 10);
+      window.setTimeout(function () {
+        el.classList.add("is-in");
+        el.classList.remove("is-pending");
+      }, delay);
+    });
+  }
 
+  function initHeroMedia() {
     var figure = document.getElementById("zs-hero-figure");
     var hero = document.getElementById("zs-hero-img");
     var header = document.querySelector(".zs-hero");
@@ -191,23 +110,6 @@
       if (figure) figure.hidden = true;
       if (header) header.classList.add("zs-hero--text-only");
     }
-
-    if (!animOn || !figure || !hero || figure.hidden) return;
-
-    var ticking = false;
-    function onScroll() {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(function () {
-        var rect = figure.getBoundingClientRect();
-        var viewH = window.innerHeight || 1;
-        var p = (rect.top / viewH) * -12;
-        p = Math.max(-12, Math.min(12, p));
-        hero.style.transform = "translateY(" + p + "px)";
-        ticking = false;
-      });
-    }
-    window.addEventListener("scroll", onScroll, { passive: true });
   }
 
   function spawnPassingLine(text) {
@@ -270,7 +172,7 @@
     var count = document.getElementById("zs-thought-count");
     var ephemeralBtn = document.getElementById("zs-ephemeral-btn");
     var keepBtn = document.getElementById("zs-keep-wish-btn");
-    var soon = document.getElementById("zs-wish-soon");
+    var keepWrap = document.getElementById("zs-keep-wrap");
     var toCard = document.getElementById("zs-to-card-btn");
     var canvas = document.getElementById("zs-card-canvas");
     var result = document.getElementById("zs-card-result");
@@ -305,12 +207,13 @@
       });
     }
 
-    if (keepBtn) {
+    if (keepWrap && keepBtn) {
       var formUrl = cfg.googleFormUrl;
       if (!isSafeHttpUrl(formUrl)) {
-        keepBtn.disabled = true;
-        if (soon) soon.hidden = false;
+        keepWrap.hidden = true;
       } else {
+        keepWrap.hidden = false;
+        keepWrap.removeAttribute("aria-hidden");
         keepBtn.addEventListener("click", function () {
           var url = formUrl;
           var entry = cfg.googleFormWishEntry;
@@ -773,25 +676,6 @@
       fig.hidden = false;
       img.src = venue.src;
       img.alt = venue.alt || "";
-      if (animOn) {
-        var ticking = false;
-        window.addEventListener(
-          "scroll",
-          function () {
-            if (ticking) return;
-            ticking = true;
-            requestAnimationFrame(function () {
-              var rect = fig.getBoundingClientRect();
-              var viewH = window.innerHeight || 1;
-              var p = (rect.top / viewH) * -12;
-              p = Math.max(-12, Math.min(12, p));
-              img.style.transform = "translateY(" + p + "px)";
-              ticking = false;
-            });
-          },
-          { passive: true }
-        );
-      }
     }
   }
 
@@ -858,32 +742,321 @@
     );
   }
 
+  function isPresentNumber(v) {
+    return typeof v === "number" && isFinite(v);
+  }
+
+  function namedCounts(list) {
+    if (!list || !list.length) return [];
+    return list
+      .filter(function (it) {
+        return it && it.name && isPresentNumber(it.count) && it.count > 0;
+      })
+      .sort(function (a, b) {
+        return b.count - a.count;
+      });
+  }
+
+  function collapseNamedCounts(list, maxNamed) {
+    var items = namedCounts(list);
+    if (items.length <= maxNamed) return items;
+    var head = items.slice(0, maxNamed);
+    var rest = items.slice(maxNamed);
+    var other = 0;
+    rest.forEach(function (it) {
+      other += it.count;
+    });
+    if (other > 0) head.push({ name: "其他", count: other });
+    return head;
+  }
+
+  function sampleNote(n) {
+    if (!isPresentNumber(n)) return "";
+    if (n < 20) return "";
+    if (n < 50) return "初步參與觀察";
+    return "";
+  }
+
+  function renderDotPlot(items) {
+    if (!items.length) return "";
+    var max = items[0].count;
+    return (
+      '<ol class="zs-obs-dots">' +
+      items
+        .map(function (it) {
+          var vis = max > 0 ? Math.max(1, Math.round((it.count / max) * 20)) : 1;
+          var dots = "";
+          var i;
+          for (i = 0; i < vis; i++) dots += '<span class="zs-obs-dots__mark" aria-hidden="true"></span>';
+          return (
+            "<li class=\"zs-obs-dots__row\">" +
+            '<span class="zs-obs-dots__name">' +
+            escapeHtml(it.name) +
+            "</span>" +
+            '<span class="zs-obs-dots__track">' +
+            dots +
+            "</span>" +
+            '<span class="zs-obs-dots__n">' +
+            it.count +
+            "</span></li>"
+          );
+        })
+        .join("") +
+      "</ol>"
+    );
+  }
+
+  function renderMatrix(value) {
+    var n = Math.max(0, Math.min(100, Math.round(value)));
+    var html = '<div class="zs-obs-matrix" aria-hidden="true">';
+    var i;
+    for (i = 0; i < 100; i++) {
+      html +=
+        '<span class="zs-obs-matrix__dot' +
+        (i < n ? " is-on" : "") +
+        '"></span>';
+    }
+    return html + "</div>";
+  }
+
+  function renderRankedBars(items) {
+    if (!items.length) return "";
+    var max = items[0].count;
+    return (
+      '<ol class="zs-obs-rank">' +
+      items
+        .map(function (it, idx) {
+          var pct = max > 0 ? Math.round((it.count / max) * 100) : 0;
+          return (
+            "<li class=\"zs-obs-rank__row\">" +
+            '<span class="zs-obs-rank__i">' +
+            (idx + 1) +
+            "</span>" +
+            '<span class="zs-obs-rank__name">' +
+            escapeHtml(it.name) +
+            "</span>" +
+            '<span class="zs-obs-rank__track"><span class="zs-obs-rank__fill" style="width:' +
+            pct +
+            '%"></span></span>' +
+            '<span class="zs-obs-rank__n">' +
+            it.count +
+            "</span></li>"
+          );
+        })
+        .join("") +
+      "</ol>"
+    );
+  }
+
   function initOutcomes() {
     var section = document.getElementById("outcomes");
-    if (!section) return;
-    var o = cfg.outcomes || {};
-    var hasReal =
-      o.visible === true &&
-      (o.validSamples ||
-        o.participants ||
-        o.digitalWishes ||
-        o.firstVisitRate ||
-        o.perceptionChangeRate);
-    section.hidden = !hasReal;
+    var root = document.getElementById("zs-outcomes-root");
+    if (!section || !root) return;
+
+    var url = cfg.outcomesUrl || "/assets/data/zhushan-outcomes.json";
+    if (!isSafeHttpUrl(url) && String(url).charAt(0) !== "/") {
+      showSection("outcomes", false);
+      return;
+    }
+
+    fetch(url)
+      .then(function (r) {
+        if (!r.ok) throw new Error("outcomes");
+        return r.json();
+      })
+      .then(function (data) {
+        if (!data || typeof data !== "object") {
+          showSection("outcomes", false);
+          return;
+        }
+        var html = [];
+        var kpis = data.kpis || data.summary || {};
+        var kpiDefs = [
+          { key: "participants", label: "現場參與／互動人次" },
+          { key: "wishes", label: "正式收錄竹願" },
+          { key: "regions", label: "參與者來源地區數" },
+          { key: "validSurveys", label: "有效參與觀察樣本" },
+        ];
+        var kpiParts = [];
+        kpiDefs.forEach(function (def) {
+          if (kpis[def.key] === null || kpis[def.key] === undefined) return;
+          if (!isPresentNumber(kpis[def.key])) return;
+          kpiParts.push(
+            '<div class="zs-obs-kpi">' +
+              '<p class="zs-obs-kpi__n">' +
+              kpis[def.key] +
+              "</p>" +
+              '<p class="zs-obs-kpi__l">' +
+              escapeHtml(def.label) +
+              "</p></div>"
+          );
+        });
+        if (kpiParts.length) {
+          html.push('<div class="zs-obs-kpis">' + kpiParts.join("") + "</div>");
+        }
+
+        var nSurvey = isPresentNumber(kpis.validSurveys) ? kpis.validSurveys : null;
+        var note = sampleNote(nSurvey);
+        if (note) {
+          html.push('<p class="zs-obs-note">' + escapeHtml(note) + "</p>");
+        }
+
+        var regions = collapseNamedCounts(data.regions, 8);
+        if (regions.length) {
+          html.push(
+            '<div class="zs-obs-block"><h3 class="zs-obs-h">參與從哪裡來</h3>' +
+              renderDotPlot(regions) +
+              "</div>"
+          );
+        }
+
+        var relations = namedCounts(data.relations);
+        if (relations.length) {
+          html.push(
+            '<div class="zs-obs-block"><h3 class="zs-obs-h">與竹山的關係</h3>' +
+              '<table class="zs-obs-table"><caption class="zs-visually-hidden">與竹山的關係</caption><thead><tr><th>關係</th><th>人數</th></tr></thead><tbody>' +
+              relations
+                .map(function (it) {
+                  return (
+                    "<tr><td>" +
+                    escapeHtml(it.name) +
+                    "</td><td>" +
+                    it.count +
+                    "</td></tr>"
+                  );
+                })
+                .join("") +
+              "</tbody></table></div>"
+          );
+        }
+
+        var rates = (data.rates || []).filter(function (it) {
+          return it && it.label && isPresentNumber(it.value);
+        });
+        if (rates.length && nSurvey !== null && nSurvey >= 20) {
+          html.push('<div class="zs-obs-block"><h3 class="zs-obs-h">參與觀察比例</h3>');
+          rates.forEach(function (it) {
+            var v = Math.max(0, Math.min(100, it.value));
+            html.push(
+              '<div class="zs-obs-rate" title="' +
+                escapeHtml(it.label) +
+                '">' +
+                '<p class="zs-obs-rate__n">' +
+                Math.round(v) +
+                "<span>%</span></p>" +
+                '<p class="zs-obs-rate__l">' +
+                escapeHtml(it.label) +
+                "</p>" +
+                renderMatrix(v) +
+                "</div>"
+            );
+          });
+          html.push("</div>");
+        }
+
+        var interactions = namedCounts(data.interactions);
+        if (interactions.length) {
+          html.push(
+            '<div class="zs-obs-block"><h3 class="zs-obs-h">最有感的互動</h3>' +
+              '<p class="zs-obs-sub">哪一種參與式設計最能留下印象</p>' +
+              renderRankedBars(interactions) +
+              "</div>"
+          );
+        }
+
+        var apps = namedCounts(data.applications).slice(0, 5);
+        if (apps.length) {
+          html.push(
+            '<div class="zs-obs-block"><h3 class="zs-obs-h">希望竹材應用在哪裡</h3>' +
+              '<ol class="zs-obs-tags">' +
+              apps
+                .map(function (it, idx) {
+                  return (
+                    "<li><span>" +
+                    (idx + 1) +
+                    "</span>" +
+                    escapeHtml(it.name) +
+                    '<em>' +
+                    it.count +
+                    "</em></li>"
+                  );
+                })
+                .join("") +
+              "</ol></div>"
+          );
+        }
+
+        var voices = (data.voices || [])
+          .map(function (it) {
+            if (!it) return null;
+            var quote = it.quote || it.message;
+            if (!quote) return null;
+            var meta = it.meta || [it.place, it.relation].filter(Boolean).join("・");
+            return { quote: quote, meta: meta };
+          })
+          .filter(Boolean)
+          .slice(0, 6);
+        if (voices.length) {
+          html.push('<div class="zs-obs-block"><h3 class="zs-obs-h">精選竹願／民眾分享</h3>');
+          voices.forEach(function (it) {
+            html.push(
+              '<blockquote class="zs-obs-voice"><p>「' +
+                escapeHtml(it.quote) +
+                "」</p>" +
+                (it.meta ? "<footer>" + escapeHtml(it.meta) + "</footer>" : "") +
+                "</blockquote>"
+            );
+          });
+          html.push("</div>");
+        }
+
+        var themeSource = data.wishThemes;
+        var themeItems = [];
+        var tTitle = "目前公開竹願・主題觀察";
+        var tDisc =
+          "依目前公開竹願內容進行編輯整理；屬內容主題觀察，不代表參與人次。";
+        if (Array.isArray(themeSource)) {
+          themeItems = namedCounts(themeSource);
+          tDisc = data.wishThemesNote || tDisc;
+        } else if (themeSource && typeof themeSource === "object") {
+          themeItems = namedCounts(themeSource.items);
+          tTitle = themeSource.title || tTitle;
+          tDisc = themeSource.disclaimer || data.wishThemesNote || tDisc;
+        }
+        if (themeItems.length) {
+          html.push(
+            '<div class="zs-obs-block"><h3 class="zs-obs-h">' +
+              escapeHtml(tTitle) +
+              "</h3><p class=\"zs-obs-disc\">" +
+              escapeHtml(tDisc) +
+              "</p>" +
+              renderDotPlot(themeItems) +
+              "</div>"
+          );
+        }
+
+        if (!html.length) {
+          showSection("outcomes", false);
+          return;
+        }
+        root.innerHTML = html.join("");
+        showSection("outcomes", true);
+      })
+      .catch(function () {
+        showSection("outcomes", false);
+      });
   }
 
   document.addEventListener("DOMContentLoaded", function () {
     track("zhushan_project_view", { page: "zhushan" });
-    initRevealAnimations();
-    initHeroMotion();
+    initHeroEntrance();
+    initHeroMedia();
     initComposer();
     initWishesWall();
     initCommunityMoments();
     initCommunityShare();
     initProcess();
     initVenue();
-    initImageReveal();
-    initRuleReveal();
     initExternalLinks();
     initScrollDepth();
     initOutcomes();

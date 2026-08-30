@@ -1,29 +1,24 @@
 {
-  "updatedAt": "2026-08-30",
-  "summary": {
+  "kpis": {
     "participants": null,
     "wishes": null,
     "regions": null,
     "validSurveys": null
   },
-  "wishThemes": [
-    {"name": "地方活力與竹山未來", "count": 4},
-    {"name": "再訪、停留與空間", "count": 3},
-    {"name": "生活祝福與好心情", "count": 2},
-    {"name": "竹材想像與創新", "count": 1}
-  ],
-  "wishThemesNote": "依目前公開竹願內容進行編輯整理；屬內容主題觀察，不代表參與人次。",
-  "publicDimensions": [
-    {"label": "來源地區", "description": "看見作品如何跨出竹山，連結不同地方。"},
-    {"label": "與竹山的關係", "description": "區分在地、返鄉、工作求學、旅遊與首次到訪。"},
-    {"label": "首次到訪", "description": "觀察作品是否成為走進場域的一個入口。"},
-    {"label": "最有感互動", "description": "比較竹語、竹願、歸土、作品與場域何者最能留下印象。"},
-    {"label": "材料認知", "description": "觀察參與後是否更想了解竹材與植物纖維的應用。"},
-    {"label": "再訪與推薦", "description": "觀察場域是否增加再次停留與分享的意願。"}
-  ],
   "regions": [],
+  "relations": [],
   "rates": [],
   "interactions": [],
   "applications": [],
-  "voices": []
+  "voices": [],
+  "wishThemes": {
+    "title": "目前公開竹願・主題觀察",
+    "disclaimer": "依目前公開竹願內容進行編輯整理；屬內容主題觀察，不代表參與人次。",
+    "items": [
+      { "name": "地方活力與竹山未來", "count": 4 },
+      { "name": "再訪、停留與空間", "count": 3 },
+      { "name": "生活祝福與好心情", "count": 2 },
+      { "name": "竹材想像與創新", "count": 1 }
+    ]
+  }
 }

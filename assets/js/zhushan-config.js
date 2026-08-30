@@ -12,7 +12,7 @@ window.ZHUSHAN_CONFIG = {
   googleFormWishEntry: "",
   wishesApiUrl: "",
   staticWishesUrl: "/assets/data/zhushan-wishes.json",
-  useMockWishes: false,
+  outcomesUrl: "/assets/data/zhushan-outcomes.json",
 
   communityShareFormUrl: "",
   communityDataUrl: "/assets/data/zhushan-community.json",
@@ -25,7 +25,7 @@ window.ZHUSHAN_CONFIG = {
   },
 
   animations: {
-    enabled: false,
+    enabled: true,
   },
 
   video: {
@@ -68,34 +68,5 @@ window.ZHUSHAN_CONFIG = {
     harmonyCultureWebsite: "https://harmonyculture.art",
   },
 
-  outcomes: {
-    visible: false,
-    exhibitionPeriod: "",
-    participants: null,
-    digitalWishes: null,
-    onsiteWishes: null,
-    pageViews: null,
-    validSamples: null,
-    firstVisitRate: null,
-    perceptionChangeRate: null,
-    willingnessToTryRate: null,
-    topApplications: null,
-    topDecisionFactors: null,
-  },
-
   gaMeasurementId: "",
 };
-
-/* V4.4 production polish layer */
-(function () {
-  var v = "20260830-v44";
-  var css = document.createElement("link");
-  css.rel = "stylesheet";
-  css.href = "/assets/css/zhushan-polish.css?v=" + v;
-  document.head.appendChild(css);
-
-  var js = document.createElement("script");
-  js.src = "/assets/js/zhushan-polish.js?v=" + v;
-  js.async = false;
-  document.head.appendChild(js);
-})();

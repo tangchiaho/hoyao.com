@@ -30,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v42">
+<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v45">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -138,7 +138,7 @@
 <section class="zs-section zs-fiber zs-reveal" id="participate" aria-labelledby="participate-title">
 <p class="zs-section__label">Participation</p>
 <h2 class="zs-section__title" id="participate-title">留下一句話</h2>
-<p class="zs-section__lead">現在想到什麼？<br>讓它飄過、把它留下，或帶走。</p>
+<p class="zs-section__lead">現在想到什麼？<br>讓它飄過，或帶走。</p>
 
 <div class="zs-stage" id="zs-reaction-stage" aria-hidden="true"></div>
 <p class="zs-live-status" id="zs-ephemeral-live" aria-live="polite"></p>
@@ -154,10 +154,9 @@
 <p class="zs-thought-hint">只在你的畫面出現片刻，不會保存。</p>
 <p class="zs-thought-status" id="zs-ephemeral-status" hidden>已經飄過了，不會被保存。</p>
 </div>
-<div class="zs-thought-action">
+<div class="zs-thought-action" id="zs-keep-wrap" hidden aria-hidden="true">
 <button type="button" class="zs-btn" id="zs-keep-wish-btn">留下竹願</button>
 <p class="zs-thought-hint">留下這句話，經整理後可能收錄於作品紀錄。</p>
-<p class="zs-thought-soon" id="zs-wish-soon" hidden>竹願投稿即將開放</p>
 </div>
 <div class="zs-thought-action">
 <button type="button" class="zs-btn-link" id="zs-to-card-btn">做成竹願卡 <span aria-hidden="true">→</span></button>
@@ -196,6 +195,15 @@
 <p class="zs-section__lead">有人把願望留在竹片上，<br>有些話，也留在這裡。</p>
 <div id="zs-wishes-wall" class="zs-wishes__display"></div>
 <div id="zs-wish-stats" class="zs-stats" hidden></div>
+</section>
+
+<hr class="zs-rule" id="outcomes-rule" hidden>
+
+<section class="zs-section zs-section--wide" id="outcomes" aria-labelledby="outcomes-title" hidden>
+<p class="zs-section__label">Observation</p>
+<h2 class="zs-section__title" id="outcomes-title">參與觀察</h2>
+<p class="zs-section__lead">作品不只被觀看，也透過竹語、竹願與歸土，<br>留下人與材料、場域及竹山之間的關係。</p>
+<div id="zs-outcomes-root"></div>
 </section>
 
 <hr class="zs-rule" id="process-rule" hidden>
@@ -308,11 +316,6 @@
 </p>
 </section>
 
-<section class="zs-section zs-outcomes" id="outcomes" aria-labelledby="outcomes-title" hidden>
-<p class="zs-section__label">Outcomes</p>
-<h2 class="zs-section__title" id="outcomes-title">成果紀錄</h2>
-</section>
-
 </main>
 
 <footer class="zs-foot-block">
@@ -321,7 +324,7 @@
 </footer>
 </div>
 
-<script src="/assets/js/zhushan-config.js?v=20260830-v42"></script>
-<script src="/assets/js/zhushan.js?v=20260830-v42"></script>
+<script src="/assets/js/zhushan-config.js?v=20260830-v45"></script>
+<script src="/assets/js/zhushan.js?v=20260830-v45"></script>
 </body>
 </html>

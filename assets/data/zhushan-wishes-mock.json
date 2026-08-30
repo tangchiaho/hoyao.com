@@ -1,0 +1,48 @@
+{
+  "totalCount": 128,
+  "approved": [
+    {
+      "message": "希望竹山有更多讓年輕人留下來的工作。",
+      "relation": "竹山在地",
+      "age_range": "30–39",
+      "created_at": "2026-03-15T10:24:00+08:00"
+    },
+    {
+      "message": "希望竹子可以有更多新的用途。",
+      "relation": "外地旅客",
+      "age_range": "18–29",
+      "created_at": "2026-03-16T14:02:00+08:00"
+    },
+    {
+      "message": "希望老空間可以一直被好好使用。",
+      "relation": "南投其他地區",
+      "age_range": "40–49",
+      "created_at": "2026-03-17T11:18:00+08:00"
+    },
+    {
+      "message": "帶著孩子來，希望他記得竹子的味道。",
+      "relation": "竹山在地",
+      "age_range": "30–39",
+      "created_at": "2026-03-18T16:45:00+08:00"
+    },
+    {
+      "message": "願材料可以回到土地，而不是被丟掉。",
+      "relation": "工作／就學",
+      "age_range": "18–29",
+      "created_at": "2026-03-19T09:33:00+08:00"
+    },
+    {
+      "message": "希望竹山保留安靜，也保留創造力。",
+      "relation": "外地旅客",
+      "age_range": "50–59",
+      "created_at": "2026-03-20T13:07:00+08:00"
+    }
+  ],
+  "stats": {
+    "enabled": false,
+    "byRelation": {},
+    "firstVisitRatio": null,
+    "topInteraction": null,
+    "topHope": null
+  }
+}

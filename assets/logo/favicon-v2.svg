@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Temporary web icon v2: high-contrast H cropped from official hoyao-wordmark.svg.
+     Opaque paper background (#F7F6F2) for dark browser themes.
+     Not a formal HOYAO brand symbol. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="HOYAO">
+  <rect width="32" height="32" fill="#F7F6F2"/>
+  <rect x="0.5" y="0.5" width="31" height="31" rx="3.5" ry="3.5" fill="none" stroke="#D8D6D0" stroke-width="1"/>
+  <g fill="#111111" transform="translate(16 16) scale(3.72) translate(-6.43 -8.28)">
+    <polygon points="7.83 7.79 5.04 7.79 5.04 5.53 4.05 5.53 4.05 11.03 5.04 11.03 5.04 8.77 7.83 8.77 7.83 11.03 8.81 11.03 8.81 5.53 7.83 5.53 7.83 7.79"/>
+  </g>
+</svg>

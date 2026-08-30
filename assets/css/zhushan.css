@@ -1,6 +1,13 @@
 /* 竹山開飯了 V4.6 — Bamboo Visual System
    Native scroll only. No scroll-snap / scroll-linked motion. */
 
+html.zs-page {
+  overflow-x: clip;
+  overscroll-behavior-x: none;
+  color-scheme: only light;
+  max-width: 100%;
+}
+
 .zs-page {
   --zs-paper: #f5f4ef;
   --zs-paper-deep: #efece5;
@@ -36,6 +43,11 @@
     radial-gradient(ellipse 70% 40% at 92% 8%, rgba(90, 107, 86, 0.03), transparent 50%),
     linear-gradient(180deg, var(--zs-paper) 0%, var(--zs-paper-deep) 48%, var(--zs-paper) 100%);
   -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  overscroll-behavior-x: none;
+  max-width: 100%;
+  width: 100%;
+  position: relative;
 }
 
 .zs-page *,
@@ -93,9 +105,11 @@
 }
 
 .zs-shell {
-  max-width: var(--zs-hero);
+  width: 100%;
+  max-width: min(100%, var(--zs-hero));
   margin: 0 auto;
   padding: 0 24px 88px;
+  overflow-x: clip;
 }
 
 @media (min-width: 1100px) {
@@ -238,6 +252,7 @@
   color: var(--zs-bamboo);
   isolation: isolate;
   overflow: hidden;
+  max-width: 100%;
 }
 
 @media (min-width: 900px) {
@@ -906,6 +921,22 @@
   transition: background-color 280ms var(--zs-ease), color 280ms var(--zs-ease);
 }
 
+/* Anchor CTAs must beat `.zs-page a { color: inherit }` */
+.zs-page a.zs-btn,
+.zs-page a.zs-btn:visited {
+  color: var(--zs-white);
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.zs-page a.zs-btn:hover,
+.zs-page a.zs-btn:active,
+.zs-page a.zs-btn:focus-visible {
+  color: var(--zs-white);
+  opacity: 1;
+  background: #2a2a2a;
+}
+
 .zs-btn:hover {
   opacity: 1;
   background: #2a2a2a;
@@ -914,6 +945,13 @@
 .zs-btn-ghost {
   background: transparent;
   color: var(--zs-ink);
+}
+
+.zs-page a.zs-btn-ghost,
+.zs-page a.zs-btn-ghost:visited,
+.zs-page a.zs-btn-ghost:hover {
+  color: var(--zs-ink);
+  background: transparent;
 }
 
 .zs-btn-ghost:hover {
@@ -1404,6 +1442,22 @@
   letter-spacing: 0.02em;
   color: var(--zs-warm);
   font-weight: 400;
+}
+
+.zs-page a#zs-survey-btn.zs-btn {
+  color: #ffffff;
+  background: #1a1a18;
+  border-color: #1a1a18;
+  box-shadow: none;
+  font-weight: 500;
+}
+
+.zs-page a#zs-survey-btn.zs-btn:hover,
+.zs-page a#zs-survey-btn.zs-btn:active,
+.zs-page a#zs-survey-btn.zs-btn:focus-visible {
+  color: #ffffff;
+  background: #111110;
+  opacity: 1;
 }
 
 @media (max-width: 600px) {
@@ -2020,6 +2074,15 @@
   pointer-events: none;
   color: var(--zs-ink);
   will-change: transform;
+  contain: layout style;
+}
+
+.zs-stage,
+.zs-stage--wish {
+  overflow: hidden;
+  contain: paint;
+  isolation: isolate;
+  touch-action: pan-y;
 }
 
 .zs-danmaku.is-drift {

@@ -1,5 +1,6 @@
 /**
- * 竹山開飯了 V4 — 作品檔案頁
+ * 竹山開飯了 V4.6 — Bamboo Visual System
+ * Native scroll only. Analytics scroll depth does not mutate visuals.
  */
 (function () {
   "use strict";
@@ -44,7 +45,27 @@
     var el = document.getElementById(id);
     var rule = document.getElementById(id + "-rule");
     if (el) el.hidden = !show;
-    if (rule) rule.hidden = !show;
+    if (rule) {
+      rule.hidden = !show;
+      if (show) rule.removeAttribute("aria-hidden");
+      else rule.setAttribute("aria-hidden", "true");
+    }
+  }
+
+  /** Insert content without shifting scroll when section sits above viewport. */
+  function mutatePreservingScroll(mutateFn) {
+    var beforeY = window.scrollY || window.pageYOffset || 0;
+    var beforeH = document.documentElement.scrollHeight;
+    mutateFn();
+    var afterH = document.documentElement.scrollHeight;
+    var delta = afterH - beforeH;
+    if (delta !== 0 && beforeY > 0) {
+      var anchor = document.getElementById("outcomes");
+      var top = anchor ? anchor.getBoundingClientRect().top + beforeY : 0;
+      if (beforeY + 40 >= top) {
+        window.scrollTo(0, beforeY + delta);
+      }
+    }
   }
 
   function shuffle(list) {
@@ -92,6 +113,7 @@
     var figure = document.getElementById("zs-hero-figure");
     var hero = document.getElementById("zs-hero-img");
     var header = document.querySelector(".zs-hero");
+    var visual = document.getElementById("zs-hero-visual");
     var h = cfg.images && cfg.images.hero;
     var real = h && isRealSrc(h.src);
 
@@ -106,9 +128,10 @@
         cap.hidden = false;
         cap.textContent = h.caption;
       }
+      if (header) header.classList.add("zs-hero--has-photo");
     } else {
       if (figure) figure.hidden = true;
-      if (header) header.classList.add("zs-hero--text-only");
+      if (visual) visual.hidden = false;
     }
   }
 
@@ -123,22 +146,16 @@
     node.setAttribute("aria-hidden", "true");
     node.textContent = text;
 
-    var used = {};
-    for (var i = 0; i < active.length; i++) {
-      used[active[i].getAttribute("data-lane") || "0"] = true;
-    }
-    var lane = 0;
-    for (lane = 0; lane < 3; lane++) {
-      if (!used[String(lane)]) break;
-    }
-    node.setAttribute("data-lane", String(lane));
-    var y = 16 + lane * 28;
-    var jitter = Math.round(Math.random() * 24 - 12);
-    node.style.top = "calc(" + y + "% + " + jitter + "px)";
-    node.style.opacity = String(0.65 + Math.random() * 0.17);
-    node.style.fontSize = window.matchMedia("(max-width: 600px)").matches
-      ? 15 + Math.round(Math.random() * 3) + "px"
-      : 18 + Math.round(Math.random() * 4) + "px";
+    /* Organic field — avoid fixed 3 lanes */
+    var y = 12 + Math.random() * 68;
+    var rot = (Math.random() * 0.4 - 0.2).toFixed(2);
+    node.style.top = y + "%";
+    node.style.opacity = String(0.42 + Math.random() * 0.38);
+    node.style.setProperty("--zs-rot", rot + "deg");
+    var mobile = window.matchMedia("(max-width: 600px)").matches;
+    node.style.fontSize = mobile
+      ? 14 + Math.round(Math.random() * 5) + "px"
+      : 16 + Math.round(Math.random() * 8) + "px";
 
     function cleanup() {
       if (node.parentNode) node.parentNode.removeChild(node);
@@ -151,7 +168,7 @@
       node.addEventListener("animationend", cleanup);
       window.setTimeout(cleanup, 3400);
     } else {
-      var dur = 9000 + Math.floor(Math.random() * 4001);
+      var dur = 11000 + Math.floor(Math.random() * 5001);
       node.style.setProperty("--zs-dur", dur + "ms");
       node.classList.add("is-drift");
       node.addEventListener("animationend", cleanup);
@@ -219,7 +236,11 @@
           var entry = cfg.googleFormWishEntry;
           var thought = input ? input.value.trim() : "";
           if (entry && /^entry\.\d+$/.test(entry) && thought) {
-            url += (url.indexOf("?") >= 0 ? "&" : "?") + entry + "=" + encodeURIComponent(thought);
+            url +=
+              (url.indexOf("?") >= 0 ? "&" : "?") +
+              entry +
+              "=" +
+              encodeURIComponent(thought);
           }
           if (!isSafeHttpUrl(url)) return;
           track("wish_form_open", { page: "zhushan" });
@@ -337,7 +358,7 @@
         prev.classList.add("is-leaving");
         window.setTimeout(function () {
           if (prev.parentNode) prev.parentNode.removeChild(prev);
-        }, 850);
+        }, 750);
       }
       var block = document.createElement("blockquote");
       block.className = "zs-wishes__quote";
@@ -391,12 +412,12 @@
     canvas.height = h;
 
     function paint() {
-      ctx.fillStyle = "#F7F6F2";
+      ctx.fillStyle = "#F5F4EF";
       ctx.fillRect(0, 0, w, h);
 
       ctx.save();
-      ctx.globalAlpha = 0.05;
-      ctx.strokeStyle = "#3d4a3a";
+      ctx.globalAlpha = 0.045;
+      ctx.strokeStyle = "#3a4a38";
       ctx.lineWidth = 1;
       for (var i = 0; i < 18; i++) {
         ctx.beginPath();
@@ -406,22 +427,35 @@
       }
       ctx.restore();
 
-      ctx.fillStyle = "#8A8882";
+      /* small bamboo ring mark */
+      ctx.save();
+      ctx.strokeStyle = "#3a4a38";
+      ctx.globalAlpha = 0.35;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(w / 2, 130, 14, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(w / 2, 130, 7, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = "#8A8780";
       ctx.font = '28px "Noto Sans TC", "PingFang TC", sans-serif';
       ctx.textAlign = "center";
-      ctx.fillText("竹山開飯了", w / 2, 180);
+      ctx.fillText("竹山開飯了", w / 2, 200);
 
-      ctx.fillStyle = "#5C5A54";
+      ctx.fillStyle = "#5A5852";
       ctx.font = '32px "Noto Serif TC", "PingFang TC", serif';
-      ctx.fillText("竹子重生的永續花園", w / 2, 240);
+      ctx.fillText("竹子重生的永續花園", w / 2, 260);
 
-      ctx.strokeStyle = "#D8D6D0";
+      ctx.strokeStyle = "#D4D1C9";
       ctx.beginPath();
-      ctx.moveTo(360, 300);
-      ctx.lineTo(720, 300);
+      ctx.moveTo(360, 320);
+      ctx.lineTo(720, 320);
       ctx.stroke();
 
-      ctx.fillStyle = "#111111";
+      ctx.fillStyle = "#1A1A18";
       ctx.font = '48px "Noto Serif TC", "PingFang TC", serif';
       var lines = wrapCanvasText(ctx, "「" + message + "」", 780);
       var startY = 520 - (lines.length - 1) * 32;
@@ -429,16 +463,16 @@
         ctx.fillText(line, w / 2, startY + i * 72);
       });
 
-      ctx.fillStyle = "#8A8882";
+      ctx.fillStyle = "#8A8780";
       ctx.font = '24px "Noto Sans TC", "PingFang TC", sans-serif';
       ctx.fillText("我的竹願", w / 2, 980);
       ctx.fillText("2026・竹山", w / 2, 1024);
 
-      ctx.fillStyle = "#3d4a3a";
+      ctx.fillStyle = "#3a4a38";
       ctx.font = '26px "Noto Serif TC", serif';
       ctx.fillText(cfg.wishCard.hashtag || "#竹山開飯了", w / 2, 1120);
 
-      ctx.fillStyle = "#8A8882";
+      ctx.fillStyle = "#8A8780";
       ctx.font = '22px "Noto Sans TC", sans-serif';
       ctx.fillText(cfg.wishCard.url || "hoyao.com/zhushan/", w / 2, 1170);
     }
@@ -527,9 +561,11 @@
         return r.json();
       })
       .then(function (data) {
-        var items = (data.items || []).filter(function (it) {
-          return it.approved === true && (!it.url || isSafeHttpUrl(it.url));
-        }).slice(0, 12);
+        var items = (data.items || [])
+          .filter(function (it) {
+            return it.approved === true && (!it.url || isSafeHttpUrl(it.url));
+          })
+          .slice(0, 12);
         if (!items.length) {
           showSection("community-moments", false);
           return;
@@ -562,7 +598,7 @@
               (it.url && isSafeHttpUrl(it.url)
                 ? '<a href="' +
                   escapeHtml(it.url) +
-                  '" rel="noopener noreferrer" target="_blank" data-entity="community_moment" data-channel="original_post">查看原分享 →</a>'
+                  '" rel="noopener noreferrer" target="_blank" data-entity="community_moment" data-channel="original_post">查看原分享</a>'
                 : "") +
               "</article>"
             );
@@ -602,7 +638,7 @@
         var num = escapeHtml(it.id || "");
         var stage = it.stage ? escapeHtml(it.stage) + " ・ " : "";
         return (
-          '<figure class="zs-process-item zs-reveal-child zs-img-reveal">' +
+          '<figure class="zs-process-item">' +
           (num ? '<span class="zs-process-item__num">' + num + "</span>" : "") +
           '<img src="' +
           escapeHtml(it.src) +
@@ -706,6 +742,49 @@
     });
   }
 
+  function initProjectContact() {
+    var el = document.getElementById("zs-project-contact");
+    if (!el) return;
+    var links = cfg.externalLinks || {};
+    var harmony = links.harmonyCultureWebsite || "https://harmonyculture.art";
+    var hoyao = links.hoyaoWebsite || "https://hoyao.com/";
+    var email = (cfg.contactEmail || "").trim();
+    var parts = [];
+
+    if (isSafeHttpUrl(harmony)) {
+      parts.push(
+        '<a href="' +
+          escapeHtml(harmony) +
+          '" target="_blank" rel="noopener noreferrer" data-entity="harmony_culture" data-channel="website" data-zs-link="harmonyCultureWebsite">和聲文化音樂</a>'
+      );
+    } else {
+      parts.push("和聲文化音樂");
+    }
+
+    if (isSafeHttpUrl(hoyao)) {
+      parts.push(
+        '<a href="' +
+          escapeHtml(hoyao) +
+          '" data-entity="hoyao" data-channel="website" data-zs-link="hoyaoWebsite">HOYAO 和曜應用科技</a>'
+      );
+    } else {
+      parts.push("HOYAO 和曜應用科技");
+    }
+
+    if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      parts.push(
+        '合作與交流：<a href="mailto:' +
+          escapeHtml(email) +
+          '">' +
+          escapeHtml(email) +
+          "</a>"
+      );
+    }
+
+    el.innerHTML = parts.join(" · ");
+  }
+
+  /** Analytics only — never mutates visuals. */
   function initScrollDepth() {
     var marks = [25, 50, 75, 90];
     var fired = {};
@@ -777,26 +856,28 @@
     return "";
   }
 
-  function renderDotPlot(items) {
+  /** Bamboo ring marks — concentric circles, not solid dots. */
+  function renderRingPlot(items) {
     if (!items.length) return "";
     var max = items[0].count;
     return (
       '<ol class="zs-obs-dots">' +
       items
         .map(function (it) {
-          var vis = max > 0 ? Math.max(1, Math.round((it.count / max) * 20)) : 1;
-          var dots = "";
+          var vis = max > 0 ? Math.max(1, Math.round((it.count / max) * 16)) : 1;
+          var marks = "";
           var i;
-          for (i = 0; i < vis; i++) dots += '<span class="zs-obs-dots__mark" aria-hidden="true"></span>';
+          for (i = 0; i < vis; i++) {
+            marks += '<span class="zs-obs-dots__mark" aria-hidden="true"></span>';
+          }
           return (
-            "<li class=\"zs-obs-dots__row\">" +
+            '<li class="zs-obs-dots__row">' +
             '<span class="zs-obs-dots__name">' +
             escapeHtml(it.name) +
             "</span>" +
             '<span class="zs-obs-dots__track">' +
-            dots +
-            "</span>" +
-            '<span class="zs-obs-dots__n">' +
+            marks +
+            '</span><span class="zs-obs-dots__n">' +
             it.count +
             "</span></li>"
           );
@@ -806,39 +887,43 @@
     );
   }
 
-  function renderMatrix(value) {
+  /** 10×10 tiny bamboo stems. */
+  function renderBambooMatrix(value) {
     var n = Math.max(0, Math.min(100, Math.round(value)));
     var html = '<div class="zs-obs-matrix" aria-hidden="true">';
     var i;
     for (i = 0; i < 100; i++) {
       html +=
-        '<span class="zs-obs-matrix__dot' +
+        '<span class="zs-obs-matrix__stem' +
         (i < n ? " is-on" : "") +
         '"></span>';
     }
     return html + "</div>";
   }
 
-  function renderRankedBars(items) {
+  /** Horizontal ranked bamboo segment bars — static, no width animation. */
+  function renderBambooBars(items) {
     if (!items.length) return "";
     var max = items[0].count;
     return (
       '<ol class="zs-obs-rank">' +
       items
         .map(function (it, idx) {
-          var pct = max > 0 ? Math.round((it.count / max) * 100) : 0;
+          var segs = max > 0 ? Math.max(1, Math.round((it.count / max) * 18)) : 1;
+          var marks = "";
+          var i;
+          for (i = 0; i < segs; i++) {
+            marks += '<span class="zs-obs-rank__seg" aria-hidden="true"></span>';
+          }
           return (
-            "<li class=\"zs-obs-rank__row\">" +
+            '<li class="zs-obs-rank__row">' +
             '<span class="zs-obs-rank__i">' +
             (idx + 1) +
-            "</span>" +
-            '<span class="zs-obs-rank__name">' +
+            '</span><span class="zs-obs-rank__name">' +
             escapeHtml(it.name) +
-            "</span>" +
-            '<span class="zs-obs-rank__track"><span class="zs-obs-rank__fill" style="width:' +
-            pct +
-            '%"></span></span>' +
-            '<span class="zs-obs-rank__n">' +
+            '</span><span class="zs-obs-rank__track">' +
+            marks +
+            '</span><span class="zs-obs-rank__n">' +
             it.count +
             "</span></li>"
           );
@@ -848,10 +933,308 @@
     );
   }
 
+  function renderWishConstellation(items, title, disclaimer) {
+    if (!items.length) return "";
+    var max = items[0].count;
+    var angles = [-72, 18, 108, 198];
+    var cx = 260;
+    var cy = 250;
+    var baseR = 118;
+
+    var clusters = items.slice(0, 4).map(function (it, i) {
+      var ang = (angles[i] * Math.PI) / 180;
+      var r = baseR + (i % 2) * 8;
+      var x = cx + Math.cos(ang) * r;
+      var y = cy + Math.sin(ang) * r;
+      var size = 14 + (max > 0 ? (it.count / max) * 22 : 0);
+      var labelY = y + size / 2 + 18;
+      return (
+        '<g class="zs-constellation__cluster">' +
+        '<line x1="' +
+        cx +
+        '" y1="' +
+        cy +
+        '" x2="' +
+        x.toFixed(1) +
+        '" y2="' +
+        y.toFixed(1) +
+        '" stroke="currentColor" stroke-width="0.6" opacity="0.28"/>' +
+        '<circle cx="' +
+        x.toFixed(1) +
+        '" cy="' +
+        y.toFixed(1) +
+        '" r="' +
+        (size / 2).toFixed(1) +
+        '" fill="none" stroke="currentColor" stroke-width="1" opacity="0.55"/>' +
+        '<circle cx="' +
+        x.toFixed(1) +
+        '" cy="' +
+        y.toFixed(1) +
+        '" r="' +
+        (size / 4).toFixed(1) +
+        '" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.4"/>' +
+        '<circle cx="' +
+        x.toFixed(1) +
+        '" cy="' +
+        y.toFixed(1) +
+        '" r="2.2" fill="currentColor" opacity="0.5"/>' +
+        '<text class="zs-constellation__label" x="' +
+        x.toFixed(1) +
+        '" y="' +
+        labelY.toFixed(1) +
+        '" text-anchor="middle">' +
+        escapeHtml(it.name) +
+        "</text>" +
+        '<text class="zs-constellation__count" x="' +
+        x.toFixed(1) +
+        '" y="' +
+        (labelY + 14).toFixed(1) +
+        '" text-anchor="middle">' +
+        it.count +
+        "</text></g>"
+      );
+    });
+
+    var legend =
+      '<ul class="zs-constellation__legend" aria-label="竹願主題">' +
+      items
+        .map(function (it) {
+          return (
+            "<li><span>" +
+            escapeHtml(it.name) +
+            "</span><em>" +
+            it.count +
+            "</em></li>"
+          );
+        })
+        .join("") +
+      "</ul>";
+
+    return (
+      '<div class="zs-obs-block"><h3 class="zs-obs-h">' +
+      escapeHtml(title || "竹願裡，看見什麼？") +
+      '</h3><p class="zs-obs-disc">' +
+      escapeHtml(
+        disclaimer ||
+          "依目前公開竹願內容進行主題整理；屬內容觀察，不代表參與人次。"
+      ) +
+      '</p><figure class="zs-constellation"><svg class="zs-constellation__svg" viewBox="0 0 520 520" role="img" aria-hidden="true">' +
+      '<circle cx="' +
+      cx +
+      '" cy="' +
+      cy +
+      '" r="28" fill="none" stroke="currentColor" stroke-width="0.9" opacity="0.4"/>' +
+      '<circle cx="' +
+      cx +
+      '" cy="' +
+      cy +
+      '" r="14" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.3"/>' +
+      '<circle cx="' +
+      cx +
+      '" cy="' +
+      cy +
+      '" r="3" fill="currentColor" opacity="0.45"/>' +
+      '<text class="zs-constellation__center-label" x="' +
+      cx +
+      '" y="' +
+      (cy + 5) +
+      '" text-anchor="middle">竹山</text>' +
+      clusters.join("") +
+      "</svg></figure>" +
+      legend +
+      "</div>"
+    );
+  }
+
+  function buildOutcomesHtml(data) {
+    if (!data || typeof data !== "object") return "";
+    var html = [];
+    var kpis = data.kpis || data.summary || {};
+    var kpiDefs = [
+      { key: "participants", label: "現場參與／互動人次" },
+      { key: "wishes", label: "正式收錄竹願" },
+      { key: "regions", label: "參與者來源地區數" },
+      { key: "validSurveys", label: "有效參與觀察樣本" },
+    ];
+    var kpiParts = [];
+    kpiDefs.forEach(function (def) {
+      if (kpis[def.key] === null || kpis[def.key] === undefined) return;
+      if (!isPresentNumber(kpis[def.key])) return;
+      kpiParts.push(
+        '<div class="zs-obs-kpi"><p class="zs-obs-kpi__n">' +
+          kpis[def.key] +
+          '</p><p class="zs-obs-kpi__l">' +
+          escapeHtml(def.label) +
+          "</p></div>"
+      );
+    });
+    if (kpiParts.length) {
+      html.push('<div class="zs-obs-kpis">' + kpiParts.join("") + "</div>");
+    }
+
+    var nSurvey = isPresentNumber(kpis.validSurveys) ? kpis.validSurveys : null;
+    var note = sampleNote(nSurvey);
+    if (note) {
+      html.push('<p class="zs-obs-note">' + escapeHtml(note) + "</p>");
+    }
+
+    var regions = collapseNamedCounts(data.regions, 8);
+    if (regions.length) {
+      html.push(
+        '<div class="zs-obs-block"><h3 class="zs-obs-h">參與從哪裡來</h3>' +
+          renderRingPlot(regions) +
+          "</div>"
+      );
+    }
+
+    var relations = namedCounts(data.relations);
+    if (relations.length) {
+      html.push(
+        '<div class="zs-obs-block"><h3 class="zs-obs-h">與竹山的關係</h3>' +
+          '<table class="zs-obs-table"><caption class="zs-visually-hidden">與竹山的關係</caption><thead><tr><th>關係</th><th>人數</th></tr></thead><tbody>' +
+          relations
+            .map(function (it) {
+              return (
+                "<tr><td>" +
+                escapeHtml(it.name) +
+                "</td><td>" +
+                it.count +
+                "</td></tr>"
+              );
+            })
+            .join("") +
+          "</tbody></table></div>"
+      );
+    }
+
+    var rates = (data.rates || []).filter(function (it) {
+      return it && it.label && isPresentNumber(it.value);
+    });
+    if (rates.length && nSurvey !== null && nSurvey >= 20) {
+      html.push('<div class="zs-obs-block"><h3 class="zs-obs-h">參與觀察比例</h3>');
+      rates.forEach(function (it) {
+        var v = Math.max(0, Math.min(100, it.value));
+        html.push(
+          '<div class="zs-obs-rate" title="' +
+            escapeHtml(it.label) +
+            '"><p class="zs-obs-rate__n">' +
+            Math.round(v) +
+            "<span>%</span></p><p class=\"zs-obs-rate__l\">" +
+            escapeHtml(it.label) +
+            "</p>" +
+            renderBambooMatrix(v) +
+            "</div>"
+        );
+      });
+      html.push("</div>");
+    }
+
+    var interactions = namedCounts(data.interactions);
+    if (interactions.length) {
+      html.push(
+        '<div class="zs-obs-block"><h3 class="zs-obs-h">最有感的互動</h3>' +
+          '<p class="zs-obs-sub">哪一種參與式設計最能留下印象</p>' +
+          renderBambooBars(interactions) +
+          "</div>"
+      );
+    }
+
+    var apps = namedCounts(data.applications).slice(0, 5);
+    if (apps.length) {
+      html.push(
+        '<div class="zs-obs-block"><h3 class="zs-obs-h">希望竹材應用在哪裡</h3>' +
+          '<ol class="zs-obs-tags">' +
+          apps
+            .map(function (it, idx) {
+              return (
+                "<li><span>" +
+                (idx + 1) +
+                "</span>" +
+                escapeHtml(it.name) +
+                "<em>" +
+                it.count +
+                "</em></li>"
+              );
+            })
+            .join("") +
+          "</ol></div>"
+      );
+    }
+
+    var voices = (data.voices || [])
+      .map(function (it) {
+        if (!it) return null;
+        var quote = it.quote || it.message;
+        if (!quote) return null;
+        var meta = it.meta || [it.place, it.relation].filter(Boolean).join("・");
+        return { quote: quote, meta: meta };
+      })
+      .filter(Boolean)
+      .slice(0, 6);
+    if (voices.length) {
+      html.push('<div class="zs-obs-block"><h3 class="zs-obs-h">精選竹願／民眾分享</h3>');
+      voices.forEach(function (it) {
+        html.push(
+          '<blockquote class="zs-obs-voice"><p>「' +
+            escapeHtml(it.quote) +
+            "」</p>" +
+            (it.meta ? "<footer>" + escapeHtml(it.meta) + "</footer>" : "") +
+            "</blockquote>"
+        );
+      });
+      html.push("</div>");
+    }
+
+    var themeSource = data.wishThemes;
+    var themeItems = [];
+    var tTitle = "竹願裡，看見什麼？";
+    var tDisc =
+      "依目前公開竹願內容進行主題整理；屬內容觀察，不代表參與人次。";
+    if (Array.isArray(themeSource)) {
+      themeItems = namedCounts(themeSource);
+      tDisc = data.wishThemesNote || tDisc;
+    } else if (themeSource && typeof themeSource === "object") {
+      themeItems = namedCounts(themeSource.items);
+      tTitle = themeSource.title || tTitle;
+      tDisc = themeSource.disclaimer || data.wishThemesNote || tDisc;
+    }
+    if (themeItems.length) {
+      html.push(renderWishConstellation(themeItems, tTitle, tDisc));
+    }
+
+    return html.join("");
+  }
+
+  function applyOutcomes(data) {
+    var section = document.getElementById("outcomes");
+    var root = document.getElementById("zs-outcomes-root");
+    if (!section || !root) return;
+
+    var html = buildOutcomesHtml(data);
+    if (!html) {
+      showSection("outcomes", false);
+      return;
+    }
+
+    mutatePreservingScroll(function () {
+      root.innerHTML = html;
+      showSection("outcomes", true);
+    });
+  }
+
   function initOutcomes() {
     var section = document.getElementById("outcomes");
     var root = document.getElementById("zs-outcomes-root");
     if (!section || !root) return;
+
+    var early = window.__ZS_OUTCOMES_P;
+    if (early && typeof early.then === "function") {
+      early.then(function (data) {
+        if (data) applyOutcomes(data);
+        else showSection("outcomes", false);
+      });
+      return;
+    }
 
     var url = cfg.outcomesUrl || "/assets/data/zhushan-outcomes.json";
     if (!isSafeHttpUrl(url) && String(url).charAt(0) !== "/") {
@@ -865,182 +1248,7 @@
         return r.json();
       })
       .then(function (data) {
-        if (!data || typeof data !== "object") {
-          showSection("outcomes", false);
-          return;
-        }
-        var html = [];
-        var kpis = data.kpis || data.summary || {};
-        var kpiDefs = [
-          { key: "participants", label: "現場參與／互動人次" },
-          { key: "wishes", label: "正式收錄竹願" },
-          { key: "regions", label: "參與者來源地區數" },
-          { key: "validSurveys", label: "有效參與觀察樣本" },
-        ];
-        var kpiParts = [];
-        kpiDefs.forEach(function (def) {
-          if (kpis[def.key] === null || kpis[def.key] === undefined) return;
-          if (!isPresentNumber(kpis[def.key])) return;
-          kpiParts.push(
-            '<div class="zs-obs-kpi">' +
-              '<p class="zs-obs-kpi__n">' +
-              kpis[def.key] +
-              "</p>" +
-              '<p class="zs-obs-kpi__l">' +
-              escapeHtml(def.label) +
-              "</p></div>"
-          );
-        });
-        if (kpiParts.length) {
-          html.push('<div class="zs-obs-kpis">' + kpiParts.join("") + "</div>");
-        }
-
-        var nSurvey = isPresentNumber(kpis.validSurveys) ? kpis.validSurveys : null;
-        var note = sampleNote(nSurvey);
-        if (note) {
-          html.push('<p class="zs-obs-note">' + escapeHtml(note) + "</p>");
-        }
-
-        var regions = collapseNamedCounts(data.regions, 8);
-        if (regions.length) {
-          html.push(
-            '<div class="zs-obs-block"><h3 class="zs-obs-h">參與從哪裡來</h3>' +
-              renderDotPlot(regions) +
-              "</div>"
-          );
-        }
-
-        var relations = namedCounts(data.relations);
-        if (relations.length) {
-          html.push(
-            '<div class="zs-obs-block"><h3 class="zs-obs-h">與竹山的關係</h3>' +
-              '<table class="zs-obs-table"><caption class="zs-visually-hidden">與竹山的關係</caption><thead><tr><th>關係</th><th>人數</th></tr></thead><tbody>' +
-              relations
-                .map(function (it) {
-                  return (
-                    "<tr><td>" +
-                    escapeHtml(it.name) +
-                    "</td><td>" +
-                    it.count +
-                    "</td></tr>"
-                  );
-                })
-                .join("") +
-              "</tbody></table></div>"
-          );
-        }
-
-        var rates = (data.rates || []).filter(function (it) {
-          return it && it.label && isPresentNumber(it.value);
-        });
-        if (rates.length && nSurvey !== null && nSurvey >= 20) {
-          html.push('<div class="zs-obs-block"><h3 class="zs-obs-h">參與觀察比例</h3>');
-          rates.forEach(function (it) {
-            var v = Math.max(0, Math.min(100, it.value));
-            html.push(
-              '<div class="zs-obs-rate" title="' +
-                escapeHtml(it.label) +
-                '">' +
-                '<p class="zs-obs-rate__n">' +
-                Math.round(v) +
-                "<span>%</span></p>" +
-                '<p class="zs-obs-rate__l">' +
-                escapeHtml(it.label) +
-                "</p>" +
-                renderMatrix(v) +
-                "</div>"
-            );
-          });
-          html.push("</div>");
-        }
-
-        var interactions = namedCounts(data.interactions);
-        if (interactions.length) {
-          html.push(
-            '<div class="zs-obs-block"><h3 class="zs-obs-h">最有感的互動</h3>' +
-              '<p class="zs-obs-sub">哪一種參與式設計最能留下印象</p>' +
-              renderRankedBars(interactions) +
-              "</div>"
-          );
-        }
-
-        var apps = namedCounts(data.applications).slice(0, 5);
-        if (apps.length) {
-          html.push(
-            '<div class="zs-obs-block"><h3 class="zs-obs-h">希望竹材應用在哪裡</h3>' +
-              '<ol class="zs-obs-tags">' +
-              apps
-                .map(function (it, idx) {
-                  return (
-                    "<li><span>" +
-                    (idx + 1) +
-                    "</span>" +
-                    escapeHtml(it.name) +
-                    '<em>' +
-                    it.count +
-                    "</em></li>"
-                  );
-                })
-                .join("") +
-              "</ol></div>"
-          );
-        }
-
-        var voices = (data.voices || [])
-          .map(function (it) {
-            if (!it) return null;
-            var quote = it.quote || it.message;
-            if (!quote) return null;
-            var meta = it.meta || [it.place, it.relation].filter(Boolean).join("・");
-            return { quote: quote, meta: meta };
-          })
-          .filter(Boolean)
-          .slice(0, 6);
-        if (voices.length) {
-          html.push('<div class="zs-obs-block"><h3 class="zs-obs-h">精選竹願／民眾分享</h3>');
-          voices.forEach(function (it) {
-            html.push(
-              '<blockquote class="zs-obs-voice"><p>「' +
-                escapeHtml(it.quote) +
-                "」</p>" +
-                (it.meta ? "<footer>" + escapeHtml(it.meta) + "</footer>" : "") +
-                "</blockquote>"
-            );
-          });
-          html.push("</div>");
-        }
-
-        var themeSource = data.wishThemes;
-        var themeItems = [];
-        var tTitle = "目前公開竹願・主題觀察";
-        var tDisc =
-          "依目前公開竹願內容進行編輯整理；屬內容主題觀察，不代表參與人次。";
-        if (Array.isArray(themeSource)) {
-          themeItems = namedCounts(themeSource);
-          tDisc = data.wishThemesNote || tDisc;
-        } else if (themeSource && typeof themeSource === "object") {
-          themeItems = namedCounts(themeSource.items);
-          tTitle = themeSource.title || tTitle;
-          tDisc = themeSource.disclaimer || data.wishThemesNote || tDisc;
-        }
-        if (themeItems.length) {
-          html.push(
-            '<div class="zs-obs-block"><h3 class="zs-obs-h">' +
-              escapeHtml(tTitle) +
-              "</h3><p class=\"zs-obs-disc\">" +
-              escapeHtml(tDisc) +
-              "</p>" +
-              renderDotPlot(themeItems) +
-              "</div>"
-          );
-        }
-
-        if (!html.length) {
-          showSection("outcomes", false);
-          return;
-        }
-        root.innerHTML = html.join("");
-        showSection("outcomes", true);
+        applyOutcomes(data);
       })
       .catch(function () {
         showSection("outcomes", false);
@@ -1058,6 +1266,7 @@
     initProcess();
     initVenue();
     initExternalLinks();
+    initProjectContact();
     initScrollDepth();
     initOutcomes();
   });

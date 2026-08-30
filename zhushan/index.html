@@ -30,7 +30,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v45">
+<link rel="preload" href="/assets/data/zhushan-outcomes.json" as="fetch" crossorigin>
+<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v46">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -74,21 +75,83 @@
   }
 }
 </script>
+<script src="/assets/js/zhushan-config.js?v=20260830-v46"></script>
+<script>
+/* Early outcomes fetch — reduce mid-scroll layout insertion */
+window.__ZS_OUTCOMES_P = (function () {
+  try {
+    var u = (window.ZHUSHAN_CONFIG && window.ZHUSHAN_CONFIG.outcomesUrl) || "/assets/data/zhushan-outcomes.json";
+    return fetch(u).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
+  } catch (e) { return Promise.resolve(null); }
+})();
+</script>
 </head>
 <body>
 <a class="zs-skip" href="#main">跳至主要內容</a>
 
 <div class="zs-shell">
-<header class="zs-hero zs-fiber" id="top">
+<header class="zs-hero" id="top">
+<div class="zs-hero__grid">
 <div class="zs-hero__text">
 <h1 class="zs-hero__title zs-hero-anim" data-hero-delay="0">竹山開飯了</h1>
-<p class="zs-hero__subtitle zs-hero-anim" data-hero-delay="110">竹子重生的永續花園</p>
-<p class="zs-hero__meta zs-hero-anim" data-hero-delay="230">2026｜參與式場域裝置</p>
-<p class="zs-hero__materials zs-hero-anim" data-hero-delay="340">竹材・竹纖維餐具・植物纖維再生材料</p>
-<p class="zs-hero__tags zs-hero-anim" data-hero-delay="450">在地材料・材料再生・永續循環・場域活化・參與式創作</p>
-<blockquote class="zs-hero__quote zs-hero-anim" data-hero-delay="580">「從竹林到餐桌，再從餐桌回到土地。」</blockquote>
+<p class="zs-hero__subtitle zs-hero-anim" data-hero-delay="100">竹子重生的永續花園</p>
+<p class="zs-hero__meta zs-hero-anim" data-hero-delay="200">2026｜參與式場域裝置</p>
+<p class="zs-hero__materials zs-hero-anim" data-hero-delay="300">竹材・竹纖維餐具・植物纖維再生材料</p>
+<blockquote class="zs-hero__quote zs-hero-anim" data-hero-delay="420">「從竹林到餐桌，再從餐桌回到土地。」</blockquote>
 </div>
-<figure class="zs-hero__figure zs-img-reveal" id="zs-hero-figure" hidden>
+
+<div class="zs-hero__visual" aria-hidden="true" id="zs-hero-visual">
+<div class="zs-hero__leaf"></div>
+<svg class="zs-hero__bamboo" viewBox="0 0 420 520" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+<g class="zs-stem zs-stem--a" opacity="0.28">
+<path d="M48 520 V92" stroke="currentColor" stroke-width="1.25"/>
+<circle cx="48" cy="168" r="2.4" fill="currentColor"/><circle cx="48" cy="278" r="2.4" fill="currentColor"/><circle cx="48" cy="392" r="2.4" fill="currentColor"/>
+</g>
+<g class="zs-stem zs-stem--b" opacity="0.48">
+<path d="M86 520 V48" stroke="currentColor" stroke-width="1.55"/>
+<circle cx="86" cy="132" r="2.7" fill="currentColor"/><circle cx="86" cy="248" r="2.7" fill="currentColor"/><circle cx="86" cy="368" r="2.7" fill="currentColor"/>
+</g>
+<g class="zs-stem zs-stem--c" opacity="0.2">
+<path d="M118 520 V168" stroke="currentColor" stroke-width="1.1"/>
+<circle cx="118" cy="236" r="2.2" fill="currentColor"/><circle cx="118" cy="348" r="2.2" fill="currentColor"/>
+</g>
+<g class="zs-stem zs-stem--d" opacity="0.58">
+<path d="M156 520 V28" stroke="currentColor" stroke-width="1.7"/>
+<circle cx="156" cy="108" r="2.9" fill="currentColor"/><circle cx="156" cy="220" r="2.9" fill="currentColor"/><circle cx="156" cy="340" r="2.9" fill="currentColor"/><circle cx="156" cy="440" r="2.9" fill="currentColor"/>
+</g>
+<g class="zs-stem zs-stem--e" opacity="0.26">
+<path d="M194 520 V128" stroke="currentColor" stroke-width="1.2"/>
+<circle cx="194" cy="208" r="2.3" fill="currentColor"/><circle cx="194" cy="318" r="2.3" fill="currentColor"/>
+</g>
+<g class="zs-stem zs-stem--f" opacity="0.5">
+<path d="M232 520 V56" stroke="currentColor" stroke-width="1.5"/>
+<circle cx="232" cy="140" r="2.7" fill="currentColor"/><circle cx="232" cy="260" r="2.7" fill="currentColor"/><circle cx="232" cy="390" r="2.7" fill="currentColor"/>
+</g>
+<g class="zs-stem zs-stem--g" opacity="0.18">
+<path d="M268 520 V190" stroke="currentColor" stroke-width="1.05"/>
+<circle cx="268" cy="268" r="2.1" fill="currentColor"/><circle cx="268" cy="378" r="2.1" fill="currentColor"/>
+</g>
+<g class="zs-stem zs-stem--h" opacity="0.62">
+<path d="M304 520 V18" stroke="currentColor" stroke-width="1.75"/>
+<circle cx="304" cy="96" r="3" fill="currentColor"/><circle cx="304" cy="208" r="3" fill="currentColor"/><circle cx="304" cy="328" r="3" fill="currentColor"/><circle cx="304" cy="448" r="3" fill="currentColor"/>
+</g>
+<g class="zs-stem zs-stem--i" opacity="0.3">
+<path d="M338 520 V110" stroke="currentColor" stroke-width="1.25"/>
+<circle cx="338" cy="188" r="2.4" fill="currentColor"/><circle cx="338" cy="310" r="2.4" fill="currentColor"/>
+</g>
+<g class="zs-stem zs-stem--j" opacity="0.44">
+<path d="M372 520 V64" stroke="currentColor" stroke-width="1.4"/>
+<circle cx="372" cy="148" r="2.6" fill="currentColor"/><circle cx="372" cy="268" r="2.6" fill="currentColor"/><circle cx="372" cy="398" r="2.6" fill="currentColor"/>
+</g>
+<g class="zs-stem zs-stem--k" opacity="0.22">
+<path d="M402 520 V156" stroke="currentColor" stroke-width="1.1"/>
+<circle cx="402" cy="228" r="2.2" fill="currentColor"/><circle cx="402" cy="352" r="2.2" fill="currentColor"/>
+</g>
+</svg>
+</div>
+</div>
+
+<figure class="zs-hero__figure" id="zs-hero-figure" hidden>
 <img width="1600" height="900" alt="竹山開飯了－竹子重生的永續花園" fetchpriority="high" decoding="async" id="zs-hero-img">
 <figcaption class="zs-hero__caption" id="zs-hero-caption" hidden></figcaption>
 </figure>
@@ -96,51 +159,107 @@
 
 <main id="main">
 
-<section class="zs-section zs-reveal" id="concept" aria-labelledby="concept-title">
+<section class="zs-section" id="concept" aria-labelledby="concept-title">
 <p class="zs-section__label">Concept</p>
 <h2 class="zs-section__title" id="concept-title">作品理念</h2>
 <div class="zs-prose">
-<p class="zs-reveal-child">竹子長久存在於竹山的產業、生活與地方風景之中。</p>
-<p class="zs-reveal-child">作品以竹材與竹纖維餐具重新構築一座想像中的竹林：<br>竹管成為林木，碗、盤、叉、匙化為花朵，<br>讓原本屬於餐桌的日常用品，在完成原有用途之後，<br>重新成為竹山風景的一部分。</p>
-<p class="zs-reveal-child">作品落在台西客運竹山站／竹青庭人文空間。</p>
-<p class="zs-reveal-child">這處曾承載地方交通與往來的空間，<br>如今重新成為人們停留與交流的地方。</p>
-<p class="zs-reveal-child">當場域被重新使用，材料也被重新看見。</p>
+<p>竹子長久存在於竹山的產業、生活與地方風景之中。</p>
+<p>作品以竹材與竹纖維餐具重新構築一座想像中的竹林：<br>竹管成為林木，碗、盤、叉、匙化為花朵，<br>讓原本屬於餐桌的日常用品，在完成原有用途之後，<br>重新成為竹山風景的一部分。</p>
+<p>作品落在台西客運竹山站／竹青庭人文空間。</p>
+<p>這處曾承載地方交通與往來的空間，<br>如今重新成為人們停留與交流的地方。</p>
+<p>當場域被重新使用，材料也被重新看見。</p>
 </div>
 </section>
 
-<hr class="zs-rule">
+<div class="zs-divider" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section zs-section--wide zs-reveal" id="interactions" aria-labelledby="interactions-title">
+<section class="zs-section zs-section--cycle" id="cycle" aria-labelledby="cycle-title">
+<p class="zs-section__label">Material Cycle</p>
+<h2 class="zs-section__title" id="cycle-title">材料回到地方</h2>
+<p class="zs-section__lead">從竹林到餐桌，再從餐桌回到土地。</p>
+<figure class="zs-cycle" aria-label="材料循環：竹林、竹材、餐桌、作品、參與、土地">
+<svg class="zs-cycle__svg" viewBox="0 0 520 520" role="img" focusable="false">
+<title>材料循環</title>
+<circle class="zs-cycle__ring" cx="260" cy="260" r="168" fill="none" stroke="currentColor" stroke-width="0.75" opacity="0.35"/>
+<circle class="zs-cycle__ring zs-cycle__ring--inner" cx="260" cy="260" r="72" fill="none" stroke="currentColor" stroke-width="0.9" opacity="0.28"/>
+<circle class="zs-cycle__core-ring" cx="260" cy="260" r="18" fill="none" stroke="currentColor" stroke-width="1" opacity="0.45"/>
+<circle class="zs-cycle__core-ring" cx="260" cy="260" r="10" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.35"/>
+<circle class="zs-cycle__core-ring" cx="260" cy="260" r="3.5" fill="currentColor" opacity="0.4"/>
+<text class="zs-cycle__center" x="260" y="264" text-anchor="middle" font-size="12" font-family="Noto Serif TC, serif">竹山開飯了</text>
+<!-- nodes around the circle -->
+<g class="zs-cycle__node" transform="translate(260 78)">
+<circle r="4.5" fill="currentColor" opacity="0.55"/><text y="-14" text-anchor="middle">竹林</text>
+</g>
+<g class="zs-cycle__node" transform="translate(410 160)">
+<circle r="4.5" fill="currentColor" opacity="0.55"/><text y="-14" text-anchor="middle">竹材</text>
+</g>
+<g class="zs-cycle__node" transform="translate(430 320)">
+<circle r="4.5" fill="currentColor" opacity="0.55"/><text y="22" text-anchor="middle">餐桌</text>
+</g>
+<g class="zs-cycle__node" transform="translate(260 442)">
+<circle r="4.5" fill="currentColor" opacity="0.55"/><text y="22" text-anchor="middle">作品</text>
+</g>
+<g class="zs-cycle__node" transform="translate(90 320)">
+<circle r="4.5" fill="currentColor" opacity="0.55"/><text y="22" text-anchor="middle">參與</text>
+</g>
+<g class="zs-cycle__node" transform="translate(110 160)">
+<circle r="4.5" fill="currentColor" opacity="0.55"/><text y="-14" text-anchor="middle">土地</text>
+</g>
+</svg>
+</figure>
+</section>
+
+<div class="zs-divider" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
+
+<section class="zs-section zs-section--wide" id="interactions" aria-labelledby="interactions-title">
 <p class="zs-section__label">On Site</p>
 <h2 class="zs-section__title" id="interactions-title">參與式互動</h2>
-<div class="zs-interactions">
-<article class="zs-interaction">
-<h3 class="zs-interaction__name">竹語</h3>
-<p class="zs-interaction__hint">帶走一句話</p>
-<p class="zs-interaction__body">抽一支竹語，<br>讓一句話陪你離開竹山。</p>
+<p class="zs-section__lead zs-loop-lead">帶走 → 留下 → 歸還 ↺</p>
+
+<div class="zs-loop" role="list">
+<article class="zs-loop__item" role="listitem">
+<span class="zs-glyph" aria-hidden="true">
+<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.15"><path d="M8 3v18M12 5v16M16 4v17"/><circle cx="8" cy="9" r="1.1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.1" fill="currentColor" stroke="none"/></svg>
+</span>
+<p class="zs-loop__role">帶走</p>
+<h3 class="zs-loop__name">竹語</h3>
+<p class="zs-loop__hint">帶走一句話</p>
+<p class="zs-loop__body">抽一支竹語，<br>讓一句話陪你離開竹山。</p>
 </article>
-<article class="zs-interaction">
-<h3 class="zs-interaction__name">竹願</h3>
-<p class="zs-interaction__hint">留下一個心願</p>
-<p class="zs-interaction__body">寫下一個心願，<br>掛上竹願架。</p>
+<span class="zs-loop__connector" aria-hidden="true"></span>
+<article class="zs-loop__item" role="listitem">
+<span class="zs-glyph" aria-hidden="true">
+<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.15"><rect x="7" y="4" width="10" height="16" rx="1"/><circle cx="12" cy="10" r="1.4" fill="currentColor" stroke="none"/><path d="M9 15h6"/></svg>
+</span>
+<p class="zs-loop__role">留下</p>
+<h3 class="zs-loop__name">竹願</h3>
+<p class="zs-loop__hint">留下一個心願</p>
+<p class="zs-loop__body">寫下一個心願，<br>掛上竹願架。</p>
 </article>
-<article class="zs-interaction">
-<h3 class="zs-interaction__name">歸土</h3>
-<p class="zs-interaction__hint">讓材料回到土地</p>
-<p class="zs-interaction__body">取一小片經時間老化的竹纖維材料，<br>輕輕剝碎，送回土壤。</p>
+<span class="zs-loop__connector" aria-hidden="true"></span>
+<article class="zs-loop__item" role="listitem">
+<span class="zs-glyph" aria-hidden="true">
+<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.15"><path d="M4 16c3-1 5 1 8 0s5-2 8 0"/><path d="M6 12c2.5-.8 4.5.6 6 0s3.5-1.2 6 0"/><path d="M8 8c1.8-.5 3.2.4 4 0s2.5-.8 4 0"/><circle cx="12" cy="18.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+</span>
+<p class="zs-loop__role">歸還</p>
+<h3 class="zs-loop__name">歸土</h3>
+<p class="zs-loop__hint">讓材料回到土地</p>
+<p class="zs-loop__body">取一小片經時間老化的竹纖維材料，<br>輕輕剝碎，送回土壤。</p>
 </article>
 </div>
-<p class="zs-interactions__note">「帶走・留下・歸還——觀看之外，每一次參與，也成為作品的一部分。」</p>
+<p class="zs-loop__note">「帶走・留下・歸還——觀看之外，每一次參與，也成為作品的一部分。」</p>
 </section>
 
-<hr class="zs-rule" id="participate-rule">
+<div class="zs-divider" id="participate-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section zs-fiber zs-reveal" id="participate" aria-labelledby="participate-title">
+<section class="zs-section" id="participate" aria-labelledby="participate-title">
 <p class="zs-section__label">Participation</p>
 <h2 class="zs-section__title" id="participate-title">留下一句話</h2>
 <p class="zs-section__lead">現在想到什麼？<br>讓它飄過，或帶走。</p>
 
-<div class="zs-stage" id="zs-reaction-stage" aria-hidden="true"></div>
+<div class="zs-stage" id="zs-reaction-stage" aria-hidden="true">
+<div class="zs-stage__fiber" aria-hidden="true"></div>
+</div>
 <p class="zs-live-status" id="zs-ephemeral-live" aria-live="polite"></p>
 
 <div class="zs-composer">
@@ -187,9 +306,9 @@
 </div>
 </section>
 
-<hr class="zs-rule" id="wishes-live-rule">
+<div class="zs-divider" id="wishes-live-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section zs-fiber zs-reveal" id="wishes-live" aria-labelledby="wishes-live-title">
+<section class="zs-section" id="wishes-live" aria-labelledby="wishes-live-title">
 <p class="zs-section__label">Wishes</p>
 <h2 class="zs-section__title" id="wishes-live-title">竹願</h2>
 <p class="zs-section__lead">有人把願望留在竹片上，<br>有些話，也留在這裡。</p>
@@ -197,30 +316,30 @@
 <div id="zs-wish-stats" class="zs-stats" hidden></div>
 </section>
 
-<hr class="zs-rule" id="outcomes-rule" hidden>
+<div class="zs-divider" id="outcomes-rule" hidden aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section zs-section--wide" id="outcomes" aria-labelledby="outcomes-title" hidden>
+<section class="zs-section zs-section--data" id="outcomes" aria-labelledby="outcomes-title" hidden>
 <p class="zs-section__label">Observation</p>
 <h2 class="zs-section__title" id="outcomes-title">參與觀察</h2>
 <p class="zs-section__lead">作品不只被觀看，也透過竹語、竹願與歸土，<br>留下人與材料、場域及竹山之間的關係。</p>
 <div id="zs-outcomes-root"></div>
 </section>
 
-<hr class="zs-rule" id="process-rule" hidden>
+<div class="zs-divider" id="process-rule" hidden aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section zs-section--wide zs-reveal" id="process" aria-labelledby="process-title" hidden>
+<section class="zs-section zs-section--wide zs-section--editorial" id="process" aria-labelledby="process-title" hidden>
 <p class="zs-section__label">Process</p>
 <h2 class="zs-section__title" id="process-title">從材料到作品</h2>
 <div class="zs-process-grid" id="zs-process-grid"></div>
 <div class="zs-video" id="zs-video" hidden></div>
 </section>
 
-<hr class="zs-rule">
+<div class="zs-divider" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section zs-reveal" id="venue" aria-labelledby="venue-title">
+<section class="zs-section" id="venue" aria-labelledby="venue-title">
 <p class="zs-section__label">Site</p>
 <h2 class="zs-section__title" id="venue-title">一個被重新使用的場域</h2>
-<figure class="zs-venue__figure zs-img-reveal" id="zs-venue-figure" hidden>
+<figure class="zs-venue__figure" id="zs-venue-figure" hidden>
 <img id="zs-venue-img" width="1600" height="900" alt="" loading="lazy" decoding="async">
 </figure>
 <div class="zs-prose">
@@ -228,40 +347,42 @@
 <p>本作品選擇在這裡發生，<br>讓「場域的重新使用」與「材料的重新看見」產生呼應。</p>
 </div>
 <p class="zs-venue-quiet">
-<a href="https://www.facebook.com/townway104/" target="_blank" rel="noopener noreferrer" data-zs-link="townCultureFacebook" data-entity="townway" data-channel="facebook">小鎮文創 Facebook ↗</a>
+<a href="https://www.facebook.com/townway104/" target="_blank" rel="noopener noreferrer" data-zs-link="townCultureFacebook" data-entity="townway" data-channel="facebook">小鎮文創</a>
 </p>
 </section>
 
-<hr class="zs-rule">
+<div class="zs-divider" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section zs-reveal" id="share" aria-labelledby="share-title">
+<section class="zs-section" id="share" aria-labelledby="share-title">
 <p class="zs-section__label">Share</p>
 <h2 class="zs-section__title" id="share-title">分享你的竹山片刻</h2>
 <div class="zs-share">
 <p>「如果你也拍下了作品、竹願，<br>或一個屬於你的竹山片刻，<br>歡迎分享。」</p>
-<p class="zs-share__tag">#竹山開飯了</p>
+<p class="zs-share__tag">
+<span class="zs-glyph zs-glyph--inline" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="18" cy="5" r="2.2"/><circle cx="6" cy="12" r="2.2"/><circle cx="18" cy="19" r="2.2"/><path d="M8 11.2l8-5.2M8 12.8l8 5.2"/></svg></span>
+#竹山開飯了
+</p>
 <button type="button" class="zs-btn" id="zs-community-share-btn" hidden>分享我的竹山片刻</button>
 </div>
 </section>
 
-<hr class="zs-rule" id="community-moments-rule" hidden>
+<div class="zs-divider" id="community-moments-rule" hidden aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section zs-section--wide zs-reveal" id="community-moments" aria-labelledby="community-title" hidden>
+<section class="zs-section zs-section--wide zs-section--editorial" id="community-moments" aria-labelledby="community-title" hidden>
 <p class="zs-section__label">Community Moments</p>
 <h2 class="zs-section__title" id="community-title">竹山片刻</h2>
 <div class="zs-moments" id="zs-moments"></div>
 </section>
 
-<hr class="zs-rule">
+<div class="zs-divider" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section zs-reveal" id="credits" aria-labelledby="credits-title">
+<section class="zs-section" id="credits" aria-labelledby="credits-title">
 <p class="zs-section__label">Credits</p>
 <h2 class="zs-section__title" id="credits-title">作品資訊</h2>
 <dl class="zs-credits">
 <dt>創作企劃／統籌</dt><dd>唐加和</dd>
 <dt>執行製作</dt><dd>唐加和・陳品亦</dd>
 <dt>藝術指導</dt><dd>張莉家・陳鎮顯</dd>
-<dt>企劃製作</dt><dd><a class="zs-name-link" href="https://harmonyculture.art" target="_blank" rel="noopener noreferrer" data-zs-link="harmonyCultureWebsite" data-entity="harmony_culture" data-channel="website">和聲文化音樂股份有限公司</a></dd>
 <dt>木作協力</dt><dd>仨匠室內裝潢</dd>
 <dt>材料合作</dt><dd><a class="zs-name-link" href="https://www.taiwanbamboo.shop/" target="_blank" rel="noopener noreferrer" data-zs-link="bambooSponsorWebsite" data-entity="bamboo_sponsor" data-channel="website">新竹金 BAMBOO</a><span class="zs-name-sep">・</span><a class="zs-name-link" href="https://hoyao.com/" data-zs-link="hoyaoWebsite" data-entity="hoyao" data-channel="website">HOYAO 和曜應用科技</a></dd>
 <dt>育成支持</dt><dd>國發會中興新村地方創生育成村</dd>
@@ -273,9 +394,9 @@
 </dl>
 </section>
 
-<hr class="zs-rule">
+<div class="zs-divider" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section zs-section--quiet zs-reveal" id="related" aria-labelledby="related-title">
+<section class="zs-section zs-section--quiet" id="related" aria-labelledby="related-title">
 <p class="zs-section__label">Related Information</p>
 <h2 class="zs-section__title" id="related-title">相關資訊</h2>
 <div class="zs-related">
@@ -284,47 +405,30 @@
 <p class="zs-related__name">台西客運竹山站・竹青庭人文空間</p>
 <p class="zs-related__addr">南投縣竹山鎮中山里菜園路27號</p>
 <p class="zs-related__links">
-<a href="https://share.google/7UQXuN2FdtoffdhMn" target="_blank" rel="noopener noreferrer" data-zs-link="taixiMap" data-entity="taixi_station" data-channel="google_maps">台西客運竹山站｜Google Maps ↗</a>
-<a href="https://share.google/JviOZVssQLkXxWZEd" target="_blank" rel="noopener noreferrer" data-zs-link="zhuchingtingMap" data-entity="zhuchingting" data-channel="google_maps">竹青庭｜Google Maps ↗</a>
+<a href="https://share.google/7UQXuN2FdtoffdhMn" target="_blank" rel="noopener noreferrer" data-zs-link="taixiMap" data-entity="taixi_station" data-channel="google_maps">台西客運竹山站</a>
+<a href="https://share.google/JviOZVssQLkXxWZEd" target="_blank" rel="noopener noreferrer" data-zs-link="zhuchingtingMap" data-entity="zhuchingting" data-channel="google_maps">竹青庭</a>
 </p>
 </div>
 <div class="zs-related__group">
 <p class="zs-related__kicker">育成支持</p>
-<p class="zs-related__name">國發會中興新村地方創生育成村</p>
-<p class="zs-related__links">
-<a href="https://zrsi.org/" target="_blank" rel="noopener noreferrer" data-zs-link="incubationVillageWebsite" data-entity="incubation_village" data-channel="website">官方網站 ↗</a>
-<a href="https://www.facebook.com/zrsi2021/" target="_blank" rel="noopener noreferrer" data-zs-link="incubationVillageFacebook" data-entity="incubation_village" data-channel="facebook">Facebook ↗</a>
-</p>
+<p class="zs-related__name"><a href="https://zrsi.org/" target="_blank" rel="noopener noreferrer" data-zs-link="incubationVillageWebsite" data-entity="incubation_village" data-channel="website">國發會中興新村地方創生育成村</a></p>
 </div>
 <div class="zs-related__group">
 <p class="zs-related__kicker">主辦單位</p>
-<p class="zs-related__name">南投縣青年發展所</p>
-<p class="zs-related__links">
-<a href="https://youth.nantou.gov.tw/zh-TW" target="_blank" rel="noopener noreferrer" data-zs-link="youthDevelopmentWebsite" data-entity="nantou_youth" data-channel="website">官方網站 ↗</a>
-</p>
+<p class="zs-related__name"><a href="https://youth.nantou.gov.tw/zh-TW" target="_blank" rel="noopener noreferrer" data-zs-link="youthDevelopmentWebsite" data-entity="nantou_youth" data-channel="website">南投縣青年發展所</a></p>
 </div>
 </div>
-</section>
-
-<hr class="zs-rule">
-
-<section class="zs-sig zs-reveal" id="signature" aria-labelledby="sig-title">
-<p class="zs-sig__label">Project Production</p>
-<p class="zs-sig__kicker" id="sig-title">企劃製作</p>
-<p class="zs-sig__name">
-<a class="zs-name-link" href="https://harmonyculture.art" target="_blank" rel="noopener noreferrer" data-zs-link="harmonyCultureWebsite" data-entity="harmony_culture" data-channel="website">和聲文化音樂股份有限公司</a>
-</p>
 </section>
 
 </main>
 
 <footer class="zs-foot-block">
+<p class="zs-foot-block__contact" id="zs-project-contact"></p>
 <p class="zs-foot-block__credit">作品檔案頁</p>
 <p class="zs-foot">© 2026 竹山開飯了<br>本頁為《竹山開飯了－竹子重生的永續花園》長期保存之作品紀錄。</p>
 </footer>
 </div>
 
-<script src="/assets/js/zhushan-config.js?v=20260830-v45"></script>
-<script src="/assets/js/zhushan.js?v=20260830-v45"></script>
+<script src="/assets/js/zhushan.js?v=20260830-v46"></script>
 </body>
 </html>

@@ -17,6 +17,9 @@ window.ZHUSHAN_CONFIG = {
   communityShareFormUrl: "",
   communityDataUrl: "/assets/data/zhushan-community.json",
 
+  /* 合作／交流 Email；空字串則不顯示 */
+  contactEmail: "",
+
   wishCard: {
     enabled: true,
     maxLength: 70,
@@ -52,6 +55,8 @@ window.ZHUSHAN_CONFIG = {
       height: 900,
     },
     process: [],
+    interactions: [],
+    community: [],
   },
 
   ogImage: "https://hoyao.com/assets/images/projects/zhushan/og-image.png",

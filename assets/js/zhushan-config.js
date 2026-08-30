@@ -6,7 +6,7 @@ window.ZHUSHAN_CONFIG = {
   slug: "zhushan",
   canonicalUrl: "https://hoyao.com/zhushan/",
 
-  dataMode: "api",
+  dataMode: "static",
 
   googleFormUrl: "",
   wishesApiUrl: "",

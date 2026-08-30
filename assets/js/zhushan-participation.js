@@ -868,7 +868,11 @@
     if (prize) {
       if (prizeText) {
         prize.hidden = false;
-        prize.textContent = prizeText;
+        if (/完成問卷/.test(prizeText) || /抽獎/.test(prizeText)) {
+          prize.textContent = prizeText;
+        } else {
+          prize.textContent = "完成問卷可參加" + prizeText + "抽獎";
+        }
       } else {
         prize.hidden = true;
       }

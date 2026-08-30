@@ -1,4 +1,18 @@
 {
+  "study": {
+    "title": "竹材新應用與地方參與觀察",
+    "titleEn": "Bamboo Applications & Local Participation Study",
+    "subtitle": "《竹山開飯了》參與研究",
+    "kind": "exploratory participation study",
+    "sample": "convenience sample",
+    "disclaimer": "本次有效回覆來自作品參與者與網站訪客，屬探索性參與觀察，不代表台灣消費者或竹山居民的普遍意見。"
+  },
+  "summary": {
+    "participants": null,
+    "wishes": null,
+    "regions": null,
+    "validSurveys": null
+  },
   "kpis": {
     "participants": null,
     "wishes": null,
@@ -7,13 +21,28 @@
   },
   "regions": [],
   "relations": [],
-  "rates": [],
-  "interactions": [],
+  "roles": [],
+  "knowledgeBefore": [],
+  "knownApplications": [],
+  "imaginationChange": [],
   "applications": [],
+  "purchaseFactors": [],
+  "concerns": [],
+  "trustSignals": [],
+  "sustainablePreference": [],
+  "priceTolerance": [],
+  "sustainabilityAttitudes": [],
+  "localOrigin": [],
+  "zhushanExpectation": [],
+  "interactions": [],
+  "firstVisit": [],
+  "onlineVisitIntent": [],
+  "revisit": [],
+  "recommend": [],
   "voices": [],
   "wishThemes": {
     "title": "竹願裡，看見什麼？",
-    "disclaimer": "依目前公開竹願內容進行主題整理；屬內容觀察，不代表參與人次。",
+    "disclaimer": "依目前公開竹願內容進行主題整理；屬質性內容觀察，不是正式問卷研究，也不代表參與人次。",
     "items": [
       { "name": "地方活力與竹山未來", "count": 4 },
       { "name": "再訪、停留與空間", "count": 3 },

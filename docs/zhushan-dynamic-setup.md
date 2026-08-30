@@ -158,14 +158,17 @@ useMockWishes: false,
 
 若 `ephemeralApiUrl` 為空：飄過僅本機可見（optimistic），不會跨裝置。
 
-## L. 問卷／社群挑戰
+## L. 問卷／參與研究
+
+完整題目、分流與 Sheet 欄位見 `docs/zhushan-research-schema.md`。
 
 ```js
 surveyFormUrl: "https://docs.google.com/forms/d/e/XXXX/viewform",
-surveyPrizeText: "完成問卷可參加抽獎", // 空字串則不顯示
-communitySubmissionFormUrl: "https://docs.google.com/forms/d/e/YYYY/viewform",
-communityMention: "@your_account",
-communityPrizeText: "",
+surveyPrizeText: "竹山好物", // 顯示為：完成問卷可參加竹山好物抽獎；空則不顯示
+prizeEntryFormUrl: "https://docs.google.com/forms/d/e/YYYY/viewform",
 ```
 
-抽獎個資請用獨立表單或獨立區段，勿與研究答題混為公開資料。
+- 研究問卷與抽獎表單分開。抽獎個資不要進入 `zhushan-outcomes.json`。
+- `surveyFormUrl` 為空：網站隱藏整個 Research CTA。
+- 正式名稱：竹材新應用與地方參與觀察（exploratory participation study）。
+- 聚合範例：`docs/zhushan-survey-apps-script.js`（人工核對後才寫入公開 JSON）。

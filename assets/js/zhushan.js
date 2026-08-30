@@ -877,13 +877,67 @@
 
   function sampleNote(n) {
     if (!isPresentNumber(n)) return "";
-    if (n < 20) return "";
-    if (n < 50) return "初步參與觀察";
-    return "";
+    if (n < 20) {
+      return (
+        "本次有效回覆 " +
+        n +
+        " 則。以實際數量與匿名文字為主；屬探索性參與觀察。"
+      );
+    }
+    if (n < 50) {
+      return "本次有效回覆 " + n + " 則。初步參與觀察。受訪者自陳。";
+    }
+    return "本次有效回覆 " + n + " 則。探索性結果，受訪者自陳。";
+  }
+
+  function showPercent(n) {
+    return isPresentNumber(n) && n >= 20;
+  }
+
+  function canSegment(n) {
+    return isPresentNumber(n) && n >= 100;
+  }
+
+  function seriesOf(raw) {
+    if (!raw) return { n: null, items: [] };
+    if (Array.isArray(raw)) return { n: null, items: namedCounts(raw) };
+    if (typeof raw === "object") {
+      var items = namedCounts(raw.items || raw.values || []);
+      return {
+        n: isPresentNumber(raw.n) ? raw.n : null,
+        items: items,
+      };
+    }
+    return { n: null, items: [] };
+  }
+
+  function countMarkup(count, n) {
+    var html = String(count);
+    if (showPercent(n) && n > 0) {
+      html +=
+        '<span class="zs-obs-pct"> · ' +
+        Math.round((count / n) * 100) +
+        "%</span>";
+    }
+    return html;
+  }
+
+  function obsBlock(title, sub, inner) {
+    if (!inner) return "";
+    return (
+      '<div class="zs-obs-block"><h3 class="zs-obs-h">' +
+      escapeHtml(title) +
+      "</h3>" +
+      (sub
+        ? '<p class="zs-obs-sub">' + escapeHtml(sub) + "</p>"
+        : "") +
+      inner +
+      "</div>"
+    );
   }
 
   /** Bamboo ring marks — concentric circles, not solid dots. */
-  function renderRingPlot(items) {
+  function renderRingPlot(items, n) {
     if (!items.length) return "";
     var max = items[0].count;
     return (
@@ -904,7 +958,7 @@
             '<span class="zs-obs-dots__track">' +
             marks +
             '</span><span class="zs-obs-dots__n">' +
-            it.count +
+            countMarkup(it.count, n) +
             "</span></li>"
           );
         })
@@ -928,7 +982,7 @@
   }
 
   /** Horizontal ranked bamboo segment bars — static, no width animation. */
-  function renderBambooBars(items) {
+  function renderBambooBars(items, n) {
     if (!items.length) return "";
     var max = items[0].count;
     return (
@@ -950,8 +1004,60 @@
             '</span><span class="zs-obs-rank__track">' +
             marks +
             '</span><span class="zs-obs-rank__n">' +
-            it.count +
+            countMarkup(it.count, n) +
             "</span></li>"
+          );
+        })
+        .join("") +
+      "</ol>"
+    );
+  }
+
+  /** Quiet editorial distribution — large type, not a dashboard. */
+  function renderEditorialDist(items, n) {
+    if (!items.length) return "";
+    var lead = items[0];
+    var rest = items.slice(1);
+    var html =
+      '<p class="zs-obs-leadline"><span class="zs-obs-leadline__t">「' +
+      escapeHtml(lead.name) +
+      '」</span><span class="zs-obs-leadline__n">' +
+      countMarkup(lead.count, n) +
+      "</span></p>";
+    if (rest.length) {
+      html +=
+        '<ol class="zs-obs-stack">' +
+        rest
+          .map(function (it) {
+            return (
+              "<li><span>" +
+              escapeHtml(it.name) +
+              "</span><em>" +
+              countMarkup(it.count, n) +
+              "</em></li>"
+            );
+          })
+          .join("") +
+        "</ol>";
+    }
+    return html;
+  }
+
+  function renderTagRank(items, n, limit) {
+    var list = items.slice(0, limit || 5);
+    if (!list.length) return "";
+    return (
+      '<ol class="zs-obs-tags">' +
+      list
+        .map(function (it, idx) {
+          return (
+            "<li><span>" +
+            (idx + 1) +
+            "</span>" +
+            escapeHtml(it.name) +
+            "<em>" +
+            countMarkup(it.count, n) +
+            "</em></li>"
           );
         })
         .join("") +
@@ -1075,7 +1181,20 @@
   function buildOutcomesHtml(data) {
     if (!data || typeof data !== "object") return "";
     var html = [];
-    var kpis = data.kpis || data.summary || {};
+    var kpis = {};
+    if (data.summary && typeof data.summary === "object") {
+      Object.keys(data.summary).forEach(function (k) {
+        kpis[k] = data.summary[k];
+      });
+    }
+    if (data.kpis && typeof data.kpis === "object") {
+      Object.keys(data.kpis).forEach(function (k) {
+        if (data.kpis[k] !== null && data.kpis[k] !== undefined) {
+          kpis[k] = data.kpis[k];
+        }
+      });
+    }
+    var study = data.study || {};
     var kpiDefs = [
       { key: "participants", label: "現場參與／互動人次" },
       { key: "wishes", label: "正式收錄竹願" },
@@ -1100,38 +1219,152 @@
 
     var nSurvey = isPresentNumber(kpis.validSurveys) ? kpis.validSurveys : null;
     var note = sampleNote(nSurvey);
-    if (note) {
-      html.push('<p class="zs-obs-note">' + escapeHtml(note) + "</p>");
+
+    function baseN(series) {
+      return isPresentNumber(series.n) ? series.n : nSurvey;
     }
 
-    var regions = collapseNamedCounts(data.regions, 8);
-    if (regions.length) {
+    function pushRank(title, sub, raw, limit) {
+      var s = seriesOf(raw);
+      var items = s.items.slice(0, limit || 5);
+      if (!items.length) return;
+      html.push(obsBlock(title, sub, renderBambooBars(items, baseN(s))));
+    }
+
+    function pushRings(title, sub, raw, collapse) {
+      var s = seriesOf(raw);
+      var items = collapse ? collapseNamedCounts(s.items, collapse) : s.items;
+      if (!items.length) return;
+      html.push(obsBlock(title, sub, renderRingPlot(items, baseN(s))));
+    }
+
+    function pushEditorial(title, sub, raw) {
+      var s = seriesOf(raw);
+      if (!s.items.length) return;
+      html.push(obsBlock(title, sub, renderEditorialDist(s.items, baseN(s))));
+    }
+
+    function pushTags(title, sub, raw, limit) {
+      var s = seriesOf(raw);
+      var items = s.items.slice(0, limit || 5);
+      if (!items.length) return;
+      html.push(obsBlock(title, sub, renderTagRank(items, baseN(s), limit || 5)));
+    }
+
+    pushRings(
+      "大家原本怎麼認識竹子？",
+      "本次參與者對竹材應用的既有認知",
+      data.knownApplications
+    );
+    pushEditorial(
+      "原先對竹材應用的了解程度",
+      "參與《竹山開飯了》之前，受訪者自陳",
+      data.knowledgeBefore
+    );
+    pushEditorial(
+      "參與後，竹材想像有沒有改變？",
+      "本次有效回覆，受訪者自陳",
+      data.imaginationChange || data.bambooImaginationChange
+    );
+    pushRank(
+      "選擇竹材產品時，大家最在意什麼？",
+      "本次參與者最常提到的選擇考量（最多三項）",
+      data.purchaseFactors
+    );
+    pushRank(
+      "參與者對新型竹材產品的主要疑慮",
+      "本次有效回覆；用於理解測試與溝通優先序，不是市場痛點證明",
+      data.concerns || data.bambooConcerns
+    );
+    pushRank(
+      "什麼最能建立材料信任？",
+      "本次參與者認為較能增加信任的訊號",
+      data.trustSignals
+    );
+    pushEditorial(
+      "價格與性能接近時，是否願意優先選永續材料？",
+      "受訪者自陳；不是實際市場支付意願",
+      data.sustainablePreference || data.preferSustainableWhenEqual
+    );
+    pushEditorial(
+      "自陳價格接受程度",
+      "不是實際市場支付意願，也不是定價證明",
+      data.priceTolerance || data.pricePremiumTolerance
+    );
+    pushEditorial(
+      "理念支持與實際採用之間的差距",
+      "本次參與者較接近的想法",
+      data.sustainabilityAttitudes
+    );
+    pushEditorial(
+      "竹山在地來源是否增加吸引力？",
+      "若產品使用竹山／南投竹材，本次回覆的感受",
+      data.localOrigin || data.localOriginEffect
+    );
+    pushTags(
+      "參與者期待竹山發展哪些竹材新應用？",
+      "本次有效回覆中較常被提到的應用方向",
+      data.applications || data.desiredApplications
+    );
+    pushEditorial(
+      "竹山創新期待",
+      "是否期待竹山發展更多竹材新應用",
+      data.zhushanExpectation
+    );
+
+    var regions = seriesOf(data.regions);
+    if (regions.items.length) {
       html.push(
-        '<div class="zs-obs-block"><h3 class="zs-obs-h">參與從哪裡來</h3>' +
-          renderRingPlot(regions) +
-          "</div>"
+        obsBlock(
+          "參與從哪裡來",
+          "本次參與者來源地區",
+          renderRingPlot(collapseNamedCounts(regions.items, 8), baseN(regions))
+        )
       );
     }
 
-    var relations = namedCounts(data.relations);
-    if (relations.length) {
+    var relations = seriesOf(data.relations);
+    if (relations.items.length) {
       html.push(
-        '<div class="zs-obs-block"><h3 class="zs-obs-h">與竹山的關係</h3>' +
-          '<table class="zs-obs-table"><caption class="zs-visually-hidden">與竹山的關係</caption><thead><tr><th>關係</th><th>人數</th></tr></thead><tbody>' +
-          relations
-            .map(function (it) {
-              return (
-                "<tr><td>" +
-                escapeHtml(it.name) +
-                "</td><td>" +
-                it.count +
-                "</td></tr>"
-              );
-            })
-            .join("") +
-          "</tbody></table></div>"
+        obsBlock(
+          "與竹山的關係",
+          "",
+          renderRingPlot(relations.items, baseN(relations))
+        )
       );
     }
+
+    if (canSegment(nSurvey)) {
+      var roles = seriesOf(data.roles);
+      if (roles.items.length) {
+        html.push(
+          obsBlock(
+            "受訪者背景",
+            "樣本數足夠後才做的初步區分，仍屬 convenience sample",
+            renderRingPlot(roles.items, baseN(roles))
+          )
+        );
+      }
+    }
+
+    pushEditorial(
+      "是否第一次走進這個場域",
+      "現場／曾到訪參與者",
+      data.firstVisit
+    );
+    pushRank(
+      "最有感的互動",
+      "現場／曾到訪參與者",
+      data.interactions,
+      6
+    );
+    pushEditorial("再訪意願", "現場／曾到訪參與者，受訪者自陳", data.revisit);
+    pushEditorial("推薦意願", "現場／曾到訪參與者，受訪者自陳", data.recommend);
+    pushEditorial(
+      "線上參與者的實體到訪意願",
+      "看到作品後，是否更想實際到竹山看看",
+      data.onlineVisitIntent
+    );
 
     var rates = (data.rates || []).filter(function (it) {
       return it && it.label && isPresentNumber(it.value);
@@ -1155,41 +1388,10 @@
       html.push("</div>");
     }
 
-    var interactions = namedCounts(data.interactions);
-    if (interactions.length) {
-      html.push(
-        '<div class="zs-obs-block"><h3 class="zs-obs-h">最有感的互動</h3>' +
-          '<p class="zs-obs-sub">哪一種參與式設計最能留下印象</p>' +
-          renderBambooBars(interactions) +
-          "</div>"
-      );
-    }
-
-    var apps = namedCounts(data.applications).slice(0, 5);
-    if (apps.length) {
-      html.push(
-        '<div class="zs-obs-block"><h3 class="zs-obs-h">希望竹材應用在哪裡</h3>' +
-          '<ol class="zs-obs-tags">' +
-          apps
-            .map(function (it, idx) {
-              return (
-                "<li><span>" +
-                (idx + 1) +
-                "</span>" +
-                escapeHtml(it.name) +
-                "<em>" +
-                it.count +
-                "</em></li>"
-              );
-            })
-            .join("") +
-          "</ol></div>"
-      );
-    }
-
     var voices = (data.voices || [])
       .map(function (it) {
         if (!it) return null;
+        if (it.quoteConsent === false) return null;
         var quote = it.quote || it.message;
         if (!quote) return null;
         var meta = it.meta || [it.place, it.relation].filter(Boolean).join("・");
@@ -1198,7 +1400,10 @@
       .filter(Boolean)
       .slice(0, 6);
     if (voices.length) {
-      html.push('<div class="zs-obs-block"><h3 class="zs-obs-h">精選竹願／民眾分享</h3>');
+      html.push(
+        '<div class="zs-obs-block"><h3 class="zs-obs-h">參與者留下的話</h3>' +
+          '<p class="zs-obs-sub">僅收錄已同意匿名引用的文字回覆</p>'
+      );
       voices.forEach(function (it) {
         html.push(
           '<blockquote class="zs-obs-voice"><p>「' +
@@ -1215,7 +1420,7 @@
     var themeItems = [];
     var tTitle = "竹願裡，看見什麼？";
     var tDisc =
-      "依目前公開竹願內容進行主題整理；屬內容觀察，不代表參與人次。";
+      "依目前公開竹願內容進行主題整理；屬質性內容觀察，不是正式問卷研究，也不代表參與人次。";
     if (Array.isArray(themeSource)) {
       themeItems = namedCounts(themeSource);
       tDisc = data.wishThemesNote || tDisc;
@@ -1226,6 +1431,16 @@
     }
     if (themeItems.length) {
       html.push(renderWishConstellation(themeItems, tTitle, tDisc));
+    }
+
+    if (html.length) {
+      if (!note && study.disclaimer) note = study.disclaimer;
+      if (note) {
+        html.unshift('<p class="zs-obs-note">' + escapeHtml(note) + "</p>");
+      }
+      html.push(
+        '<p class="zs-obs-frame">正式參與研究以問卷資料為主要來源。竹願文本另作質性內容觀察。</p>'
+      );
     }
 
     return html.join("");

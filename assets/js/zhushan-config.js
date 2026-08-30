@@ -28,7 +28,7 @@ window.ZHUSHAN_CONFIG = {
   },
 
   /* 參與研究（探索性參與觀察；與彈幕、竹願分開） */
-  surveyFormUrl: "",
+  surveyFormUrl: "https://forms.gle/6RcUN9S3YkFNJPdR9",
   surveyPrizeText: "",
   prizeEntryFormUrl: "",
 
@@ -37,7 +37,7 @@ window.ZHUSHAN_CONFIG = {
     titleEn: "Bamboo Applications & Local Participation Study",
     subtitle: "《竹山開飯了》參與研究",
     kind: "exploratory participation study",
-    minutes: "2–3",
+    minutes: "3–4",
     sample: "convenience sample",
     disclaimer:
       "本次有效回覆來自作品參與者與網站訪客，屬探索性參與觀察，不代表台灣消費者或竹山居民的普遍意見。",

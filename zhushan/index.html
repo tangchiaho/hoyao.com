@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>竹山開飯了｜竹子重生的永續花園｜HOYAO 和曜應用科技</title>
+<title>竹山開飯了｜竹子重生的永續花園</title>
 <meta name="description" content="《竹山開飯了－竹子重生的永續花園》以竹材、竹纖維餐具與植物纖維再生材料，於台西客運竹山站／竹青庭人文空間呈現材料再生、場域活化與參與式創作。">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://hoyao.com/zhushan/">
@@ -30,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v3">
+<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v4a">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -45,31 +45,37 @@
   "artform": "參與式場域裝置",
   "url": "https://hoyao.com/zhushan/",
   "image": "https://hoyao.com/assets/images/projects/zhushan/og-image.png",
-  "creator": [
-    { "@type": "Person", "name": "唐加和", "jobTitle": "創作企劃／統籌" },
+  "creator": {
+    "@type": "Person",
+    "name": "唐加和",
+    "jobTitle": "創作企劃／統籌"
+  },
+  "contributor": [
     { "@type": "Person", "name": "陳品亦", "jobTitle": "執行製作" },
     { "@type": "Person", "name": "張莉家", "jobTitle": "藝術指導" },
     { "@type": "Person", "name": "陳鎮顯", "jobTitle": "藝術指導" }
   ],
+  "publisher": {
+    "@type": "Organization",
+    "name": "HOYAO 和曜應用科技",
+    "alternateName": "和曜應用科技股份有限公司",
+    "url": "https://hoyao.com/"
+  },
   "locationCreated": {
     "@type": "Place",
     "name": "台西客運竹山站・竹青庭人文空間",
     "address": {
       "@type": "PostalAddress",
+      "streetAddress": "中山里菜園路27號",
       "addressLocality": "竹山鎮",
       "addressRegion": "南投縣",
+      "postalCode": "557",
       "addressCountry": "TW"
     }
   },
   "isPartOf": {
     "@type": "WebSite",
     "name": "HOYAO 和曜應用科技",
-    "url": "https://hoyao.com/"
-  },
-  "provider": {
-    "@type": "Organization",
-    "name": "HOYAO 和曜應用科技",
-    "alternateName": "和曜應用科技股份有限公司",
     "url": "https://hoyao.com/"
   }
 }
@@ -88,8 +94,8 @@
 <p class="zs-hero__tags zs-hero-anim" data-hero-delay="320">在地材料・材料再生・永續循環・場域活化・參與式創作</p>
 <blockquote class="zs-hero__quote zs-hero-anim" data-hero-delay="420">「從竹林到餐桌，再從餐桌回到土地。」</blockquote>
 </div>
-<figure class="zs-hero__figure zs-hero-anim" data-hero-delay="520" id="zs-hero-figure">
-<img src="/assets/images/projects/zhushan/placeholder-hero.svg" width="1600" height="900" alt="竹山開飯了－竹子重生的永續花園" fetchpriority="high" decoding="async" id="zs-hero-img">
+<figure class="zs-hero__figure zs-hero-anim" data-hero-delay="520" id="zs-hero-figure" hidden>
+<img width="1600" height="900" alt="竹山開飯了－竹子重生的永續花園" fetchpriority="high" decoding="async" id="zs-hero-img">
 <figcaption class="zs-hero__caption" id="zs-hero-caption" hidden></figcaption>
 </figure>
 </header>
@@ -133,26 +139,56 @@
 <p class="zs-interactions__note">「帶走・留下・歸還——觀看之外，每一次參與，也成為作品的一部分。」</p>
 </section>
 
-<hr class="zs-rule" id="wish-form-rule" hidden>
+<hr class="zs-rule" id="passing-thought-rule">
 
-<section class="zs-section zs-fiber zs-reveal" id="wish-form" aria-labelledby="wish-form-title" hidden>
-<p class="zs-section__label">Digital Wish</p>
-<h2 class="zs-section__title" id="wish-form-title">留下你的竹願</h2>
-<p class="zs-section__lead">「如果竹山的未來可以多一點什麼，<br>你希望留下什麼？」</p>
-<div class="zs-wish-cta">
-<button type="button" class="zs-btn" id="zs-wish-form-btn">留下竹願</button>
+<section class="zs-section zs-fiber zs-reveal" id="passing-thought" aria-labelledby="passing-title">
+<p class="zs-section__label">A Passing Thought</p>
+<h2 class="zs-section__title" id="passing-title">一句當下</h2>
+<p class="zs-section__lead">寫下一句現在想到的話。<br>讓它飄過，或把它留下。</p>
+
+<div class="zs-stage" id="zs-reaction-stage" aria-hidden="true"></div>
+<p class="zs-live-status" id="zs-ephemeral-live" aria-live="polite"></p>
+
+<label class="zs-card-label" for="zs-thought-input">現在想到的一句話</label>
+<textarea id="zs-thought-input" class="zs-card-input" maxlength="70" rows="3" placeholder="現在想到的一句話……"></textarea>
+<p class="zs-card-count"><span id="zs-thought-count">0</span> / 70</p>
+
+<div class="zs-thought-actions">
+<div class="zs-thought-action">
+<button type="button" class="zs-btn zs-btn-ghost" id="zs-ephemeral-btn">讓它飄過</button>
+<p class="zs-thought-hint">彈幕只在你的畫面出現片刻，不會保存。</p>
+<p class="zs-thought-status" id="zs-ephemeral-status" hidden>已經飄過了，不會被保存。</p>
 </div>
-<p class="zs-form-note">約 1 分鐘完成・不需留下姓名</p>
+<div class="zs-thought-action">
+<button type="button" class="zs-btn" id="zs-keep-wish-btn">留下成為竹願</button>
+<p class="zs-thought-hint">竹願會被留下，<br>經整理後可能收錄於作品紀錄。</p>
+<p class="zs-thought-soon" id="zs-wish-soon" hidden>竹願投稿即將開放</p>
+</div>
+<div class="zs-thought-action">
+<button type="button" class="zs-btn-link" id="zs-to-card-btn">做成我的竹願卡 →</button>
+<p class="zs-thought-hint">做成一張只屬於你的分享圖片。</p>
+</div>
+</div>
+
+<p class="zs-quick__lead">或者，按一下現在的感覺</p>
+<div class="zs-quick" id="zs-quick-reactions">
+<button type="button" data-reaction-id="R01">原來竹子可以這樣</button>
+<button type="button" data-reaction-id="R02">很喜歡這個空間</button>
+<button type="button" data-reaction-id="R03">想再來竹山</button>
+<button type="button" data-reaction-id="R04">想帶家人來</button>
+<button type="button" data-reaction-id="R05">很有意思</button>
+<button type="button" data-reaction-id="R06">祝竹山越來越好</button>
+</div>
 </section>
 
-<hr class="zs-rule" id="wishes-live-rule" hidden>
+<hr class="zs-rule" id="wishes-live-rule">
 
-<section class="zs-section zs-fiber zs-reveal" id="wishes-live" aria-labelledby="wishes-live-title" hidden>
-<p class="zs-section__label">Community</p>
-<h2 class="zs-section__title" id="wishes-live-title">大家留下的竹願</h2>
+<section class="zs-section zs-fiber zs-reveal" id="wishes-live" aria-labelledby="wishes-live-title">
+<p class="zs-section__label">Wishes</p>
+<h2 class="zs-section__title" id="wishes-live-title">開展前的祝福</h2>
 <p class="zs-section__lead">「有些願望被寫在竹片上，<br>有些則留在這裡。」</p>
-<p class="zs-wishes__count">目前已留下 <strong id="zs-wishes-count">—</strong> 個竹願</p>
-<div id="zs-wishes-wall" class="zs-wishes__display" aria-live="polite"></div>
+<p class="zs-wishes__count" id="zs-wishes-count-line"></p>
+<div id="zs-wishes-wall" class="zs-wishes__display"></div>
 <div id="zs-wish-stats" class="zs-stats" hidden></div>
 </section>
 
@@ -160,12 +196,13 @@
 
 <section class="zs-section zs-reveal" id="wish-card" aria-labelledby="wish-card-title">
 <p class="zs-section__label">My Wish Card</p>
-<h2 class="zs-section__title" id="wish-card-title">帶走你的竹願</h2>
-<p class="zs-section__lead">寫下一句留給未來竹山的話，生成你的竹願分享卡。</p>
+<h2 class="zs-section__title" id="wish-card-title">製作我的竹願卡</h2>
+<p class="zs-section__lead">寫下一句話，做成一張屬於你的竹願卡。</p>
+<p class="zs-form-note">分享卡只在你的裝置產生，不會自動公開。</p>
 <label class="zs-card-label" for="zs-card-input">我想留給未來竹山的一句話</label>
 <textarea id="zs-card-input" class="zs-card-input" maxlength="70" rows="3" placeholder="一句話，留給未來的竹山。"></textarea>
 <p class="zs-card-count"><span id="zs-card-count">0</span> / 70</p>
-<button type="button" class="zs-btn" id="zs-card-generate">生成我的竹願卡</button>
+<button type="button" class="zs-btn" id="zs-card-generate">製作我的竹願卡</button>
 <div id="zs-card-result" class="zs-card-result" hidden>
 <canvas id="zs-card-canvas" width="1080" height="1350" aria-hidden="true"></canvas>
 <p class="zs-card-text" id="zs-card-text"></p>
@@ -198,8 +235,8 @@
 <p>台西客運竹山站曾承載地方交通與往來，<br>如今轉化為人們停留、交流與認識竹山的文化空間。</p>
 <p>本作品選擇在這裡發生，<br>讓「場域的重新使用」與「材料的重新看見」產生呼應。</p>
 </div>
-<p class="zs-venue-more">
-<a href="#" id="zs-venue-link" data-zs-external="venue" hidden>了解場域故事 →</a>
+<p class="zs-venue-quiet">
+<a href="https://www.facebook.com/townway104/" target="_blank" rel="noopener noreferrer" data-zs-link="townCultureFacebook" data-entity="townway" data-channel="facebook">小鎮文創 Facebook ↗</a>
 </p>
 </section>
 
@@ -233,9 +270,9 @@
 <dt>執行製作</dt><dd>唐加和・陳品亦</dd>
 <dt>藝術指導</dt><dd>張莉家・陳鎮顯</dd>
 <dt>木作協力</dt><dd>仨匠室內裝潢</dd>
-<dt>材料合作</dt><dd>新竹金 BAMBOO・HOYAO 和曜應用科技</dd>
+<dt>竹纖維餐具贊助</dt><dd>新竹金 BAMBOO<br><a href="https://www.taiwanbamboo.shop/" target="_blank" rel="noopener noreferrer" data-zs-link="bambooSponsorWebsite" data-entity="bamboo_sponsor" data-channel="website">品牌資訊 ↗</a></dd>
 <dt>育成支持</dt><dd>國發會中興新村地方創生育成村</dd>
-<dt>展出地點</dt><dd>台西客運竹山站・竹青庭人文空間</dd>
+<dt>展出地點</dt><dd>台西客運竹山站・竹青庭人文空間<br>南投縣竹山鎮中山里菜園路27號</dd>
 <dt>場域合作</dt><dd>小鎮文創股份有限公司</dd>
 <dt>指導單位</dt><dd>南投縣政府</dd>
 <dt>主辦單位</dt><dd>南投縣青年發展所</dd>
@@ -243,29 +280,54 @@
 </dl>
 </section>
 
+<hr class="zs-rule">
+
+<section class="zs-section zs-section--quiet zs-reveal" id="related" aria-labelledby="related-title">
+<p class="zs-section__label">Related Information</p>
+<h2 class="zs-section__title" id="related-title">相關資訊</h2>
+<div class="zs-related">
+<div class="zs-related__group">
+<p class="zs-related__kicker">展出場域</p>
+<p class="zs-related__name">台西客運竹山站・竹青庭人文空間</p>
+<p class="zs-related__addr">南投縣竹山鎮中山里菜園路27號</p>
+<p class="zs-related__links">
+<a href="https://share.google/7UQXuN2FdtoffdhMn" target="_blank" rel="noopener noreferrer" data-zs-link="taixiMap" data-entity="taixi_station" data-channel="google_maps">台西客運竹山站｜Google Maps ↗</a>
+<a href="https://share.google/JviOZVssQLkXxWZEd" target="_blank" rel="noopener noreferrer" data-zs-link="zhuchingtingMap" data-entity="zhuchingting" data-channel="google_maps">竹青庭｜Google Maps ↗</a>
+</p>
+</div>
+<div class="zs-related__group">
+<p class="zs-related__kicker">育成支持</p>
+<p class="zs-related__name">國發會中興新村地方創生育成村</p>
+<p class="zs-related__links">
+<a href="https://zrsi.org/" target="_blank" rel="noopener noreferrer" data-zs-link="incubationVillageWebsite" data-entity="incubation_village" data-channel="website">官方網站 ↗</a>
+<a href="https://www.facebook.com/zrsi2021/" target="_blank" rel="noopener noreferrer" data-zs-link="incubationVillageFacebook" data-entity="incubation_village" data-channel="facebook">Facebook ↗</a>
+</p>
+</div>
+<div class="zs-related__group">
+<p class="zs-related__kicker">主辦單位</p>
+<p class="zs-related__name">南投縣青年發展所</p>
+<p class="zs-related__links">
+<a href="https://youth.nantou.gov.tw/zh-TW" target="_blank" rel="noopener noreferrer" data-zs-link="youthDevelopmentWebsite" data-entity="nantou_youth" data-channel="website">官方網站 ↗</a>
+</p>
+</div>
+</div>
+</section>
+
 <section class="zs-section zs-outcomes" id="outcomes" aria-labelledby="outcomes-title" hidden>
 <p class="zs-section__label">Outcomes</p>
 <h2 class="zs-section__title" id="outcomes-title">成果紀錄</h2>
-<dl>
-<dt>展期</dt><dd data-outcome="exhibitionPeriod">—</dd>
-<dt>參與人次</dt><dd data-outcome="participants">—</dd>
-<dt>數位竹願</dt><dd data-outcome="digitalWishes">—</dd>
-<dt>現場竹願</dt><dd data-outcome="onsiteWishes">—</dd>
-<dt>頁面瀏覽</dt><dd data-outcome="pageViews">—</dd>
-</dl>
 </section>
 
 </main>
 
-<footer class="zs-partner">
-<p class="zs-partner__label">Material Partner</p>
-<p class="zs-partner__name">HOYAO 和曜應用科技</p>
-<p><a href="https://hoyao.com/">回到 hoyao.com</a></p>
+<footer class="zs-foot-block">
+<p class="zs-foot-block__credit">作品檔案維護｜HOYAO 和曜應用科技</p>
+<p><a href="https://hoyao.com/">hoyao.com ↗</a></p>
 <p class="zs-foot">© 2026 竹山開飯了｜作品檔案頁<br>本頁為《竹山開飯了－竹子重生的永續花園》長期保存之作品紀錄。</p>
 </footer>
 </div>
 
-<script src="/assets/js/zhushan-config.js?v=20260830-v3"></script>
-<script src="/assets/js/zhushan.js?v=20260830-v3"></script>
+<script src="/assets/js/zhushan-config.js?v=20260830-v4a"></script>
+<script src="/assets/js/zhushan.js?v=20260830-v4a"></script>
 </body>
 </html>

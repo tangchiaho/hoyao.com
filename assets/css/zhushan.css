@@ -80,11 +80,13 @@
   max-width: var(--zs-wide);
   margin: 0 auto;
   padding: 0 20px 96px;
+  overflow-x: hidden;
 }
 
 /* Fiber texture — abstract, very faint */
 .zs-fiber {
   position: relative;
+  overflow-x: hidden;
 }
 
 .zs-fiber::before {
@@ -106,6 +108,7 @@
       #8a8882 34.6px,
       transparent 35px 70px
     );
+  -webkit-mask-image: radial-gradient(ellipse at 30% 20%, #000 0%, transparent 72%);
   mask-image: radial-gradient(ellipse at 30% 20%, #000 0%, transparent 72%);
   z-index: 0;
 }
@@ -149,6 +152,10 @@
 /* Hero */
 .zs-hero {
   padding: 48px 0 40px;
+}
+
+.zs-hero--text-only {
+  padding-bottom: 8px;
 }
 
 .zs-hero__text {
@@ -359,6 +366,20 @@
   color: var(--zs-ink);
 }
 
+.zs-btn-link {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  min-height: 44px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--zs-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
 .zs-btn:disabled {
   background: transparent;
   color: var(--zs-warm);
@@ -385,13 +406,8 @@
 }
 
 .zs-wishes__count strong {
-  display: inline-block;
-  font-family: var(--zs-serif);
-  font-size: 2rem;
   font-weight: 500;
-  line-height: 1;
   color: var(--zs-ink);
-  padding: 0 6px;
 }
 
 .zs-wishes__display {
@@ -641,10 +657,20 @@
   will-change: transform;
 }
 
-.zs-venue-more {
-  margin-top: 24px;
-  font-size: 14px;
+.zs-venue-quiet {
+  margin: 20px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.zs-venue-quiet a {
   color: var(--zs-muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--zs-rule);
+}
+
+.zs-venue-quiet a:hover {
+  color: var(--zs-ink);
 }
 
 /* Moments */
@@ -734,6 +760,16 @@
   border-bottom: none;
 }
 
+.zs-credits a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--zs-rule);
+}
+
+.zs-credits a:hover {
+  color: var(--zs-muted);
+}
+
 @media (min-width: 600px) {
   .zs-credits {
     display: grid;
@@ -760,6 +796,63 @@
   }
 }
 
+.zs-section--quiet .zs-section__title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.zs-related {
+  margin: 0;
+}
+
+.zs-related__group {
+  padding: 16px 0;
+  border-top: 1px solid var(--zs-rule);
+}
+
+.zs-related__group:last-child {
+  padding-bottom: 0;
+}
+
+.zs-related__kicker {
+  margin: 0 0 4px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--zs-warm);
+}
+
+.zs-related__name {
+  margin: 0 0 4px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--zs-ink);
+}
+
+.zs-related__addr {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--zs-warm);
+}
+
+.zs-related__links {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.zs-related__links a {
+  font-size: 12px;
+  color: var(--zs-muted);
+  text-decoration: none;
+  border-bottom: none;
+}
+
+.zs-related__links a:hover {
+  color: var(--zs-ink);
+}
+
 .zs-outcomes dl {
   margin: 0;
   font-size: 14px;
@@ -775,7 +868,7 @@
   margin: 4px 0 0;
 }
 
-.zs-partner {
+.zs-foot-block {
   margin-top: 56px;
   padding-top: 32px;
   border-top: 1px solid var(--zs-rule);
@@ -784,23 +877,168 @@
   color: var(--zs-warm);
 }
 
-.zs-partner__label {
-  margin: 0 0 6px;
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+.zs-foot-block__credit {
+  margin: 0 0 8px;
+  font-size: 13px;
+  color: var(--zs-muted);
 }
 
-.zs-partner__name {
-  margin: 0 0 16px;
-  font-size: 14px;
+.zs-foot-block a {
   color: var(--zs-muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--zs-rule);
 }
 
 .zs-foot {
   margin-top: 24px;
   font-size: 12px;
   line-height: 1.65;
+}
+
+/* Passing thought / reaction stage */
+.zs-stage {
+  position: relative;
+  height: 148px;
+  overflow: hidden;
+  margin: 0 0 28px;
+  border-top: 1px solid var(--zs-rule);
+  border-bottom: 1px solid var(--zs-rule);
+}
+
+@media (min-width: 760px) {
+  .zs-stage {
+    height: 184px;
+  }
+}
+
+.zs-danmaku {
+  position: absolute;
+  left: 100%;
+  max-width: none;
+  font-family: var(--zs-serif);
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  pointer-events: none;
+  color: var(--zs-ink);
+}
+
+.zs-danmaku.is-drift {
+  animation: zs-drift var(--zs-dur, 9s) linear forwards;
+}
+
+.zs-danmaku.is-fade {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  white-space: normal;
+  max-width: 86%;
+  text-align: center;
+  animation: zs-fade-pass 3.2s ease forwards;
+}
+
+@keyframes zs-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-100% - 100vw)); }
+}
+
+@keyframes zs-fade-pass {
+  0% { opacity: 0; }
+  14% { opacity: 0.78; }
+  78% { opacity: 0.78; }
+  100% { opacity: 0; }
+}
+
+.zs-live-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.zs-thought-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin: 8px 0 32px;
+}
+
+.zs-thought-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.zs-thought-hint,
+.zs-thought-soon,
+.zs-thought-status {
+  margin: 10px 0 0;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--zs-warm);
+  max-width: 28em;
+}
+
+.zs-thought-status {
+  color: var(--zs-muted);
+}
+
+.zs-quick__lead {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--zs-muted);
+}
+
+.zs-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+}
+
+.zs-quick button {
+  appearance: none;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--zs-rule);
+  border-radius: 0;
+  padding: 10px 0;
+  min-height: 44px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--zs-muted);
+  cursor: pointer;
+}
+
+.zs-quick button:hover {
+  color: var(--zs-ink);
+}
+
+.zs-video__poster {
+  appearance: none;
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--zs-rule);
+  background: var(--zs-ink);
+  cursor: pointer;
+  color: var(--zs-white);
+  font-family: inherit;
+  font-size: 14px;
+  min-height: 180px;
+}
+
+.zs-video__poster img {
+  width: 100%;
+  height: auto;
+}
+
+.zs-video iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  display: block;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -818,7 +1056,9 @@
   .zs-hero-anim.is-in[data-hero-delay="520"] img,
   .zs-wishes__quote,
   .zs-bar__fill,
-  .zs-process-item img {
+  .zs-process-item img,
+  .zs-danmaku.is-drift {
     transition: none;
+    animation: none;
   }
 }

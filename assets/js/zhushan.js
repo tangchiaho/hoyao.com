@@ -1,5 +1,5 @@
 /**
- * 竹山開飯了 V3 — 動態互動作品檔案
+ * 竹山開飯了 V4 — 作品檔案頁
  */
 (function () {
   "use strict";
@@ -9,6 +9,7 @@
     window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var animOn = cfg.animations && cfg.animations.enabled !== false && !reduceMotion;
+  var MAX_LEN = (cfg.wishCard && cfg.wishCard.maxLength) || 70;
 
   function track(eventName, params) {
     if (typeof window.gtag === "function") {
@@ -29,11 +30,44 @@
     return src.indexOf("placeholder-") === -1;
   }
 
+  function isSafeHttpUrl(url) {
+    if (!url || typeof url !== "string") return false;
+    try {
+      var parsed = new URL(url, window.location.origin);
+      return parsed.protocol === "http:" || parsed.protocol === "https:";
+    } catch (err) {
+      return false;
+    }
+  }
+
   function showSection(id, show) {
     var el = document.getElementById(id);
     var rule = document.getElementById(id + "-rule");
     if (el) el.hidden = !show;
     if (rule) rule.hidden = !show;
+  }
+
+  function shuffle(list) {
+    var a = list.slice();
+    var i;
+    for (i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i];
+      a[i] = a[j];
+      a[j] = t;
+    }
+    return a;
+  }
+
+  function nextRound(items, lastItem) {
+    var round = shuffle(items);
+    if (round.length > 1 && lastItem && round[0] === lastItem) {
+      var k = 1 + Math.floor(Math.random() * (round.length - 1));
+      var t = round[0];
+      round[0] = round[k];
+      round[k] = t;
+    }
+    return round;
   }
 
   function initRevealAnimations() {
@@ -90,25 +124,29 @@
       });
     }
 
+    var figure = document.getElementById("zs-hero-figure");
     var hero = document.getElementById("zs-hero-img");
-    if (hero && cfg.images && cfg.images.hero) {
-      var h = cfg.images.hero;
-      if (h.src) {
-        hero.src = h.src;
-        hero.alt = h.alt || "";
-        if (h.width) hero.width = h.width;
-        if (h.height) hero.height = h.height;
-      }
+    var header = document.querySelector(".zs-hero");
+    var h = cfg.images && cfg.images.hero;
+    var real = h && isRealSrc(h.src);
+
+    if (figure && hero && real) {
+      figure.hidden = false;
+      hero.src = h.src;
+      hero.alt = h.alt || "";
+      if (h.width) hero.width = h.width;
+      if (h.height) hero.height = h.height;
       var cap = document.getElementById("zs-hero-caption");
       if (cap && h.caption) {
         cap.hidden = false;
         cap.textContent = h.caption;
       }
+    } else {
+      if (figure) figure.hidden = true;
+      if (header) header.classList.add("zs-hero--text-only");
     }
 
-    if (!animOn) return;
-    var figure = document.getElementById("zs-hero-figure");
-    if (!figure || !hero) return;
+    if (!animOn || !figure || !hero || figure.hidden) return;
 
     var ticking = false;
     function onScroll() {
@@ -126,46 +164,161 @@
     window.addEventListener("scroll", onScroll, { passive: true });
   }
 
-  function initWishForm() {
-    var section = document.getElementById("wish-form");
-    var btn = document.getElementById("zs-wish-form-btn");
-    if (!section || !btn) return;
+  function spawnPassingLine(text) {
+    var stage = document.getElementById("zs-reaction-stage");
+    if (!stage) return false;
+    var active = stage.querySelectorAll(".zs-danmaku");
+    if (active.length >= 3) return false;
 
-    var url = cfg.googleFormUrl;
-    if (!url) {
-      showSection("wish-form", false);
-      return;
+    var node = document.createElement("span");
+    node.className = "zs-danmaku";
+    node.setAttribute("aria-hidden", "true");
+    node.textContent = text;
+
+    var used = {};
+    for (var i = 0; i < active.length; i++) {
+      used[active[i].getAttribute("data-lane") || "0"] = true;
+    }
+    var lane = 0;
+    for (lane = 0; lane < 3; lane++) {
+      if (!used[String(lane)]) break;
+    }
+    node.setAttribute("data-lane", String(lane));
+    node.style.top = 12 + lane * 30 + "%";
+    node.style.opacity = String(0.68 + Math.random() * 0.14);
+    node.style.fontSize = window.matchMedia("(max-width: 600px)").matches
+      ? 15 + Math.round(Math.random() * 3) + "px"
+      : 18 + Math.round(Math.random() * 4) + "px";
+
+    function cleanup() {
+      if (node.parentNode) node.parentNode.removeChild(node);
     }
 
-    showSection("wish-form", true);
-    btn.addEventListener("click", function () {
-      track("wish_form_open", { page: "zhushan" });
-      window.open(url, "_blank", "noopener");
-    });
+    stage.appendChild(node);
+
+    if (reduceMotion) {
+      node.classList.add("is-fade");
+      node.addEventListener("animationend", cleanup);
+      window.setTimeout(cleanup, 3400);
+    } else {
+      var dur = 8000 + Math.floor(Math.random() * 3001);
+      node.style.setProperty("--zs-dur", dur + "ms");
+      node.classList.add("is-drift");
+      node.addEventListener("animationend", cleanup);
+      window.setTimeout(cleanup, dur + 400);
+    }
+    return true;
+  }
+
+  function announcePassed() {
+    var live = document.getElementById("zs-ephemeral-live");
+    var status = document.getElementById("zs-ephemeral-status");
+    if (live) live.textContent = "這句話已經飄過。";
+    if (status) status.hidden = false;
+  }
+
+  function initPassingThought() {
+    var input = document.getElementById("zs-thought-input");
+    var count = document.getElementById("zs-thought-count");
+    var ephemeralBtn = document.getElementById("zs-ephemeral-btn");
+    var keepBtn = document.getElementById("zs-keep-wish-btn");
+    var soon = document.getElementById("zs-wish-soon");
+    var toCard = document.getElementById("zs-to-card-btn");
+    var cardInput = document.getElementById("zs-card-input");
+    var passedOnce = false;
+
+    if (input && count) {
+      input.setAttribute("maxlength", String(MAX_LEN));
+      input.addEventListener("input", function () {
+        count.textContent = String(input.value.length);
+      });
+    }
+
+    if (ephemeralBtn && input) {
+      ephemeralBtn.addEventListener("click", function () {
+        var text = input.value.trim();
+        if (!text) {
+          input.focus();
+          return;
+        }
+        if (!spawnPassingLine(text)) return;
+        announcePassed();
+        track("passing_thought", { page: "zhushan", action: "ephemeral_sent" });
+        if (!passedOnce) {
+          passedOnce = true;
+          ephemeralBtn.textContent = "再飄一次";
+        }
+      });
+    }
+
+    if (keepBtn) {
+      var formUrl = cfg.googleFormUrl;
+      if (!isSafeHttpUrl(formUrl)) {
+        keepBtn.disabled = true;
+        if (soon) soon.hidden = false;
+      } else {
+        keepBtn.addEventListener("click", function () {
+          var url = formUrl;
+          var entry = cfg.googleFormWishEntry;
+          var thought = input ? input.value.trim() : "";
+          if (entry && /^entry\.\d+$/.test(entry) && thought) {
+            url += (url.indexOf("?") >= 0 ? "&" : "?") + entry + "=" + encodeURIComponent(thought);
+          }
+          if (!isSafeHttpUrl(url)) return;
+          track("wish_form_open", { page: "zhushan" });
+          window.open(url, "_blank", "noopener,noreferrer");
+        });
+      }
+    }
+
+    if (toCard && input && cardInput) {
+      toCard.addEventListener("click", function () {
+        cardInput.value = input.value.slice(0, MAX_LEN);
+        cardInput.dispatchEvent(new Event("input", { bubbles: true }));
+        var dest = document.getElementById("wish-card");
+        if (dest) dest.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+        cardInput.focus();
+      });
+    }
+
+    var quick = document.getElementById("zs-quick-reactions");
+    if (quick) {
+      quick.addEventListener("click", function (e) {
+        var btn = e.target.closest && e.target.closest("button[data-reaction-id]");
+        if (!btn) return;
+        var label = (btn.textContent || "").trim();
+        if (!label) return;
+        if (!spawnPassingLine(label)) return;
+        announcePassed();
+        track("quick_reaction", {
+          page: "zhushan",
+          reaction_id: btn.getAttribute("data-reaction-id"),
+          reaction_text: label,
+        });
+      });
+    }
   }
 
   function wishesSourceUrl() {
-    if (cfg.useMockWishes === true && cfg.wishesMockUrl) {
-      return cfg.wishesMockUrl;
-    }
     if (cfg.dataMode === "static") {
       return cfg.staticWishesUrl || "/assets/data/zhushan-wishes.json";
     }
-    return cfg.wishesApiUrl || "";
+    return cfg.wishesApiUrl || cfg.staticWishesUrl || "";
   }
 
   function initWishesWall() {
     var section = document.getElementById("wishes-live");
     var wall = document.getElementById("zs-wishes-wall");
+    var countLine = document.getElementById("zs-wishes-count-line");
+    var stats = document.getElementById("zs-wish-stats");
+    if (stats) stats.hidden = true;
     if (!section || !wall) return;
 
     var url = wishesSourceUrl();
-    if (!url) {
+    if (!isSafeHttpUrl(url) && url.indexOf("/") !== 0) {
       showSection("wishes-live", false);
       return;
     }
-
-    wall.innerHTML = '<div class="zs-wishes__skeleton" aria-hidden="true"></div>';
 
     fetch(url)
       .then(function (r) {
@@ -174,51 +327,51 @@
       })
       .then(function (data) {
         var items = (data.approved || []).filter(function (w) {
-          return w.message;
+          return w && w.message;
         });
-        if (!items.length && !data.totalCount) {
+        if (!items.length) {
           showSection("wishes-live", false);
           return;
         }
         showSection("wishes-live", true);
-        var countEl = document.getElementById("zs-wishes-count");
-        if (countEl) {
-          countEl.textContent = String(data.totalCount != null ? data.totalCount : items.length);
+        var publicN = 0;
+        var seedN = 0;
+        items.forEach(function (w) {
+          if (w.source === "public") publicN += 1;
+          else seedN += 1;
+        });
+        if (countLine) {
+          if (publicN > 0) {
+            countLine.textContent = "目前收錄 " + publicN + " 則竹願";
+          } else {
+            countLine.textContent = "先放上了 " + seedN + " 則開展前祝福。";
+          }
         }
-        if (!items.length) {
-          wall.innerHTML = '<p class="zs-wishes__empty">竹願正在整理中。</p>';
-          return;
+        var title = document.getElementById("wishes-live-title");
+        if (title) {
+          title.textContent = publicN > 0 ? "大家留下的竹願" : "開展前的祝福";
         }
         renderWishesRotation(wall, items);
-        initWishStats(data.stats || {}, data.totalCount != null ? data.totalCount : items.length);
       })
       .catch(function () {
-        showSection("wishes-live", true);
-        wall.innerHTML = '<p class="zs-wishes__empty">竹願正在整理中。</p>';
+        showSection("wishes-live", false);
       });
   }
 
   function renderWishesRotation(container, items) {
+    var round = nextRound(items, null);
     var index = 0;
-    var paused = false;
-    var timer = null;
-    container.innerHTML = "";
+    var lastItem = null;
 
     function paint(item) {
       var block = document.createElement("blockquote");
       block.className = "zs-wishes__quote";
-      var meta = [];
-      if (item.relation) meta.push(escapeHtml(item.relation));
-      if (item.ageRange || item.age_range) {
-        meta.push(escapeHtml(item.ageRange || item.age_range));
-      }
+      var caption = item.source === "public" ? "" : "開展前祝福";
       block.innerHTML =
         "<p>「" +
         escapeHtml(item.message) +
         "」</p>" +
-        (meta.length
-          ? '<footer class="zs-wishes__meta">' + meta.join("・") + "</footer>"
-          : "");
+        (caption ? '<footer class="zs-wishes__meta">' + caption + "</footer>" : "");
       container.innerHTML = "";
       container.appendChild(block);
       requestAnimationFrame(function () {
@@ -227,137 +380,19 @@
     }
 
     function showNext() {
-      if (paused) return;
-      paint(items[index % items.length]);
+      if (index >= round.length) {
+        lastItem = round[round.length - 1];
+        round = nextRound(items, lastItem);
+        index = 0;
+      }
+      paint(round[index]);
       index += 1;
     }
 
-    paint(items[0]);
-    index = 1;
-
-    if (animOn && items.length > 1) {
-      timer = window.setInterval(showNext, 8000);
-      container.addEventListener("mouseenter", function () {
-        paused = true;
-      });
-      container.addEventListener("mouseleave", function () {
-        paused = false;
-      });
-      container.addEventListener("touchstart", function () {
-        paused = true;
-      }, { passive: true });
+    showNext();
+    if (items.length > 1) {
+      window.setInterval(showNext, 8000);
     }
-
-    return timer;
-  }
-
-  function initWishStats(stats, total) {
-    var wrap = document.getElementById("zs-wish-stats");
-    if (!wrap || !stats) return;
-
-    var parts = [];
-    if (total) {
-      parts.push(
-        '<div class="zs-stats__item"><div class="zs-stats__value">' +
-          total +
-          '</div><div class="zs-stats__label">個竹願</div></div>'
-      );
-    }
-    if (stats.firstVisitCount != null && total) {
-      var pct = Math.round((stats.firstVisitCount / total) * 100);
-      parts.push(
-        '<div class="zs-stats__item"><div class="zs-stats__value">' +
-          pct +
-          '%</div><div class="zs-stats__label">第一次來到這個場域</div></div>'
-      );
-    }
-    if (stats.localCount != null && total) {
-      var loc = Math.round((stats.localCount / total) * 100);
-      parts.push(
-        '<div class="zs-stats__item"><div class="zs-stats__value">' +
-          loc +
-          '%</div><div class="zs-stats__label">來自竹山／南投</div></div>'
-      );
-    }
-    if (stats.favorite) {
-      var topFav = topKey(stats.favorite);
-      if (topFav) {
-        parts.push(
-          '<div class="zs-stats__item"><div class="zs-stats__value">' +
-            escapeHtml(topFav) +
-            '</div><div class="zs-stats__label">最有感互動</div></div>'
-        );
-      }
-    }
-
-    var html = "";
-    if (parts.length) {
-      html += '<div class="zs-stats__grid">' + parts.join("") + "</div>";
-    }
-    if (stats.futureTheme) {
-      html += renderBars("大家希望未來的竹山多一點什麼", stats.futureTheme);
-    }
-
-    if (!html) {
-      wrap.hidden = true;
-      return;
-    }
-    wrap.hidden = false;
-    wrap.innerHTML = html;
-    requestAnimationFrame(function () {
-      wrap.querySelectorAll(".zs-bar__fill").forEach(function (el) {
-        el.style.width = el.getAttribute("data-w") + "%";
-      });
-    });
-  }
-
-  function topKey(obj) {
-    var best = "";
-    var n = -1;
-    Object.keys(obj).forEach(function (k) {
-      if (obj[k] > n) {
-        n = obj[k];
-        best = k;
-      }
-    });
-    return best;
-  }
-
-  function renderBars(title, obj) {
-    var keys = Object.keys(obj);
-    if (!keys.length) return "";
-    var max = 0;
-    keys.forEach(function (k) {
-      if (obj[k] > max) max = obj[k];
-    });
-    keys.sort(function (a, b) {
-      return obj[b] - obj[a];
-    });
-    var rows = keys
-      .map(function (k) {
-        var w = max ? Math.round((obj[k] / max) * 100) : 0;
-        return (
-          '<div class="zs-bar">' +
-          '<span class="zs-bar__label">' +
-          escapeHtml(k) +
-          "</span>" +
-          '<span class="zs-bar__n">' +
-          obj[k] +
-          "</span>" +
-          '<div class="zs-bar__track"><div class="zs-bar__fill" data-w="' +
-          w +
-          '"></div></div>' +
-          "</div>"
-        );
-      })
-      .join("");
-    return (
-      '<div class="zs-bars"><p class="zs-bars__title">' +
-      escapeHtml(title) +
-      "</p>" +
-      rows +
-      "</div>"
-    );
   }
 
   function wrapCanvasText(ctx, text, maxWidth) {
@@ -384,7 +419,6 @@
       return;
     }
 
-    var max = cfg.wishCard.maxLength || 70;
     var input = document.getElementById("zs-card-input");
     var count = document.getElementById("zs-card-count");
     var gen = document.getElementById("zs-card-generate");
@@ -396,7 +430,7 @@
     var note = document.getElementById("zs-card-share-note");
     if (!input || !gen || !canvas) return;
 
-    input.setAttribute("maxlength", String(max));
+    input.setAttribute("maxlength", String(MAX_LEN));
     input.addEventListener("input", function () {
       if (count) count.textContent = String(input.value.length);
     });
@@ -412,7 +446,7 @@
         if (textEl) {
           textEl.textContent = "「" + msg + "」 — 我的竹願，2026・竹山";
         }
-        track("wish_card_generate");
+        track("wish_card_generate", { page: "zhushan" });
       });
     });
 
@@ -469,7 +503,7 @@
       ctx.fillStyle = "#111111";
       ctx.font = '48px "Noto Serif TC", "PingFang TC", serif';
       var lines = wrapCanvasText(ctx, "「" + message + "」", 780);
-      var startY = 520 - ((lines.length - 1) * 32);
+      var startY = 520 - (lines.length - 1) * 32;
       lines.forEach(function (line, i) {
         ctx.fillText(line, w / 2, startY + i * 72);
       });
@@ -486,8 +520,6 @@
       ctx.fillStyle = "#8A8882";
       ctx.font = '22px "Noto Sans TC", sans-serif';
       ctx.fillText(cfg.wishCard.url || "hoyao.com/zhushan/", w / 2, 1170);
-      ctx.font = '18px "Noto Sans TC", sans-serif';
-      ctx.fillText("HOYAO", w / 2, 1280);
     }
 
     if (document.fonts && document.fonts.ready) {
@@ -521,9 +553,10 @@
         nav
           .share(canFiles ? withFile : data)
           .then(function () {
-            track("wish_card_share");
+            track("wish_card_share", { page: "zhushan" });
           })
-          .catch(function () {
+          .catch(function (err) {
+            if (err && err.name === "AbortError") return;
             if (note) note.hidden = false;
             downloadWishCard(canvas);
           });
@@ -539,21 +572,21 @@
     a.href = canvas.toDataURL("image/png");
     a.download = "zhushan-wish.png";
     a.click();
-    track("wish_card_download");
+    track("wish_card_download", { page: "zhushan" });
   }
 
   function initCommunityShare() {
     var btn = document.getElementById("zs-community-share-btn");
     if (!btn) return;
     var url = cfg.communityShareFormUrl;
-    if (!url) {
+    if (!isSafeHttpUrl(url)) {
       btn.hidden = true;
       return;
     }
     btn.hidden = false;
     btn.addEventListener("click", function () {
-      track("community_post_submit");
-      window.open(url, "_blank", "noopener");
+      track("community_post_submit", { page: "zhushan" });
+      window.open(url, "_blank", "noopener,noreferrer");
     });
   }
 
@@ -574,7 +607,7 @@
       })
       .then(function (data) {
         var items = (data.items || []).filter(function (it) {
-          return it.approved === true;
+          return it.approved === true && (!it.url || isSafeHttpUrl(it.url));
         }).slice(0, 12);
         if (!items.length) {
           showSection("community-moments", false);
@@ -583,13 +616,20 @@
         showSection("community-moments", true);
         grid.innerHTML = items
           .map(function (it) {
-            var img = it.image
-              ? '<img src="' +
-                escapeHtml(it.image) +
-                '" alt="' +
-                escapeHtml(it.text || "竹山片刻") +
-                '" width="800" height="1000" loading="lazy">'
-              : "";
+            var img =
+              it.image && isSafeHttpUrl(it.image)
+                ? '<img src="' +
+                  escapeHtml(it.image) +
+                  '" alt="' +
+                  escapeHtml(it.text || "竹山片刻") +
+                  '" width="800" height="1000" loading="lazy">'
+                : it.image && String(it.image).charAt(0) === "/"
+                ? '<img src="' +
+                  escapeHtml(it.image) +
+                  '" alt="' +
+                  escapeHtml(it.text || "竹山片刻") +
+                  '" width="800" height="1000" loading="lazy">'
+                : "";
             return (
               '<article class="zs-moment">' +
               img +
@@ -598,10 +638,10 @@
               escapeHtml(it.handle || "") +
               (it.platform ? " ・ " + escapeHtml(it.platform) : "") +
               "</p>" +
-              (it.url
+              (it.url && isSafeHttpUrl(it.url)
                 ? '<a href="' +
                   escapeHtml(it.url) +
-                  '" rel="noopener" target="_blank" data-zs-external="community">查看原分享 →</a>'
+                  '" rel="noopener noreferrer" target="_blank" data-entity="community_moment" data-channel="original_post">查看原分享 →</a>'
                 : "") +
               "</article>"
             );
@@ -613,6 +653,10 @@
       });
   }
 
+  function youtubeIdSafe(id) {
+    return typeof id === "string" && /^[A-Za-z0-9_-]{11}$/.test(id);
+  }
+
   function initProcess() {
     var section = document.getElementById("process");
     var grid = document.getElementById("zs-process-grid");
@@ -621,9 +665,12 @@
     var items = ((cfg.images && cfg.images.process) || []).filter(function (it) {
       return isRealSrc(it.src);
     });
+    var youtubeId = cfg.video && cfg.video.youtubeId;
     var videoUrl = cfg.video && cfg.video.url;
+    var hasYt = youtubeIdSafe(youtubeId);
+    var hasMp4 = isSafeHttpUrl(videoUrl);
 
-    if (!items.length && !videoUrl) {
+    if (!items.length && !hasYt && !hasMp4) {
       showSection("process", false);
       return;
     }
@@ -654,18 +701,47 @@
       .join("");
 
     var videoWrap = document.getElementById("zs-video");
-    if (videoWrap && videoUrl) {
+    if (!videoWrap) return;
+
+    if (hasYt) {
+      videoWrap.hidden = false;
+      var poster = cfg.video.poster && isRealSrc(cfg.video.poster) ? cfg.video.poster : "";
+      var title = cfg.video.title || "播放影片";
+      videoWrap.innerHTML =
+        '<button type="button" class="zs-video__poster" id="zs-yt-play">' +
+        (poster ? '<img src="' + escapeHtml(poster) + '" alt="">' : "") +
+        "<span>播放「" +
+        escapeHtml(title) +
+        "」</span></button>";
+      var play = document.getElementById("zs-yt-play");
+      if (play) {
+        play.addEventListener("click", function () {
+          videoWrap.innerHTML =
+            '<iframe src="https://www.youtube-nocookie.com/embed/' +
+            youtubeId +
+            '?autoplay=1" title="' +
+            escapeHtml(title) +
+            '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+          track("process_video_play", { page: "zhushan", type: "youtube" });
+        });
+      }
+      return;
+    }
+
+    if (hasMp4) {
       videoWrap.hidden = false;
       videoWrap.innerHTML =
         '<video class="zs-video__player" controls preload="metadata" playsinline' +
-        (cfg.video.poster ? ' poster="' + cfg.video.poster + '"' : "") +
+        (cfg.video.poster && isRealSrc(cfg.video.poster)
+          ? ' poster="' + escapeHtml(cfg.video.poster) + '"'
+          : "") +
         ' width="1280" height="720"><source src="' +
-        videoUrl +
+        escapeHtml(videoUrl) +
         '" type="video/mp4"></video>';
       var video = videoWrap.querySelector("video");
       if (video) {
         video.addEventListener("play", function () {
-          track("process_video_play", { page: "zhushan" });
+          track("process_video_play", { page: "zhushan", type: "mp4" });
         });
       }
     }
@@ -699,61 +775,90 @@
         );
       }
     }
-
-    var link = document.getElementById("zs-venue-link");
-    if (link && cfg.externalLinks && cfg.externalLinks.venueStory) {
-      link.href = cfg.externalLinks.venueStory;
-      link.hidden = false;
-    }
   }
 
   function initExternalLinks() {
+    var links = cfg.externalLinks || {};
+    var nodes = document.querySelectorAll("[data-zs-link]");
+    for (var i = 0; i < nodes.length; i++) {
+      var a = nodes[i];
+      var url = links[a.getAttribute("data-zs-link")];
+      if (!isSafeHttpUrl(url)) {
+        a.hidden = true;
+        a.removeAttribute("href");
+        continue;
+      }
+      a.href = url;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+    }
+
     document.body.addEventListener("click", function (e) {
-      var a = e.target.closest && e.target.closest("[data-zs-external]");
-      if (!a) return;
+      var link = e.target.closest && e.target.closest("a[data-entity]");
+      if (!link || !link.href) return;
       track("external_link_click", {
-        link_id: a.getAttribute("data-zs-external"),
-        url: a.href,
+        entity: link.getAttribute("data-entity"),
+        channel: link.getAttribute("data-channel") || "",
+        url: link.href,
       });
     });
   }
 
   function initScrollDepth() {
-    if (!("IntersectionObserver" in window)) return;
     var marks = [25, 50, 75, 90];
     var fired = {};
-    var sections = document.querySelectorAll(".zs-section[id]");
-    var observer = new IntersectionObserver(
-      function (entries) {
-        entries.forEach(function (entry) {
-          if (!entry.isIntersecting) return;
-          var id = entry.target.id;
-          marks.forEach(function (m) {
-            if (entry.intersectionRatio * 100 >= m && !fired[id + "-" + m]) {
-              fired[id + "-" + m] = true;
-              track("scroll_depth", { section: id, depth: m });
-            }
-          });
-        });
+    var ticking = false;
+
+    function measure() {
+      ticking = false;
+      var doc = document.documentElement;
+      var body = document.body;
+      var height = Math.max(
+        doc.scrollHeight,
+        body ? body.scrollHeight : 0,
+        doc.offsetHeight
+      );
+      var max = height - window.innerHeight;
+      if (max <= 0) return;
+      var pct = (window.scrollY / max) * 100;
+      marks.forEach(function (m) {
+        if (pct >= m && !fired[m]) {
+          fired[m] = true;
+          track("scroll_depth", { page: "zhushan", depth: m });
+        }
+      });
+    }
+
+    window.addEventListener(
+      "scroll",
+      function () {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(measure);
       },
-      { threshold: [0, 0.25, 0.5, 0.75, 0.9] }
+      { passive: true }
     );
-    sections.forEach(function (el) {
-      observer.observe(el);
-    });
   }
 
   function initOutcomes() {
     var section = document.getElementById("outcomes");
-    if (!section || !cfg.outcomes || !cfg.outcomes.visible) return;
-    section.hidden = false;
+    if (!section) return;
+    var o = cfg.outcomes || {};
+    var hasReal =
+      o.visible === true &&
+      (o.validSamples ||
+        o.participants ||
+        o.digitalWishes ||
+        o.firstVisitRate ||
+        o.perceptionChangeRate);
+    section.hidden = !hasReal;
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    track("zhushan_project_view");
+    track("zhushan_project_view", { page: "zhushan" });
     initRevealAnimations();
     initHeroMotion();
-    initWishForm();
+    initPassingThought();
     initWishesWall();
     initWishCard();
     initCommunityMoments();

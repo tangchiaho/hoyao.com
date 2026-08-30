@@ -1,6 +1,6 @@
 /**
  * 竹山開飯了 — 作品專頁集中設定
- * 替換照片、表單、API、社群資料時，優先修改此檔。
+ * 替換照片、表單、社群資料時，優先修改此檔。
  */
 window.ZHUSHAN_CONFIG = {
   slug: "zhushan",
@@ -9,6 +9,7 @@ window.ZHUSHAN_CONFIG = {
   dataMode: "static",
 
   googleFormUrl: "",
+  googleFormWishEntry: "",
   wishesApiUrl: "",
   staticWishesUrl: "/assets/data/zhushan-wishes.json",
   useMockWishes: false,
@@ -28,14 +29,17 @@ window.ZHUSHAN_CONFIG = {
   },
 
   video: {
+    type: "youtube",
+    youtubeId: "",
     url: "",
     poster: "",
     title: "從材料到作品",
+    duration: "",
   },
 
   images: {
     hero: {
-      src: "/assets/images/projects/zhushan/placeholder-hero.svg",
+      src: "",
       alt: "竹山開飯了－竹子重生的永續花園",
       width: 1600,
       height: 900,
@@ -53,7 +57,13 @@ window.ZHUSHAN_CONFIG = {
   ogImage: "https://hoyao.com/assets/images/projects/zhushan/og-image.png",
 
   externalLinks: {
-    venueStory: "",
+    taixiMap: "https://share.google/7UQXuN2FdtoffdhMn",
+    zhuchingtingMap: "https://share.google/JviOZVssQLkXxWZEd",
+    incubationVillageWebsite: "https://zrsi.org/",
+    incubationVillageFacebook: "https://www.facebook.com/zrsi2021/",
+    youthDevelopmentWebsite: "https://youth.nantou.gov.tw/zh-TW",
+    townCultureFacebook: "https://www.facebook.com/townway104/",
+    bambooSponsorWebsite: "https://www.taiwanbamboo.shop/",
   },
 
   outcomes: {
@@ -63,6 +73,12 @@ window.ZHUSHAN_CONFIG = {
     digitalWishes: null,
     onsiteWishes: null,
     pageViews: null,
+    validSamples: null,
+    firstVisitRate: null,
+    perceptionChangeRate: null,
+    willingnessToTryRate: null,
+    topApplications: null,
+    topDecisionFactors: null,
   },
 
   gaMeasurementId: "",

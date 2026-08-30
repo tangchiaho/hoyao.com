@@ -1,5 +1,5 @@
 /**
- * 竹山開飯了 V4.6 — Bamboo Visual System
+ * 竹山開飯了 V4.7 — Visual completion
  * Native scroll only. Analytics scroll depth does not mutate visuals.
  */
 (function () {
@@ -11,6 +11,8 @@
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var animOn = cfg.animations && cfg.animations.enabled !== false && !reduceMotion;
   var MAX_LEN = (cfg.wishCard && cfg.wishCard.maxLength) || 70;
+  var CARD_SIZE = (cfg.wishCard && cfg.wishCard.size) || 1080;
+  var qrImagePromise = null;
 
   function track(eventName, params) {
     if (typeof window.gtag === "function") {
@@ -28,7 +30,33 @@
 
   function isRealSrc(src) {
     if (!src) return false;
-    return src.indexOf("placeholder-") === -1;
+    if (src.indexOf("placeholder-") !== -1) return false;
+    if (src.indexOf("/placeholders/") !== -1) return false;
+    return true;
+  }
+
+  function placeholdersOn() {
+    return !!(cfg.placeholders && cfg.placeholders.enabled);
+  }
+
+  function canDisplayImage(img) {
+    if (!img || !img.src) return false;
+    if (img.placeholder) return placeholdersOn();
+    return isRealSrc(img.src);
+  }
+
+  function loadQrImage() {
+    if (qrImagePromise) return qrImagePromise;
+    var src =
+      (cfg.placeholders && cfg.placeholders.qr) ||
+      "/assets/placeholders/zhushan/qr-zhushan.png";
+    qrImagePromise = new Promise(function (resolve) {
+      var img = new Image();
+      img.onload = function () { resolve(img); };
+      img.onerror = function () { resolve(null); };
+      img.src = src;
+    });
+    return qrImagePromise;
   }
 
   function isSafeHttpUrl(url) {
@@ -115,9 +143,10 @@
     var header = document.querySelector(".zs-hero");
     var visual = document.getElementById("zs-hero-visual");
     var h = cfg.images && cfg.images.hero;
-    var real = h && isRealSrc(h.src);
+    var show = h && canDisplayImage(h);
+    var isPh = !!(h && h.placeholder);
 
-    if (figure && hero && real) {
+    if (figure && hero && show) {
       figure.hidden = false;
       hero.src = h.src;
       hero.alt = h.alt || "";
@@ -128,7 +157,11 @@
         cap.hidden = false;
         cap.textContent = h.caption;
       }
-      if (header) header.classList.add("zs-hero--has-photo");
+      if (header) {
+        header.classList.add("zs-hero--has-photo");
+        if (isPh) header.classList.add("zs-hero--placeholder");
+      }
+      if (visual) visual.hidden = false;
     } else {
       if (figure) figure.hidden = true;
       if (visual) visual.hidden = false;
@@ -184,8 +217,34 @@
     if (status) status.hidden = false;
   }
 
+  function setCardStatus(msg, show) {
+    var el = document.getElementById("zs-card-action-status");
+    if (!el) return;
+    if (!show) {
+      el.hidden = true;
+      el.textContent = "";
+      return;
+    }
+    el.hidden = false;
+    el.textContent = msg;
+  }
+
+  function syncCardPreview(canvas) {
+    var preview = document.getElementById("zs-card-preview");
+    if (!preview || !canvas) return;
+    preview.src = canvas.toDataURL("image/png");
+  }
+
+  function defaultShareText() {
+    return (
+      (cfg.wishCard && cfg.wishCard.shareText) ||
+      "我在《竹山開飯了》留下了一張竹願卡。\n從竹林到餐桌，再從餐桌回到土地。\nhttps://hoyao.com/zhushan"
+    );
+  }
+
   function initComposer() {
     var input = document.getElementById("zs-thought-input");
+    var signer = document.getElementById("zs-signer-input");
     var count = document.getElementById("zs-thought-count");
     var ephemeralBtn = document.getElementById("zs-ephemeral-btn");
     var keepBtn = document.getElementById("zs-keep-wish-btn");
@@ -196,7 +255,8 @@
     var textEl = document.getElementById("zs-card-text");
     var shareBtn = document.getElementById("zs-card-share");
     var dlBtn = document.getElementById("zs-card-download");
-    var note = document.getElementById("zs-card-share-note");
+    var copyLinkBtn = document.getElementById("zs-card-copy-link");
+    var copyTextBtn = document.getElementById("zs-card-copy-text");
     var passedOnce = false;
     var cardEnabled = cfg.wishCard && cfg.wishCard.enabled !== false;
 
@@ -256,15 +316,20 @@
         input.focus();
         return;
       }
-      drawWishCard(canvas, msg).then(function () {
+      var name = signer ? signer.value.trim() : "";
+      drawWishCard(canvas, msg, name).then(function () {
+        syncCardPreview(canvas);
         result.hidden = false;
         result.classList.remove("is-ready");
         void result.offsetWidth;
         result.classList.add("is-ready");
         if (textEl) {
-          textEl.textContent = "「" + msg + "」 — 我的竹願，2026・竹山";
+          textEl.textContent =
+            "「" + msg + "」 — 我的竹願" + (name ? "・" + name : "") + "，2026・竹山";
         }
+        setCardStatus("", false);
         track("wish_card_generate", { page: "zhushan" });
+        result.scrollIntoView({ behavior: "auto", block: "nearest" });
       });
     }
 
@@ -278,12 +343,30 @@
 
     if (shareBtn) {
       shareBtn.addEventListener("click", function () {
-        shareWishCard(canvas, note);
+        shareWishCard(canvas);
       });
     }
     if (dlBtn) {
       dlBtn.addEventListener("click", function () {
         downloadWishCard(canvas);
+        setCardStatus("已開始下載 PNG。也可長按上方卡片儲存。", true);
+      });
+    }
+    if (copyLinkBtn) {
+      copyLinkBtn.addEventListener("click", function () {
+        var url = (cfg.wishCard && cfg.wishCard.url) || "https://hoyao.com/zhushan/";
+        copyText(url).then(function (ok) {
+          setCardStatus(ok ? "已複製連結" : "無法複製，請手動選取連結", true);
+          if (ok) track("wish_card_copy_link", { page: "zhushan" });
+        });
+      });
+    }
+    if (copyTextBtn) {
+      copyTextBtn.addEventListener("click", function () {
+        copyText(defaultShareText()).then(function (ok) {
+          setCardStatus(ok ? "已複製分享文案" : "無法複製，請手動選取文案", true);
+          if (ok) track("wish_card_copy_text", { page: "zhushan" });
+        });
       });
     }
 
@@ -302,6 +385,33 @@
           reaction_text: label,
         });
       });
+    }
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).then(
+        function () { return true; },
+        function () { return fallbackCopy(text); }
+      );
+    }
+    return Promise.resolve(fallbackCopy(text));
+  }
+
+  function fallbackCopy(text) {
+    try {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    } catch (e) {
+      return false;
     }
   }
 
@@ -404,84 +514,143 @@
     return lines;
   }
 
-  function drawWishCard(canvas, message) {
+  function drawWishCard(canvas, message, signer) {
     var ctx = canvas.getContext("2d");
-    var w = 1080;
-    var h = 1350;
+    var w = CARD_SIZE;
+    var h = CARD_SIZE;
     canvas.width = w;
     canvas.height = h;
+    signer = signer || "";
 
-    function paint() {
-      ctx.fillStyle = "#F5F4EF";
+    function paint(qrImg) {
+      /* paper */
+      ctx.fillStyle = "#F5F3EC";
       ctx.fillRect(0, 0, w, h);
 
+      /* fiber texture */
       ctx.save();
       ctx.globalAlpha = 0.045;
-      ctx.strokeStyle = "#3a4a38";
+      ctx.strokeStyle = "#3A4A38";
       ctx.lineWidth = 1;
-      for (var i = 0; i < 18; i++) {
+      var i;
+      for (i = 0; i < 22; i++) {
         ctx.beginPath();
-        ctx.moveTo(40 + i * 62, 0);
-        ctx.lineTo(10 + i * 62, h);
+        ctx.moveTo(30 + i * 52, 0);
+        ctx.lineTo(-20 + i * 52, h);
         ctx.stroke();
       }
       ctx.restore();
 
-      /* small bamboo ring mark */
+      /* soft leaf shadow */
       ctx.save();
-      ctx.strokeStyle = "#3a4a38";
-      ctx.globalAlpha = 0.35;
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.arc(w / 2, 130, 14, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(w / 2, 130, 7, 0, Math.PI * 2);
-      ctx.stroke();
+      ctx.globalAlpha = 0.035;
+      var grd = ctx.createRadialGradient(w * 0.78, h * 0.22, 10, w * 0.78, h * 0.22, 220);
+      grd.addColorStop(0, "#3A4A38");
+      grd.addColorStop(1, "rgba(58,74,56,0)");
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, w, h);
       ctx.restore();
 
+      /* bamboo stems decoration left */
+      ctx.save();
+      ctx.strokeStyle = "#3A4A38";
+      ctx.fillStyle = "#3A4A38";
+      [[48, 0.18, 1.2], [78, 0.28, 1.5], [108, 0.14, 1.05]].forEach(function (stem) {
+        ctx.globalAlpha = stem[1];
+        ctx.lineWidth = stem[2];
+        ctx.beginPath();
+        ctx.moveTo(stem[0], h - 40);
+        ctx.lineTo(stem[0], 120);
+        ctx.stroke();
+        [220, 380, 560, 760].forEach(function (y) {
+          ctx.beginPath();
+          ctx.arc(stem[0], y, 2.4, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      });
+      ctx.restore();
+
+      /* ring motif top-right */
+      ctx.save();
+      ctx.globalAlpha = 0.28;
+      ctx.strokeStyle = "#3A4A38";
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.arc(w - 120, 150, 36, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(w - 120, 150, 20, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(w - 120, 150, 6, 0, Math.PI * 2);
+      ctx.fillStyle = "#3A4A38";
+      ctx.fill();
+      ctx.restore();
+
+      /* border */
+      ctx.strokeStyle = "#D4D1C9";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(48, 48, w - 96, h - 96);
+
+      ctx.textAlign = "center";
       ctx.fillStyle = "#8A8780";
       ctx.font = '28px "Noto Sans TC", "PingFang TC", sans-serif';
-      ctx.textAlign = "center";
-      ctx.fillText("竹山開飯了", w / 2, 200);
+      ctx.fillText("竹山開飯了", w / 2, 160);
 
       ctx.fillStyle = "#5A5852";
-      ctx.font = '32px "Noto Serif TC", "PingFang TC", serif';
-      ctx.fillText("竹子重生的永續花園", w / 2, 260);
+      ctx.font = '30px "Noto Serif TC", "PingFang TC", serif';
+      ctx.fillText("竹子重生的永續花園", w / 2, 210);
 
       ctx.strokeStyle = "#D4D1C9";
       ctx.beginPath();
-      ctx.moveTo(360, 320);
-      ctx.lineTo(720, 320);
+      ctx.moveTo(w * 0.32, 248);
+      ctx.lineTo(w * 0.68, 248);
       ctx.stroke();
+      /* tiny node on rule */
+      ctx.fillStyle = "#3A4A38";
+      ctx.globalAlpha = 0.45;
+      ctx.beginPath();
+      ctx.arc(w / 2, 248, 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
 
       ctx.fillStyle = "#1A1A18";
-      ctx.font = '48px "Noto Serif TC", "PingFang TC", serif';
-      var lines = wrapCanvasText(ctx, "「" + message + "」", 780);
-      var startY = 520 - (lines.length - 1) * 32;
-      lines.forEach(function (line, i) {
-        ctx.fillText(line, w / 2, startY + i * 72);
+      ctx.font = '46px "Noto Serif TC", "PingFang TC", serif';
+      var lines = wrapCanvasText(ctx, "「" + message + "」", w * 0.68);
+      var startY = 430 - (lines.length - 1) * 28;
+      lines.forEach(function (line, idx) {
+        ctx.fillText(line, w / 2, startY + idx * 64);
       });
 
       ctx.fillStyle = "#8A8780";
       ctx.font = '24px "Noto Sans TC", "PingFang TC", sans-serif';
-      ctx.fillText("我的竹願", w / 2, 980);
-      ctx.fillText("2026・竹山", w / 2, 1024);
+      ctx.fillText(signer ? signer : "匿名", w / 2, 640);
+      ctx.fillText("我的竹願 · 2026・竹山", w / 2, 680);
 
-      ctx.fillStyle = "#3a4a38";
-      ctx.font = '26px "Noto Serif TC", serif';
-      ctx.fillText(cfg.wishCard.hashtag || "#竹山開飯了", w / 2, 1120);
+      /* footer */
+      ctx.fillStyle = "#3A4A38";
+      ctx.font = '22px "Noto Serif TC", serif';
+      ctx.fillText(cfg.wishCard.hashtag || "#竹山開飯了", w / 2, 780);
 
       ctx.fillStyle = "#8A8780";
-      ctx.font = '22px "Noto Sans TC", sans-serif';
-      ctx.fillText(cfg.wishCard.url || "hoyao.com/zhushan/", w / 2, 1170);
+      ctx.font = '20px "Noto Sans TC", sans-serif';
+      ctx.fillText("hoyao.com/zhushan", w / 2 - 40, 860);
+      ctx.fillText("竹語・竹願・歸土", w / 2 - 40, 896);
+
+      if (qrImg) {
+        var qs = 88;
+        ctx.drawImage(qrImg, w / 2 + 150, 820, qs, qs);
+      }
     }
 
-    if (document.fonts && document.fonts.ready) {
-      return document.fonts.ready.then(paint);
-    }
-    paint();
-    return Promise.resolve();
+    return loadQrImage().then(function (qr) {
+      if (document.fonts && document.fonts.ready) {
+        return document.fonts.ready.then(function () {
+          paint(qr);
+        });
+      }
+      paint(qr);
+    });
   }
 
   function canvasToFile(canvas) {
@@ -492,32 +661,30 @@
     });
   }
 
-  function shareWishCard(canvas, note) {
-    var text =
-      "我在《竹山開飯了》留下了一個竹願。\n" +
-      (cfg.wishCard.hashtag || "#竹山開飯了") +
-      "\n" +
-      (cfg.wishCard.url || "https://hoyao.com/zhushan/");
+  function shareWishCard(canvas) {
+    var text = defaultShareText();
+    var url = (cfg.wishCard && cfg.wishCard.url) || "https://hoyao.com/zhushan/";
 
     canvasToFile(canvas).then(function (file) {
       var nav = navigator;
       if (nav.share) {
-        var data = { title: "竹山開飯了", text: text, url: cfg.wishCard.url };
+        var data = { title: "竹山開飯了", text: text, url: url };
         var withFile = { title: data.title, text: data.text, files: [file] };
         var canFiles = nav.canShare && nav.canShare(withFile);
         nav
           .share(canFiles ? withFile : data)
           .then(function () {
+            setCardStatus("已開啟系統分享", true);
             track("wish_card_share", { page: "zhushan" });
           })
           .catch(function (err) {
             if (err && err.name === "AbortError") return;
-            if (note) note.hidden = false;
+            setCardStatus("可長按儲存圖片後，分享至 IG 限動、Facebook 或 LINE", true);
             downloadWishCard(canvas);
           });
         return;
       }
-      if (note) note.hidden = false;
+      setCardStatus("可長按儲存圖片後，分享至 IG 限動、Facebook 或 LINE", true);
       downloadWishCard(canvas);
     });
   }
@@ -619,9 +786,7 @@
     var grid = document.getElementById("zs-process-grid");
     if (!section || !grid) return;
 
-    var items = ((cfg.images && cfg.images.process) || []).filter(function (it) {
-      return isRealSrc(it.src);
-    });
+    var items = ((cfg.images && cfg.images.process) || []).filter(canDisplayImage);
     var youtubeId = cfg.video && cfg.video.youtubeId;
     var videoUrl = cfg.video && cfg.video.url;
     var hasYt = youtubeIdSafe(youtubeId);
@@ -634,11 +799,16 @@
 
     showSection("process", true);
     grid.innerHTML = items
-      .map(function (it) {
-        var num = escapeHtml(it.id || "");
+      .map(function (it, idx) {
+        var num = escapeHtml(it.id || String(idx + 1).padStart(2, "0"));
         var stage = it.stage ? escapeHtml(it.stage) + " ・ " : "";
+        var ph = it.placeholder ? ' data-placeholder="true"' : "";
         return (
-          '<figure class="zs-process-item">' +
+          '<figure class="zs-process-item' +
+          (it.placeholder ? " is-placeholder" : "") +
+          '"' +
+          ph +
+          ">" +
           (num ? '<span class="zs-process-item__num">' + num + "</span>" : "") +
           '<img src="' +
           escapeHtml(it.src) +
@@ -662,7 +832,13 @@
 
     if (hasYt) {
       videoWrap.hidden = false;
-      var poster = cfg.video.poster && isRealSrc(cfg.video.poster) ? cfg.video.poster : "";
+      var poster = cfg.video.poster && canDisplayImage({ src: cfg.video.poster, placeholder: false })
+        ? cfg.video.poster
+        : cfg.video.poster && placeholdersOn()
+        ? cfg.video.poster
+        : "";
+      if (cfg.video.poster && isRealSrc(cfg.video.poster)) poster = cfg.video.poster;
+      else poster = "";
       var title = cfg.video.title || "播放影片";
       videoWrap.innerHTML =
         '<button type="button" class="zs-video__poster" id="zs-yt-play">' +
@@ -705,14 +881,79 @@
   }
 
   function initVenue() {
-    var fig = document.getElementById("zs-venue-figure");
-    var img = document.getElementById("zs-venue-img");
-    var venue = cfg.images && cfg.images.venue;
-    if (fig && img && venue && isRealSrc(venue.src)) {
-      fig.hidden = false;
-      img.src = venue.src;
-      img.alt = venue.alt || "";
+    var gallery = document.getElementById("zs-venue-gallery");
+    var items = ((cfg.images && cfg.images.venueGallery) || []).filter(canDisplayImage);
+    if (gallery && items.length) {
+      gallery.innerHTML = items
+        .map(function (it) {
+          var size = it.size || "medium";
+          return (
+            '<figure class="zs-venue-shot zs-venue-shot--' +
+            escapeHtml(size) +
+            (it.placeholder ? " is-placeholder" : "") +
+            '">' +
+            '<img src="' +
+            escapeHtml(it.src) +
+            '" width="' +
+            (it.width || 1200) +
+            '" height="' +
+            (it.height || 900) +
+            '" alt="' +
+            escapeHtml(it.alt || "") +
+            '" loading="lazy" decoding="async">' +
+            (it.caption
+              ? "<figcaption>" + escapeHtml(it.caption) + "</figcaption>"
+              : "") +
+            "</figure>"
+          );
+        })
+        .join("");
+    } else {
+      var fig = document.getElementById("zs-venue-figure");
+      var img = document.getElementById("zs-venue-img");
+      var venue = cfg.images && cfg.images.venue;
+      if (fig && img && venue && canDisplayImage(venue)) {
+        fig.hidden = false;
+        img.src = venue.src;
+        img.alt = venue.alt || "";
+      }
     }
+  }
+
+  function initWishGallery() {
+    var root = document.getElementById("zs-wish-gallery");
+    var section = document.getElementById("wish-gallery");
+    if (!root || !section) return;
+    var items = (cfg.wishGallery || []).filter(function (it) {
+      return it && it.message;
+    }).slice(0, 8);
+    if (!items.length) {
+      showSection("wish-gallery", false);
+      return;
+    }
+    showSection("wish-gallery", true);
+    root.innerHTML = items
+      .map(function (it) {
+        var signer = it.signer || "匿名";
+        return (
+          '<article class="zs-wish-card" aria-label="竹願卡範例">' +
+          '<p class="zs-wish-card__brand">竹山開飯了</p>' +
+          '<p class="zs-wish-card__sub">竹子重生的永續花園</p>' +
+          '<p class="zs-wish-card__wish">「' +
+          escapeHtml(it.message) +
+          "」</p>" +
+          '<p class="zs-wish-card__signer">' +
+          escapeHtml(signer) +
+          "</p>" +
+          '<div class="zs-wish-card__foot">' +
+          "<span>hoyao.com/zhushan</span>" +
+          '<span class="zs-wish-card__meta">竹語・竹願・歸土</span>' +
+          "</div>" +
+          '<span class="zs-wish-card__ring" aria-hidden="true"></span>' +
+          "</article>"
+        );
+      })
+      .join("");
   }
 
   function initExternalLinks() {
@@ -1218,6 +1459,8 @@
 
     mutatePreservingScroll(function () {
       root.innerHTML = html;
+      root.removeAttribute("aria-busy");
+      root.classList.add("is-ready");
       showSection("outcomes", true);
     });
   }
@@ -1257,10 +1500,12 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     track("zhushan_project_view", { page: "zhushan" });
+    loadQrImage();
     initHeroEntrance();
     initHeroMedia();
     initComposer();
     initWishesWall();
+    initWishGallery();
     initCommunityMoments();
     initCommunityShare();
     initProcess();

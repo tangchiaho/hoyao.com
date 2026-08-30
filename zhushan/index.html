@@ -31,7 +31,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
 <link rel="preload" href="/assets/data/zhushan-outcomes.json" as="fetch" crossorigin>
-<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v46">
+<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v47">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -75,7 +75,7 @@
   }
 }
 </script>
-<script src="/assets/js/zhushan-config.js?v=20260830-v46"></script>
+<script src="/assets/js/zhushan-config.js?v=20260830-v47"></script>
 <script>
 /* Early outcomes fetch — reduce mid-scroll layout insertion */
 window.__ZS_OUTCOMES_P = (function () {
@@ -267,6 +267,9 @@ window.__ZS_OUTCOMES_P = (function () {
 <textarea id="zs-thought-input" class="zs-composer__field" maxlength="70" rows="4" placeholder="留一句話給竹山……"></textarea>
 <p class="zs-composer__count"><span id="zs-thought-count">0</span> / 70</p>
 
+<label class="zs-composer__label zs-composer__label--soft" for="zs-signer-input">署名（可留空＝匿名）</label>
+<input type="text" id="zs-signer-input" class="zs-composer__signer" maxlength="20" placeholder="你的名字，或不填">
+
 <div class="zs-thought-actions">
 <div class="zs-thought-action">
 <button type="button" class="zs-btn zs-btn-ghost" id="zs-ephemeral-btn">讓它飄過</button>
@@ -295,14 +298,21 @@ window.__ZS_OUTCOMES_P = (function () {
 </div>
 
 <div id="zs-card-result" class="zs-card-result" hidden>
-<canvas id="zs-card-canvas" width="1080" height="1350" aria-hidden="true"></canvas>
+<div class="zs-card-result__preview">
+<img id="zs-card-preview" class="zs-card-preview" alt="你的竹願卡預覽" width="1080" height="1080">
+<canvas id="zs-card-canvas" width="1080" height="1080" hidden aria-hidden="true"></canvas>
+<p class="zs-card-save-hint">長按卡片即可儲存圖片<br>或點擊下方「下載 PNG」</p>
+</div>
 <p class="zs-card-text" id="zs-card-text"></p>
 <div class="zs-card-actions">
-<button type="button" class="zs-btn" id="zs-card-share">分享竹願卡</button>
-<button type="button" class="zs-btn zs-btn-ghost" id="zs-card-download">儲存竹願卡</button>
+<button type="button" class="zs-btn" id="zs-card-download">下載 PNG</button>
+<button type="button" class="zs-btn zs-btn-ghost" id="zs-card-share">分享</button>
+<button type="button" class="zs-btn zs-btn-ghost" id="zs-card-copy-link">複製連結</button>
+<button type="button" class="zs-btn zs-btn-ghost" id="zs-card-copy-text">複製文案</button>
 </div>
+<p class="zs-form-note" id="zs-card-action-status" hidden></p>
 <p class="zs-form-note">分享卡只在你的裝置產生，不會自動公開。</p>
-<p class="zs-form-note" id="zs-card-share-note" hidden>儲存圖片後分享至你喜歡的平台</p>
+<p class="zs-form-note zs-form-note--share">可長按儲存圖片後，分享至 IG 限動、Facebook 或 LINE</p>
 </div>
 </section>
 
@@ -316,29 +326,41 @@ window.__ZS_OUTCOMES_P = (function () {
 <div id="zs-wish-stats" class="zs-stats" hidden></div>
 </section>
 
-<div class="zs-divider" id="outcomes-rule" hidden aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
+<div class="zs-divider" id="wish-gallery-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section zs-section--data" id="outcomes" aria-labelledby="outcomes-title" hidden>
+<section class="zs-section zs-section--wide" id="wish-gallery" aria-labelledby="wish-gallery-title">
+<p class="zs-section__label">Wishes Gallery</p>
+<h2 class="zs-section__title" id="wish-gallery-title">竹願卡展示</h2>
+<p class="zs-section__lead">先看看竹願卡的整體質感。<br>正式收錄內容會持續更新。</p>
+<div class="zs-wish-gallery" id="zs-wish-gallery"></div>
+</section>
+
+<div class="zs-divider" id="outcomes-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
+
+<section class="zs-section zs-section--data zs-outcomes-reserve" id="outcomes" aria-labelledby="outcomes-title">
 <p class="zs-section__label">Observation</p>
 <h2 class="zs-section__title" id="outcomes-title">參與觀察</h2>
 <p class="zs-section__lead">作品不只被觀看，也透過竹語、竹願與歸土，<br>留下人與材料、場域及竹山之間的關係。</p>
-<div id="zs-outcomes-root"></div>
+<div id="zs-outcomes-root" class="zs-outcomes-root" aria-busy="true"></div>
 </section>
 
-<div class="zs-divider" id="process-rule" hidden aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
+<div class="zs-divider" id="process-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section zs-section--wide zs-section--editorial" id="process" aria-labelledby="process-title" hidden>
+<section class="zs-section zs-section--wide zs-section--editorial" id="process" aria-labelledby="process-title">
 <p class="zs-section__label">Process</p>
 <h2 class="zs-section__title" id="process-title">從材料到作品</h2>
+<p class="zs-section__lead">從竹材整理到進場布置——先以抽象視覺呈現工序節奏。<br><span class="zs-ph-note">圖像為 placeholder，可直接替換正式照片。</span></p>
 <div class="zs-process-grid" id="zs-process-grid"></div>
 <div class="zs-video" id="zs-video" hidden></div>
 </section>
 
 <div class="zs-divider" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
 
-<section class="zs-section" id="venue" aria-labelledby="venue-title">
+<section class="zs-section zs-section--wide zs-section--editorial" id="venue" aria-labelledby="venue-title">
 <p class="zs-section__label">Site</p>
 <h2 class="zs-section__title" id="venue-title">一個被重新使用的場域</h2>
+<p class="zs-section__lead">台西客運竹山站／竹青庭人文空間。<br><span class="zs-ph-note">場域圖像為 placeholder，待替換正式現場照片。</span></p>
+<div class="zs-venue-gallery" id="zs-venue-gallery"></div>
 <figure class="zs-venue__figure" id="zs-venue-figure" hidden>
 <img id="zs-venue-img" width="1600" height="900" alt="" loading="lazy" decoding="async">
 </figure>
@@ -429,6 +451,6 @@ window.__ZS_OUTCOMES_P = (function () {
 </footer>
 </div>
 
-<script src="/assets/js/zhushan.js?v=20260830-v46"></script>
+<script src="/assets/js/zhushan.js?v=20260830-v47"></script>
 </body>
 </html>

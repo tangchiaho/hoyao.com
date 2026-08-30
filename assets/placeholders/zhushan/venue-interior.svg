@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000" viewBox="0 0 1400 1000">
+<defs>
+  <linearGradient id="g-vi" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#E8E6DF"/>
+    <stop offset="100%" stop-color="#F5F4EF"/>
+  </linearGradient>
+  <pattern id="grain" patternUnits="userSpaceOnUse" width="120" height="120">
+    <path d="M0 20h120M0 55h120M0 90h120" stroke="#3A4A38" stroke-width="0.4" opacity="0.06"/>
+    <path d="M18 0v120M52 0v120M88 0v120" stroke="#3A4A38" stroke-width="0.35" opacity="0.05"/>
+  </pattern>
+</defs>
+<rect width="1400" height="1000" fill="url(#g-vi)"/>
+<rect width="1400" height="1000" fill="#F3F1EB"/>
+  <rect width="1400" height="1000" fill="url(#grain)" opacity="0.4"/>
+<g opacity="0.18">
+      <line x1="180" y1="1000" x2="180" y2="40" stroke="#3A4A38" stroke-width="1.2"/>
+      <circle cx="180" cy="100" r="2.4" fill="#3A4A38"/><circle cx="180" cy="180" r="2.4" fill="#3A4A38"/><circle cx="180" cy="270" r="2.4" fill="#3A4A38"/><circle cx="180" cy="360" r="2.4" fill="#3A4A38"/>
+    </g>
+<g opacity="0.28">
+      <line x1="260" y1="1000" x2="260" y2="70" stroke="#3A4A38" stroke-width="1.5499999999999998"/>
+      <circle cx="260" cy="130" r="2.4" fill="#3A4A38"/><circle cx="260" cy="210" r="2.4" fill="#3A4A38"/><circle cx="260" cy="300" r="2.4" fill="#3A4A38"/><circle cx="260" cy="390" r="2.4" fill="#3A4A38"/>
+    </g>
+<g opacity="0.38">
+      <line x1="340" y1="1000" x2="340" y2="100" stroke="#3A4A38" stroke-width="1.9"/>
+      <circle cx="340" cy="160" r="2.4" fill="#3A4A38"/><circle cx="340" cy="240" r="2.4" fill="#3A4A38"/><circle cx="340" cy="330" r="2.4" fill="#3A4A38"/><circle cx="340" cy="420" r="2.4" fill="#3A4A38"/>
+    </g>
+<g opacity="0.48">
+      <line x1="420" y1="1000" x2="420" y2="94" stroke="#3A4A38" stroke-width="1.2"/>
+      <circle cx="420" cy="154" r="2.4" fill="#3A4A38"/><circle cx="420" cy="234" r="2.4" fill="#3A4A38"/><circle cx="420" cy="324" r="2.4" fill="#3A4A38"/><circle cx="420" cy="414" r="2.4" fill="#3A4A38"/>
+    </g>
+<g opacity="0.18">
+      <line x1="500" y1="1000" x2="500" y2="124" stroke="#3A4A38" stroke-width="1.5499999999999998"/>
+      <circle cx="500" cy="184" r="2.4" fill="#3A4A38"/><circle cx="500" cy="264" r="2.4" fill="#3A4A38"/><circle cx="500" cy="354" r="2.4" fill="#3A4A38"/><circle cx="500" cy="444" r="2.4" fill="#3A4A38"/>
+    </g>
+<g opacity="0.28">
+      <line x1="580" y1="1000" x2="580" y2="64" stroke="#3A4A38" stroke-width="1.9"/>
+      <circle cx="580" cy="124" r="2.4" fill="#3A4A38"/><circle cx="580" cy="204" r="2.4" fill="#3A4A38"/><circle cx="580" cy="294" r="2.4" fill="#3A4A38"/><circle cx="580" cy="384" r="2.4" fill="#3A4A38"/>
+    </g>
+<g opacity="0.38">
+      <line x1="900" y1="1000" x2="900" y2="58" stroke="#3A4A38" stroke-width="1.2"/>
+      <circle cx="900" cy="118" r="2.4" fill="#3A4A38"/><circle cx="900" cy="198" r="2.4" fill="#3A4A38"/><circle cx="900" cy="288" r="2.4" fill="#3A4A38"/><circle cx="900" cy="378" r="2.4" fill="#3A4A38"/>
+    </g>
+<g opacity="0.48">
+      <line x1="980" y1="1000" x2="980" y2="88" stroke="#3A4A38" stroke-width="1.5499999999999998"/>
+      <circle cx="980" cy="148" r="2.4" fill="#3A4A38"/><circle cx="980" cy="228" r="2.4" fill="#3A4A38"/><circle cx="980" cy="318" r="2.4" fill="#3A4A38"/><circle cx="980" cy="408" r="2.4" fill="#3A4A38"/>
+    </g>
+<g opacity="0.18">
+      <line x1="1060" y1="1000" x2="1060" y2="118" stroke="#3A4A38" stroke-width="1.9"/>
+      <circle cx="1060" cy="178" r="2.4" fill="#3A4A38"/><circle cx="1060" cy="258" r="2.4" fill="#3A4A38"/><circle cx="1060" cy="348" r="2.4" fill="#3A4A38"/><circle cx="1060" cy="438" r="2.4" fill="#3A4A38"/>
+    </g>
+<g opacity="0.28">
+      <line x1="1140" y1="1000" x2="1140" y2="112" stroke="#3A4A38" stroke-width="1.2"/>
+      <circle cx="1140" cy="172" r="2.4" fill="#3A4A38"/><circle cx="1140" cy="252" r="2.4" fill="#3A4A38"/><circle cx="1140" cy="342" r="2.4" fill="#3A4A38"/><circle cx="1140" cy="432" r="2.4" fill="#3A4A38"/>
+    </g>
+<g transform="translate(700 520) scale(2.2)" opacity="0.22" fill="none" stroke="#3A4A38" stroke-width="1.2">
+    <ellipse cx="0" cy="8" rx="28" ry="10"/>
+    <path d="M-28 8 Q-26 -6 0 -10 Q26 -6 28 8"/>
+    <path d="M-8 -10 V-22 M8 -10 V-18" stroke-width="1"/>
+  </g>
+<g transform="translate(820 580) scale(1.4)" opacity="0.22" fill="none" stroke="#3A4A38" stroke-width="1.2">
+    <ellipse cx="0" cy="8" rx="28" ry="10"/>
+    <path d="M-28 8 Q-26 -6 0 -10 Q26 -6 28 8"/>
+    <path d="M-8 -10 V-22 M8 -10 V-18" stroke-width="1"/>
+  </g>
+<g opacity="0.2">
+    <circle cx="1100" cy="300" r="48" fill="none" stroke="#3A4A38" stroke-width="1"/>
+    <circle cx="1100" cy="300" r="26.400000000000002" fill="none" stroke="#3A4A38" stroke-width="0.8"/>
+    <circle cx="1100" cy="300" r="10.56" fill="#3A4A38" opacity="0.45"/>
+  </g>
+<rect x="0" y="944" width="1400" height="56" fill="#F3F1EB" opacity="0.92"/>
+  <text x="28" y="976" font-family="Georgia, 'Noto Serif TC', serif" font-size="15" fill="#5A5852">竹青庭人文空間  ·  內部氛圍（placeholder）</text>
+</svg>

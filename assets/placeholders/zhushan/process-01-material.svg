@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+<defs>
+  <linearGradient id="g-p0" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#E8E6DF"/>
+    <stop offset="100%" stop-color="#F5F4EF"/>
+  </linearGradient>
+  <pattern id="grain" patternUnits="userSpaceOnUse" width="120" height="120">
+    <path d="M0 20h120M0 55h120M0 90h120" stroke="#3A4A38" stroke-width="0.4" opacity="0.06"/>
+    <path d="M18 0v120M52 0v120M88 0v120" stroke="#3A4A38" stroke-width="0.35" opacity="0.05"/>
+  </pattern>
+</defs>
+<rect width="1200" height="900" fill="url(#g-p0)"/>
+<rect width="1200" height="900" fill="#F3F1EB"/>
+  <rect width="1200" height="900" fill="url(#grain)" opacity="0.4"/>
+<g opacity="0.18">
+      <line x1="200" y1="900" x2="200" y2="40" stroke="#3A4A38" stroke-width="1.2"/>
+      <circle cx="200" cy="100" r="2.4" fill="#3A4A38"/><circle cx="200" cy="180" r="2.4" fill="#3A4A38"/><circle cx="200" cy="270" r="2.4" fill="#3A4A38"/><circle cx="200" cy="360" r="2.4" fill="#3A4A38"/>
+    </g>
+<g opacity="0.28">
+      <line x1="270" y1="900" x2="270" y2="70" stroke="#3A4A38" stroke-width="1.5499999999999998"/>
+      <circle cx="270" cy="130" r="2.4" fill="#3A4A38"/><circle cx="270" cy="210" r="2.4" fill="#3A4A38"/><circle cx="270" cy="300" r="2.4" fill="#3A4A38"/><circle cx="270" cy="390" r="2.4" fill="#3A4A38"/>
+    </g>
+<g opacity="0.38">
+      <line x1="340" y1="900" x2="340" y2="100" stroke="#3A4A38" stroke-width="1.9"/>
+      <circle cx="340" cy="160" r="2.4" fill="#3A4A38"/><circle cx="340" cy="240" r="2.4" fill="#3A4A38"/><circle cx="340" cy="330" r="2.4" fill="#3A4A38"/><circle cx="340" cy="420" r="2.4" fill="#3A4A38"/>
+    </g>
+<g opacity="0.48">
+      <line x1="420" y1="900" x2="420" y2="94" stroke="#3A4A38" stroke-width="1.2"/>
+      <circle cx="420" cy="154" r="2.4" fill="#3A4A38"/><circle cx="420" cy="234" r="2.4" fill="#3A4A38"/><circle cx="420" cy="324" r="2.4" fill="#3A4A38"/><circle cx="420" cy="414" r="2.4" fill="#3A4A38"/>
+    </g>
+<g opacity="0.18">
+      <line x1="500" y1="900" x2="500" y2="124" stroke="#3A4A38" stroke-width="1.5499999999999998"/>
+      <circle cx="500" cy="184" r="2.4" fill="#3A4A38"/><circle cx="500" cy="264" r="2.4" fill="#3A4A38"/><circle cx="500" cy="354" r="2.4" fill="#3A4A38"/><circle cx="500" cy="444" r="2.4" fill="#3A4A38"/>
+    </g>
+<g opacity="0.25">
+    <circle cx="864" cy="315" r="70" fill="none" stroke="#3A4A38" stroke-width="1"/>
+    <circle cx="864" cy="315" r="38.5" fill="none" stroke="#3A4A38" stroke-width="0.8"/>
+    <circle cx="864" cy="315" r="15.4" fill="#3A4A38" opacity="0.45"/>
+  </g>
+<rect x="0" y="844" width="1200" height="56" fill="#F3F1EB" opacity="0.92"/>
+  <text x="28" y="876" font-family="Georgia, 'Noto Serif TC', serif" font-size="15" fill="#5A5852">竹材整理  ·  選竹、剖開、整理管材與節點</text>
+</svg>

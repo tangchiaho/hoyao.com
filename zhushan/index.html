@@ -31,7 +31,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
 <link rel="preload" href="/assets/data/zhushan-outcomes.json" as="fetch" crossorigin>
-<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v51">
+<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v53">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -75,7 +75,7 @@
   }
 }
 </script>
-<script src="/assets/js/zhushan-config.js?v=20260830-v51"></script>
+<script src="/assets/js/zhushan-config.js?v=20260830-v53"></script>
 <script>
 /* Early outcomes fetch — reduce mid-scroll layout insertion */
 window.__ZS_OUTCOMES_P = (function () {
@@ -317,39 +317,29 @@ window.__ZS_OUTCOMES_P = (function () {
 <button type="button" data-reaction-id="R06">祝竹山越來越好</button>
 </div>
 
-<div class="zs-live-field">
-<p class="zs-live-field__label">此刻正在飄過的話</p>
-<div class="zs-stage zs-stage--live" id="zs-reaction-stage" aria-hidden="true">
+<div class="zs-wishes-field" id="zs-wishes-field">
+<p class="zs-wishes-field__label">竹願舞台 · 有些話留下，有些話飄過</p>
+<div class="zs-stage zs-stage--wish" id="zs-reaction-stage">
 <div class="zs-stage__fiber" aria-hidden="true"></div>
+<div class="zs-stage__formal" id="zs-formal-layer" aria-live="polite"></div>
 </div>
 <p class="zs-live-status" id="zs-ephemeral-live" aria-live="polite"></p>
 </div>
 </div>
 
 <div id="zs-card-result" class="zs-card-result zs-card-result--story" hidden>
+<h3 class="zs-card-result__title" id="zs-card-result-title">你的竹願卡</h3>
 <div class="zs-card-result__preview">
 <img id="zs-card-preview" class="zs-card-preview zs-card-preview--story" alt="你的竹願卡預覽" width="1080" height="1920">
 <canvas id="zs-card-canvas" width="1080" height="1920" hidden aria-hidden="true"></canvas>
-<p class="zs-card-save-hint">長按卡片也可以儲存圖片</p>
 </div>
-<p class="zs-card-text" id="zs-card-text"></p>
 <div class="zs-card-actions">
 <button type="button" class="zs-btn" id="zs-card-share">分享竹願卡</button>
 <button type="button" class="zs-btn zs-btn-ghost" id="zs-card-download">儲存圖片</button>
 </div>
+<p class="zs-card-save-hint">長按卡片也可以儲存圖片。</p>
 <p class="zs-form-note" id="zs-card-action-status" hidden></p>
-<p class="zs-form-note">分享卡只在你的裝置產生，不會自動公開。</p>
 </div>
-</section>
-
-<div class="zs-divider" id="wishes-live-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
-
-<section class="zs-section" id="wishes-live" aria-labelledby="wishes-live-title">
-<p class="zs-section__label">Approved Wishes</p>
-<h2 class="zs-section__title" id="wishes-live-title">大家留下的竹願</h2>
-<p class="zs-section__lead">經整理後公開的正式竹願。<br>與上方「此刻飄過」不同——這裡是作品檔案。</p>
-<div id="zs-wishes-wall" class="zs-wishes__display zs-wishes__display--approved"></div>
-<div id="zs-wish-stats" class="zs-stats" hidden></div>
 </section>
 
 <div class="zs-divider" id="survey-rule" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
@@ -483,7 +473,7 @@ window.__ZS_OUTCOMES_P = (function () {
 </footer>
 </div>
 
-<script src="/assets/js/zhushan.js?v=20260830-v51"></script>
-<script src="/assets/js/zhushan-participation.js?v=20260830-v51"></script>
+<script src="/assets/js/zhushan.js?v=20260830-v53"></script>
+<script src="/assets/js/zhushan-participation.js?v=20260830-v53"></script>
 </body>
 </html>

@@ -254,37 +254,7 @@
   }
 
   function initWishesWall() {
-    var section = document.getElementById("wishes-live");
-    var wall = document.getElementById("zs-wishes-wall");
-    var stats = document.getElementById("zs-wish-stats");
-    if (stats) stats.hidden = true;
-    if (!section || !wall) return;
-
-    var url = wishesSourceUrl();
-    if (!isSafeHttpUrl(url) && url.indexOf("/") !== 0) {
-      showSection("wishes-live", false);
-      return;
-    }
-
-    fetch(url)
-      .then(function (r) {
-        if (!r.ok) throw new Error("wishes");
-        return r.json();
-      })
-      .then(function (data) {
-        var items = (data.approved || []).filter(function (w) {
-          return w && w.message;
-        });
-        if (!items.length) {
-          showSection("wishes-live", false);
-          return;
-        }
-        showSection("wishes-live", true);
-        renderWishesRotation(wall, items);
-      })
-      .catch(function () {
-        showSection("wishes-live", false);
-      });
+    /* moved to zhushan-participation.js unified field */
   }
 
   function weightedItems(items) {
@@ -1319,7 +1289,7 @@
     initHeroEntrance();
     initHeroMedia();
     initComposer();
-    initWishesWall();
+    /* V5.1: formal wishes live inside unified Wishes Field */
     initCommunityMoments();
     initCommunityShare();
     initProcess();

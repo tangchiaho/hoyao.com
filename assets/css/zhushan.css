@@ -1897,31 +1897,106 @@
   max-width: none;
 }
 
-.zs-live-field {
-  margin-top: 4px;
+.zs-wishes-field {
+  margin-top: 6px;
 }
 
-.zs-live-field__label {
+.zs-wishes-field__label {
   margin: 0 0 8px;
   font-size: 12px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: var(--zs-warm);
 }
 
-.zs-stage--live {
-  height: 260px;
+.zs-stage--wish {
+  position: relative;
+  height: 300px;
   margin: 0;
+  overflow: hidden;
+  border-top: 1px solid var(--zs-rule);
+  border-bottom: 1px solid var(--zs-rule);
 }
 
 @media (min-width: 760px) {
-  .zs-stage--live {
-    height: 320px;
+  .zs-stage--wish {
+    height: 380px;
   }
+}
+
+.zs-stage__formal {
+  position: absolute;
+  inset: 16px 12px 16px 12px;
+  z-index: 1;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-start;
+  max-width: min(100%, 26rem);
+}
+
+.zs-formal__group {
+  width: 100%;
+  opacity: 0;
+  transition: opacity 700ms var(--zs-ease);
+}
+
+.zs-formal__group.is-visible {
+  opacity: 1;
+}
+
+.zs-formal__group.is-leaving {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  opacity: 0;
+}
+
+.zs-formal__wish {
+  margin: 0 0 14px;
+  padding: 0;
+  border: none;
+  font-family: var(--zs-serif);
+  font-size: clamp(0.95rem, 2.4vw, 1.125rem);
+  line-height: 1.65;
+  color: var(--zs-ink);
+  opacity: 0.88;
+}
+
+.zs-formal__wish:last-child {
+  margin-bottom: 0;
+}
+
+.zs-formal__group.is-confirm .zs-formal__wish {
+  opacity: 1;
+}
+
+.zs-formal__group.is-confirm .zs-formal__wish::after {
+  content: " · 剛留下";
+  font-family: var(--zs-sans);
+  font-size: 11px;
+  color: var(--zs-warm);
+  letter-spacing: 0.04em;
+}
+
+.zs-stage--wish .zs-danmaku {
+  z-index: 2;
+}
+
+.zs-card-result {
+  scroll-margin-top: 72px;
+}
+
+.zs-card-result__title {
+  margin: 0 0 16px;
+  font-family: var(--zs-serif);
+  font-size: 1.125rem;
+  font-weight: 500;
 }
 
 .zs-danmaku.is-mine {
   color: var(--zs-ink);
   font-weight: 600;
+  text-shadow: 0 0 12px rgba(245, 244, 239, 0.9);
 }
 
 /* Bamboo slip */
@@ -2035,12 +2110,6 @@
 }
 
 
-.zs-danmaku.is-mine {
-  color: var(--zs-ink);
-  font-weight: 600;
-  text-shadow: 0 0 12px rgba(245, 244, 239, 0.9);
-}
-
 .zs-danmaku.is-mine-drift {
   animation: zs-drift-mine var(--zs-dur, 6.5s) linear forwards;
 }
@@ -2132,14 +2201,24 @@
     margin-top: 6px;
   }
 
-  .zs-live-field__label {
+  .zs-wishes-field__label {
     margin-bottom: 6px;
   }
 
-  .zs-stage--live {
-    height: 240px;
+  .zs-stage--wish {
+    height: 300px;
+  }
+
+  .zs-stage__formal {
+    inset: 14px 10px;
+    max-width: 92%;
+  }
+
+  .zs-formal__wish {
+    font-size: 0.95rem;
   }
 }
+
 
 @media (prefers-reduced-motion: reduce) {
   .zs-slip__text.is-in {
@@ -2181,7 +2260,8 @@
     animation: none;
   }
 
-  .zs-wishes__group {
+  .zs-wishes__group,
+  .zs-formal__group {
     transition: opacity 280ms ease;
   }
 }

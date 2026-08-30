@@ -17,7 +17,7 @@
   var EPH_POLL =
     (cfg.ephemeral && cfg.ephemeral.pollMs) || 8000;
   var EPH_VISIBLE =
-    (cfg.ephemeral && cfg.ephemeral.maxVisible) || 5;
+    (cfg.ephemeral && cfg.ephemeral.maxVisible) || 4;
   var STORY_W = (cfg.wishCard && cfg.wishCard.width) || 1080;
   var STORY_H = (cfg.wishCard && cfg.wishCard.height) || 1920;
 
@@ -385,7 +385,7 @@
     var stage = stageEl();
     if (!stage || !text) return false;
     var active = stage.querySelectorAll(".zs-danmaku");
-    var maxVis = Math.max(4, Math.min(6, EPH_VISIBLE));
+    var maxVis = Math.max(2, Math.min(4, EPH_VISIBLE || 4));
     while (active.length >= maxVis) {
       var oldest = active[0];
       if (oldest && oldest.parentNode) oldest.parentNode.removeChild(oldest);
@@ -405,8 +405,9 @@
       node.style.fontSize = (mobile ? 16 : 19) + "px";
       node.style.zIndex = "3";
     } else {
-      node.style.top = 8 + Math.random() * 72 + "%";
-      node.style.opacity = String(0.38 + Math.random() * 0.32);
+      /* Passing thoughts: opacity 0.55–0.8, varied y + size */
+      node.style.top = 10 + Math.random() * 70 + "%";
+      node.style.opacity = String(0.55 + Math.random() * 0.25);
       node.style.left = 100 + Math.random() * 18 + "%";
       node.style.fontSize =
         (mobile ? 13 : 15) + Math.round(Math.random() * (mobile ? 5 : 7)) + "px";
@@ -427,9 +428,9 @@
       node.addEventListener("animationend", cleanup);
       window.setTimeout(cleanup, opts.mine ? 5200 : 3400);
     } else {
-      var dur = opts.mine
-        ? 5000 + Math.floor(Math.random() * 3001)
-        : 6500 + Math.floor(Math.random() * 3501);
+      /* 6–9 sec drift across the field */
+      var dur = 6000 + Math.floor(Math.random() * 3001);
+      if (opts.mine) dur = Math.min(dur, 7500);
       node.style.setProperty("--zs-dur", dur + "ms");
       if (opts.mine) {
         node.classList.add("is-mine-drift");
@@ -521,6 +522,131 @@
     }
   }
 
+
+  /* —— Formal wishes layer (static, inside same field) —— */
+  var formalItems = [];
+  var formalTimer = null;
+  var formalIndex = 0;
+  var formalRound = [];
+
+  function formalLayer() {
+    return document.getElementById("zs-formal-layer");
+  }
+
+  function shuffleList(list) {
+    var a = list.slice();
+    var i;
+    for (i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i];
+      a[i] = a[j];
+      a[j] = t;
+    }
+    return a;
+  }
+
+  function nextFormalRound(lastTail) {
+    var round = shuffleList(formalItems);
+    if (round.length > 1 && lastTail && round[0] === lastTail) {
+      var k = 1 + Math.floor(Math.random() * (round.length - 1));
+      var t = round[0];
+      round[0] = round[k];
+      round[k] = t;
+    }
+    return round;
+  }
+
+  function paintFormalBatch(batch, opts) {
+    opts = opts || {};
+    var layer = formalLayer();
+    if (!layer) return;
+    var prev = layer.querySelector(".zs-formal__group:not(.is-leaving)");
+    if (prev) {
+      prev.classList.remove("is-visible");
+      prev.classList.add("is-leaving");
+      window.setTimeout(function () {
+        if (prev.parentNode) prev.parentNode.removeChild(prev);
+      }, 650);
+    }
+    var group = document.createElement("div");
+    group.className = "zs-formal__group" + (opts.confirm ? " is-confirm" : "");
+    group.innerHTML = batch
+      .map(function (item) {
+        var msg = typeof item === "string" ? item : item.message;
+        return (
+          '<blockquote class="zs-formal__wish"><p>「' +
+          escapeHtml(msg) +
+          "」</p></blockquote>"
+        );
+      })
+      .join("");
+    layer.appendChild(group);
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        group.classList.add("is-visible");
+      });
+    });
+  }
+
+  function showFormalConfirm(text) {
+    paintFormalBatch([text], { confirm: true });
+    /* resume rotation after a beat */
+    window.setTimeout(function () {
+      if (formalItems.length) showNextFormal();
+    }, 5000);
+  }
+
+  function showNextFormal() {
+    if (!formalItems.length) return;
+    var size = formalItems.length >= 2 ? 2 : 1;
+    if (formalIndex >= formalRound.length) {
+      var lastTail =
+        formalRound.length ? formalRound[formalRound.length - 1] : null;
+      formalRound = nextFormalRound(lastTail);
+      formalIndex = 0;
+    }
+    var batch = [];
+    var i;
+    for (i = 0; i < size && formalIndex < formalRound.length; i++) {
+      batch.push(formalRound[formalIndex]);
+      formalIndex += 1;
+    }
+    if (batch.length) paintFormalBatch(batch);
+  }
+
+  function initFormalWishLayer() {
+    var url = cfg.staticWishesUrl || "/assets/data/zhushan-wishes.json";
+    if (cfg.dataMode !== "static" && cfg.wishesApiUrl) {
+      url = cfg.wishesApiUrl;
+    }
+    fetch(url)
+      .then(function (r) {
+        return r.ok ? r.json() : null;
+      })
+      .then(function (data) {
+        formalItems = ((data && data.approved) || []).filter(function (w) {
+          return w && w.message;
+        });
+        if (!formalItems.length) return;
+        formalRound = nextFormalRound(null);
+        formalIndex = 0;
+        showNextFormal();
+        if (formalItems.length > 1) {
+          scheduleFormalRotation();
+        }
+      })
+      .catch(function () {});
+  }
+
+  function scheduleFormalRotation() {
+    /* Stay 8–12 sec, then crossfade */
+    var wait = 8000 + Math.floor(Math.random() * 4001);
+    formalTimer = window.setTimeout(function () {
+      showNextFormal();
+      scheduleFormalRotation();
+    }, wait);
+  }
+
   function passThought(text) {
     var clean = String(text || "").trim();
     if (!clean) return;
@@ -556,7 +682,6 @@
     var canvas = document.getElementById("zs-card-canvas");
     var preview = document.getElementById("zs-card-preview");
     var result = document.getElementById("zs-card-result");
-    var textEl = document.getElementById("zs-card-text");
     var shareBtn = document.getElementById("zs-card-share");
     var dlBtn = document.getElementById("zs-card-download");
     var status = document.getElementById("zs-card-action-status");
@@ -581,16 +706,52 @@
       });
     }
 
+    var lastCardText = "";
+    var cardReady = false;
+
+    function updateCardBtnLabel() {
+      if (!cardBtn || !input) return;
+      var msg = input.value.trim();
+      if (!cardReady) {
+        cardBtn.textContent = "做成竹願卡";
+      } else if (msg && msg === lastCardText) {
+        cardBtn.textContent = "查看我的竹願卡";
+      } else {
+        cardBtn.textContent = "更新竹願卡";
+      }
+    }
+
+    function scrollToCardResult() {
+      if (!result) return;
+      result.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: "start",
+      });
+    }
+
+    if (input) {
+      input.addEventListener("input", function () {
+        updateCardBtnLabel();
+      });
+    }
+
     if (keepBtn) {
       keepBtn.addEventListener("click", function () {
         var formUrl = cfg.googleFormUrl;
         var text = input ? input.value.trim() : "";
+        if (!text) {
+          if (input) input.focus();
+          return;
+        }
+        /* temporary local confirmation in the shared Wishes Field */
+        showFormalConfirm(text);
+        if (keepStatus) {
+          keepStatus.hidden = false;
+          keepStatus.textContent =
+            "你的竹願已留下；經整理後，可能出現在竹願中。";
+        }
+        announce("你的竹願已留下；經整理後，可能出現在竹願中。");
         if (!isSafeHttpUrl(formUrl)) {
-          if (keepStatus) {
-            keepStatus.hidden = false;
-            keepStatus.textContent =
-              "正式竹願表單即將開放。你仍可先飄過或做成竹願卡。";
-          }
           return;
         }
         var url = formUrl;
@@ -601,11 +762,6 @@
             entry +
             "=" +
             encodeURIComponent(text);
-        }
-        if (keepStatus) {
-          keepStatus.hidden = false;
-          keepStatus.textContent =
-            "你的竹願已留下；經整理後，可能出現在竹願牆中。";
         }
         track("wish_form_open", { page: "zhushan" });
         window.open(url, "_blank", "noopener,noreferrer");
@@ -619,14 +775,23 @@
         input.focus();
         return;
       }
+      if (cardReady && msg === lastCardText && result && !result.hidden) {
+        scrollToCardResult();
+        return;
+      }
       paintStoryCard(canvas, { message: msg, kind: "wish" }).then(function () {
         if (preview) preview.src = canvas.toDataURL("image/png");
         if (result) {
           result.hidden = false;
+          result.classList.remove("is-ready");
+          void result.offsetWidth;
           result.classList.add("is-ready");
         }
-        if (textEl) textEl.textContent = "「" + msg + "」 — 我的竹願，2026・竹山";
+        lastCardText = msg;
+        cardReady = true;
+        updateCardBtnLabel();
         track("wish_card_generate", { page: "zhushan" });
+        scrollToCardResult();
       });
     }
 
@@ -759,6 +924,7 @@
     loadQr();
     initBambooSpeak();
     initWishUnit();
+    initFormalWishLayer();
     startEphemeralPolling();
     initSurvey();
     initCommunityChallenge();

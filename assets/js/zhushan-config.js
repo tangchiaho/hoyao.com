@@ -64,6 +64,8 @@ window.ZHUSHAN_CONFIG = {
     youthDevelopmentWebsite: "https://youth.nantou.gov.tw/zh-TW",
     townCultureFacebook: "https://www.facebook.com/townway104/",
     bambooSponsorWebsite: "https://www.taiwanbamboo.shop/",
+    hoyaoWebsite: "https://hoyao.com/",
+    harmonyCultureWebsite: "https://harmonyculture.art",
   },
 
   outcomes: {

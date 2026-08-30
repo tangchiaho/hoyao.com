@@ -107,6 +107,52 @@
     });
   }
 
+  function initRuleReveal() {
+    var rules = document.querySelectorAll(".zs-rule");
+    if (!animOn || !("IntersectionObserver" in window)) {
+      rules.forEach(function (el) {
+        el.classList.add("is-in");
+      });
+      return;
+    }
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-in");
+          io.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.2 }
+    );
+    rules.forEach(function (el) {
+      if (!el.hidden) io.observe(el);
+    });
+  }
+
+  function initImageReveal() {
+    var figs = document.querySelectorAll(".zs-img-reveal");
+    if (!animOn || !("IntersectionObserver" in window)) {
+      figs.forEach(function (el) {
+        if (!el.hidden) el.classList.add("is-in");
+      });
+      return;
+    }
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-in");
+          io.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.18 }
+    );
+    figs.forEach(function (el) {
+      if (!el.hidden) io.observe(el);
+    });
+  }
+
   function initHeroMotion() {
     var nodes = document.querySelectorAll(".zs-hero-anim");
     if (!animOn) {
@@ -155,8 +201,8 @@
       requestAnimationFrame(function () {
         var rect = figure.getBoundingClientRect();
         var viewH = window.innerHeight || 1;
-        var p = (rect.top / viewH) * -16;
-        p = Math.max(-16, Math.min(16, p));
+        var p = (rect.top / viewH) * -12;
+        p = Math.max(-12, Math.min(12, p));
         hero.style.transform = "translateY(" + p + "px)";
         ticking = false;
       });
@@ -184,8 +230,10 @@
       if (!used[String(lane)]) break;
     }
     node.setAttribute("data-lane", String(lane));
-    node.style.top = 12 + lane * 30 + "%";
-    node.style.opacity = String(0.68 + Math.random() * 0.14);
+    var y = 16 + lane * 28;
+    var jitter = Math.round(Math.random() * 24 - 12);
+    node.style.top = "calc(" + y + "% + " + jitter + "px)";
+    node.style.opacity = String(0.65 + Math.random() * 0.17);
     node.style.fontSize = window.matchMedia("(max-width: 600px)").matches
       ? 15 + Math.round(Math.random() * 3) + "px"
       : 18 + Math.round(Math.random() * 4) + "px";
@@ -201,7 +249,7 @@
       node.addEventListener("animationend", cleanup);
       window.setTimeout(cleanup, 3400);
     } else {
-      var dur = 8000 + Math.floor(Math.random() * 3001);
+      var dur = 9000 + Math.floor(Math.random() * 4001);
       node.style.setProperty("--zs-dur", dur + "ms");
       node.classList.add("is-drift");
       node.addEventListener("animationend", cleanup);
@@ -217,15 +265,21 @@
     if (status) status.hidden = false;
   }
 
-  function initPassingThought() {
+  function initComposer() {
     var input = document.getElementById("zs-thought-input");
     var count = document.getElementById("zs-thought-count");
     var ephemeralBtn = document.getElementById("zs-ephemeral-btn");
     var keepBtn = document.getElementById("zs-keep-wish-btn");
     var soon = document.getElementById("zs-wish-soon");
     var toCard = document.getElementById("zs-to-card-btn");
-    var cardInput = document.getElementById("zs-card-input");
+    var canvas = document.getElementById("zs-card-canvas");
+    var result = document.getElementById("zs-card-result");
+    var textEl = document.getElementById("zs-card-text");
+    var shareBtn = document.getElementById("zs-card-share");
+    var dlBtn = document.getElementById("zs-card-download");
+    var note = document.getElementById("zs-card-share-note");
     var passedOnce = false;
+    var cardEnabled = cfg.wishCard && cfg.wishCard.enabled !== false;
 
     if (input && count) {
       input.setAttribute("maxlength", String(MAX_LEN));
@@ -271,13 +325,41 @@
       }
     }
 
-    if (toCard && input && cardInput) {
-      toCard.addEventListener("click", function () {
-        cardInput.value = input.value.slice(0, MAX_LEN);
-        cardInput.dispatchEvent(new Event("input", { bubbles: true }));
-        var dest = document.getElementById("wish-card");
-        if (dest) dest.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
-        cardInput.focus();
+    function generateCard() {
+      if (!input || !canvas || !result) return;
+      var msg = input.value.trim();
+      if (!msg) {
+        input.focus();
+        return;
+      }
+      drawWishCard(canvas, msg).then(function () {
+        result.hidden = false;
+        result.classList.remove("is-ready");
+        void result.offsetWidth;
+        result.classList.add("is-ready");
+        if (textEl) {
+          textEl.textContent = "「" + msg + "」 — 我的竹願，2026・竹山";
+        }
+        track("wish_card_generate", { page: "zhushan" });
+      });
+    }
+
+    if (toCard) {
+      if (!cardEnabled) {
+        toCard.hidden = true;
+      } else {
+        toCard.addEventListener("click", generateCard);
+      }
+    }
+
+    if (shareBtn) {
+      shareBtn.addEventListener("click", function () {
+        shareWishCard(canvas, note);
+      });
+    }
+    if (dlBtn) {
+      dlBtn.addEventListener("click", function () {
+        downloadWishCard(canvas);
       });
     }
 
@@ -309,7 +391,6 @@
   function initWishesWall() {
     var section = document.getElementById("wishes-live");
     var wall = document.getElementById("zs-wishes-wall");
-    var countLine = document.getElementById("zs-wishes-count-line");
     var stats = document.getElementById("zs-wish-stats");
     if (stats) stats.hidden = true;
     if (!section || !wall) return;
@@ -334,23 +415,6 @@
           return;
         }
         showSection("wishes-live", true);
-        var publicN = 0;
-        var seedN = 0;
-        items.forEach(function (w) {
-          if (w.source === "public") publicN += 1;
-          else seedN += 1;
-        });
-        if (countLine) {
-          if (publicN > 0) {
-            countLine.textContent = "目前收錄 " + publicN + " 則竹願";
-          } else {
-            countLine.textContent = "先放上了 " + seedN + " 則開展前祝福。";
-          }
-        }
-        var title = document.getElementById("wishes-live-title");
-        if (title) {
-          title.textContent = publicN > 0 ? "大家留下的竹願" : "開展前的祝福";
-        }
         renderWishesRotation(wall, items);
       })
       .catch(function () {
@@ -364,18 +428,22 @@
     var lastItem = null;
 
     function paint(item) {
+      var prev = container.querySelector(".zs-wishes__quote:not(.is-leaving)");
+      if (prev) {
+        prev.classList.remove("is-visible");
+        prev.classList.add("is-leaving");
+        window.setTimeout(function () {
+          if (prev.parentNode) prev.parentNode.removeChild(prev);
+        }, 850);
+      }
       var block = document.createElement("blockquote");
       block.className = "zs-wishes__quote";
-      var caption = item.source === "public" ? "" : "開展前祝福";
-      block.innerHTML =
-        "<p>「" +
-        escapeHtml(item.message) +
-        "」</p>" +
-        (caption ? '<footer class="zs-wishes__meta">' + caption + "</footer>" : "");
-      container.innerHTML = "";
+      block.innerHTML = "<p>「" + escapeHtml(item.message) + "」</p>";
       container.appendChild(block);
       requestAnimationFrame(function () {
-        block.classList.add("is-visible");
+        requestAnimationFrame(function () {
+          block.classList.add("is-visible");
+        });
       });
     }
 
@@ -410,56 +478,6 @@
     });
     if (line) lines.push(line);
     return lines;
-  }
-
-  function initWishCard() {
-    var section = document.getElementById("wish-card");
-    if (!section || !cfg.wishCard || cfg.wishCard.enabled === false) {
-      if (section) showSection("wish-card", false);
-      return;
-    }
-
-    var input = document.getElementById("zs-card-input");
-    var count = document.getElementById("zs-card-count");
-    var gen = document.getElementById("zs-card-generate");
-    var canvas = document.getElementById("zs-card-canvas");
-    var result = document.getElementById("zs-card-result");
-    var textEl = document.getElementById("zs-card-text");
-    var shareBtn = document.getElementById("zs-card-share");
-    var dlBtn = document.getElementById("zs-card-download");
-    var note = document.getElementById("zs-card-share-note");
-    if (!input || !gen || !canvas) return;
-
-    input.setAttribute("maxlength", String(MAX_LEN));
-    input.addEventListener("input", function () {
-      if (count) count.textContent = String(input.value.length);
-    });
-
-    gen.addEventListener("click", function () {
-      var msg = input.value.trim();
-      if (!msg) {
-        input.focus();
-        return;
-      }
-      drawWishCard(canvas, msg).then(function () {
-        result.hidden = false;
-        if (textEl) {
-          textEl.textContent = "「" + msg + "」 — 我的竹願，2026・竹山";
-        }
-        track("wish_card_generate", { page: "zhushan" });
-      });
-    });
-
-    if (shareBtn) {
-      shareBtn.addEventListener("click", function () {
-        shareWishCard(canvas, note);
-      });
-    }
-    if (dlBtn) {
-      dlBtn.addEventListener("click", function () {
-        downloadWishCard(canvas);
-      });
-    }
   }
 
   function drawWishCard(canvas, message) {
@@ -681,7 +699,7 @@
         var num = escapeHtml(it.id || "");
         var stage = it.stage ? escapeHtml(it.stage) + " ・ " : "";
         return (
-          '<figure class="zs-process-item zs-reveal-child">' +
+          '<figure class="zs-process-item zs-reveal-child zs-img-reveal">' +
           (num ? '<span class="zs-process-item__num">' + num + "</span>" : "") +
           '<img src="' +
           escapeHtml(it.src) +
@@ -765,8 +783,8 @@
             requestAnimationFrame(function () {
               var rect = fig.getBoundingClientRect();
               var viewH = window.innerHeight || 1;
-              var p = (rect.top / viewH) * -18;
-              p = Math.max(-20, Math.min(20, p));
+              var p = (rect.top / viewH) * -12;
+              p = Math.max(-12, Math.min(12, p));
               img.style.transform = "translateY(" + p + "px)";
               ticking = false;
             });
@@ -858,13 +876,14 @@
     track("zhushan_project_view", { page: "zhushan" });
     initRevealAnimations();
     initHeroMotion();
-    initPassingThought();
+    initComposer();
     initWishesWall();
-    initWishCard();
     initCommunityMoments();
     initCommunityShare();
     initProcess();
     initVenue();
+    initImageReveal();
+    initRuleReveal();
     initExternalLinks();
     initScrollDepth();
     initOutcomes();

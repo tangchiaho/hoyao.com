@@ -25,7 +25,7 @@ window.ZHUSHAN_CONFIG = {
   },
 
   animations: {
-    enabled: true,
+    enabled: false,
   },
 
   video: {
@@ -86,9 +86,9 @@ window.ZHUSHAN_CONFIG = {
   gaMeasurementId: "",
 };
 
-/* V4.3 polish layer: keeps production truthful while allowing a private visual-data preview via ?preview=1 */
+/* V4.4 production polish layer */
 (function () {
-  var v = "20260830-v43";
+  var v = "20260830-v44";
   var css = document.createElement("link");
   css.rel = "stylesheet";
   css.href = "/assets/css/zhushan-polish.css?v=" + v;

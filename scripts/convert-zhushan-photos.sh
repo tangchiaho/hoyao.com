@@ -33,6 +33,5 @@ map_one "$(find_src IMG0662)" "hero-preassembly.webp" 1800 86 || true
 map_one "$(find_src IMG0281)" "people-01.webp" 1400 84 || true
 map_one "$(find_src IMG0610)" "bamboo-message-detail.webp" 1200 84 || true
 map_one "$(find_src IMG0675)" "people-02.webp" 1400 84 || true
-map_one "$(find_src IMG0442)" "site-entrance.webp" 1600 84 || true
-[[ -f "$OUT/site-entrance.webp" ]] || map_one "$(find_src IMG0447)" "site-entrance.webp" 1600 84 || true
+# site-entrance: reserved for 台西客運竹山站／竹青庭現場照片（IMG0442 為中寮場域，勿用）
 ls -la "$OUT"/*.webp 2>/dev/null || echo "No webp yet"

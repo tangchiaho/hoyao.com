@@ -56,7 +56,7 @@
     if (qrPromise) return qrPromise;
     var src =
       (cfg.placeholders && cfg.placeholders.qr) ||
-      "/assets/placeholders/zhushan/qr-zhushan.png";
+      "/assets/images/projects/zhushan/qr-zhushan.png";
     qrPromise = new Promise(function (resolve) {
       var img = new Image();
       img.onload = function () {
@@ -68,6 +68,120 @@
       img.src = src;
     });
     return qrPromise;
+  }
+
+  function cardShareUrl(kind) {
+    if (kind === "phrase") {
+      return (
+        (cfg.bambooCard && cfg.bambooCard.url) ||
+        (cfg.wishCard && cfg.wishCard.url) ||
+        "https://hoyao.com/zhushan/"
+      );
+    }
+    return (cfg.wishCard && cfg.wishCard.url) || "https://hoyao.com/zhushan/";
+  }
+
+  function qrImageFromModel(qr, pixelSize) {
+    return new Promise(function (resolve) {
+      var moduleCount = qr.getModuleCount();
+      var margin = 2;
+      var total = moduleCount + margin * 2;
+      var cell = Math.max(1, Math.floor(pixelSize / total));
+      var size = cell * total;
+      var canvas = document.createElement("canvas");
+      canvas.width = size;
+      canvas.height = size;
+      var ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, size, size);
+      ctx.fillStyle = "#1A1A18";
+      var row;
+      var col;
+      for (row = 0; row < moduleCount; row++) {
+        for (col = 0; col < moduleCount; col++) {
+          if (qr.isDark(row, col)) {
+            ctx.fillRect((col + margin) * cell, (row + margin) * cell, cell, cell);
+          }
+        }
+      }
+      var img = new Image();
+      img.onload = function () {
+        resolve(img);
+      };
+      img.onerror = function () {
+        resolve(null);
+      };
+      img.src = canvas.toDataURL("image/png");
+    });
+  }
+
+  function createQrImage(url) {
+    url = String(url || "").trim();
+    if (!url) return Promise.resolve(null);
+    if (typeof qrcode === "function") {
+      try {
+        var qr = qrcode(0, "M");
+        qr.addData(url);
+        qr.make();
+        return qrImageFromModel(qr, 420);
+      } catch (err) {
+        /* fall through to static asset */
+      }
+    }
+    return loadQr();
+  }
+
+  function drawRule(ctx, x1, x2, y) {
+    ctx.save();
+    ctx.strokeStyle = "#D4D1C9";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x1, y);
+    ctx.lineTo(x2, y);
+    ctx.stroke();
+    ctx.fillStyle = "#3A4A38";
+    ctx.globalAlpha = 0.35;
+    ctx.beginPath();
+    ctx.arc((x1 + x2) / 2, y, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawOrgCredits(ctx, w, y, host, guidance) {
+    var leftCx = w * 0.32;
+    var rightCx = w * 0.68;
+    drawRule(ctx, w * 0.16, w * 0.84, y - 24);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#9A9690";
+    ctx.font = '500 17px "Noto Sans TC", "PingFang TC", sans-serif';
+    ctx.fillText("主辦", leftCx, y);
+    ctx.fillText("指導", rightCx, y);
+    ctx.fillStyle = "#2A2A28";
+    ctx.font = '500 28px "Noto Serif TC", "PingFang TC", serif';
+    ctx.fillText(host, leftCx, y + 42);
+    ctx.fillText(guidance, rightCx, y + 42);
+  }
+
+  function drawQrBlock(ctx, qr, w, topY) {
+    var box = 220;
+    var qrSize = 184;
+    var x = w / 2 - box / 2;
+    ctx.save();
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(x, topY, box, box);
+    ctx.strokeStyle = "#CFCBC2";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, topY, box, box);
+    if (qr) {
+      ctx.drawImage(qr, x + (box - qrSize) / 2, topY + (box - qrSize) / 2, qrSize, qrSize);
+    }
+    ctx.restore();
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#8A8780";
+    ctx.font = '22px "Noto Sans TC", sans-serif';
+    ctx.fillText("掃描進入作品頁", w / 2, topY + box + 36);
+    ctx.font = '20px "Noto Sans TC", sans-serif';
+    ctx.fillText("hoyao.com/zhushan", w / 2, topY + box + 68);
   }
 
   function wrapText(ctx, text, maxWidth) {
@@ -96,124 +210,91 @@
     canvas.height = h;
     var message = opts.message || "";
     var kind = opts.kind || "wish";
-    var footerHint =
-      kind === "phrase" ? "掃描帶走你的竹語" : "掃描留下你的竹願";
+    var shareUrl = cardShareUrl(kind);
     var event = cfg.event || {};
     var venueName = event.venueName || "台西客運竹山站・竹青庭人文空間";
-    var venueAddress = event.venueAddress || "南投縣竹山鎮中山里菜園路27號";
     var host = event.host || "南投縣青年發展所";
     var guidance = event.guidance || "南投縣政府";
+    var hashtag = cfg.wishCard.hashtag || "#竹山開飯了";
 
     function paint(qr) {
-      ctx.fillStyle = "#F5F3EC";
+      ctx.fillStyle = "#F7F5EE";
       ctx.fillRect(0, 0, w, h);
 
       ctx.save();
-      ctx.globalAlpha = 0.04;
+      ctx.globalAlpha = 0.028;
       ctx.strokeStyle = "#3A4A38";
       ctx.lineWidth = 1;
       var i;
-      for (i = 0; i < 24; i++) {
+      for (i = 0; i < 18; i++) {
         ctx.beginPath();
-        ctx.moveTo(40 + i * 48, 0);
-        ctx.lineTo(-10 + i * 48, h);
+        ctx.moveTo(60 + i * 58, 0);
+        ctx.lineTo(10 + i * 58, h);
         ctx.stroke();
       }
       ctx.restore();
 
       ctx.save();
-      ctx.globalAlpha = 0.03;
-      var g = ctx.createRadialGradient(w * 0.75, h * 0.18, 20, w * 0.75, h * 0.18, 280);
-      g.addColorStop(0, "#3A4A38");
-      g.addColorStop(1, "rgba(58,74,56,0)");
-      ctx.fillStyle = g;
+      ctx.globalAlpha = 0.045;
+      var glow = ctx.createRadialGradient(w * 0.5, h * 0.28, 40, w * 0.5, h * 0.28, 520);
+      glow.addColorStop(0, "#3A4A38");
+      glow.addColorStop(1, "rgba(58,74,56,0)");
+      ctx.fillStyle = glow;
       ctx.fillRect(0, 0, w, h);
-      ctx.restore();
-
-      ctx.save();
-      ctx.strokeStyle = "#3A4A38";
-      ctx.fillStyle = "#3A4A38";
-      [[56, 0.2, 1.3], [92, 0.32, 1.6]].forEach(function (stem) {
-        ctx.globalAlpha = stem[1];
-        ctx.lineWidth = stem[2];
-        ctx.beginPath();
-        ctx.moveTo(stem[0], h - 80);
-        ctx.lineTo(stem[0], 180);
-        ctx.stroke();
-        [320, 520, 760, 1100, 1400].forEach(function (y) {
-          if (y < h - 100) {
-            ctx.beginPath();
-            ctx.arc(stem[0], y, 2.6, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        });
-      });
       ctx.restore();
 
       ctx.strokeStyle = "#D4D1C9";
       ctx.lineWidth = 1;
-      ctx.strokeRect(56, 72, w - 112, h - 144);
+      ctx.strokeRect(64, 88, w - 128, h - 176);
+      ctx.strokeRect(76, 100, w - 152, h - 200);
 
       ctx.textAlign = "center";
       ctx.fillStyle = "#8A8780";
-      ctx.font = '30px "Noto Sans TC", "PingFang TC", sans-serif';
-      ctx.fillText("竹山開飯了", w / 2, 220);
-
-      ctx.fillStyle = "#5A5852";
-      ctx.font = '34px "Noto Serif TC", "PingFang TC", serif';
-      ctx.fillText("竹子重生的永續花園", w / 2, 280);
-
-      ctx.strokeStyle = "#D4D1C9";
-      ctx.beginPath();
-      ctx.moveTo(w * 0.3, 330);
-      ctx.lineTo(w * 0.7, 330);
-      ctx.stroke();
-      ctx.fillStyle = "#3A4A38";
-      ctx.globalAlpha = 0.45;
-      ctx.beginPath();
-      ctx.arc(w / 2, 330, 3.2, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.globalAlpha = 1;
-
+      ctx.font = '500 22px "Noto Sans TC", sans-serif';
+      ctx.fillText("ZHUSHAN", w / 2, 168);
       ctx.fillStyle = "#1A1A18";
-      ctx.font = '48px "Noto Serif TC", "PingFang TC", serif';
-      var lines = wrapText(ctx, "「" + message + "」", w * 0.7);
-      var startY = 720 - (lines.length - 1) * 30;
-      lines.slice(0, 8).forEach(function (line, idx) {
-        ctx.fillText(line, w / 2, startY + idx * 70);
+      ctx.font = '500 40px "Noto Serif TC", serif';
+      ctx.fillText("竹山開飯了", w / 2, 228);
+      ctx.fillStyle = "#5A5852";
+      ctx.font = '30px "Noto Serif TC", serif';
+      ctx.fillText("竹子重生的永續花園", w / 2, 278);
+      drawRule(ctx, w * 0.28, w * 0.72, 318);
+
+      var quoteSize = message.length > 42 ? 46 : message.length > 28 ? 52 : 58;
+      ctx.fillStyle = "#1A1A18";
+      ctx.font = quoteSize + 'px "Noto Serif TC", serif';
+      var lines = wrapText(ctx, "「" + message + "」", w * 0.72);
+      var lineHeight = quoteSize + 18;
+      var maxLines = 6;
+      lines = lines.slice(0, maxLines);
+      var quoteBlock = lines.length * lineHeight;
+      var footerTop = h - 360;
+      var quoteEnd = footerTop - 300;
+      var quoteStart = Math.max(360, quoteEnd - quoteBlock);
+      lines.forEach(function (line, idx) {
+        ctx.fillText(line, w / 2, quoteStart + idx * lineHeight);
       });
 
-      ctx.fillStyle = "#8A8780";
-      ctx.font = '26px "Noto Sans TC", sans-serif';
-      ctx.fillText(kind === "phrase" ? "竹語" : "我的竹願", w / 2, 1100);
+      drawRule(ctx, w * 0.24, w * 0.76, quoteStart + quoteBlock + 28);
+
+      ctx.fillStyle = "#3A4A38";
+      ctx.font = '500 22px "Noto Sans TC", sans-serif';
+      ctx.fillText(kind === "phrase" ? "竹語" : "竹願", w / 2, quoteStart + quoteBlock + 72);
 
       ctx.fillStyle = "#5A5852";
-      ctx.font = '24px "Noto Sans TC", sans-serif';
-      ctx.fillText(venueName, w / 2, 1145);
+      ctx.font = '26px "Noto Serif TC", serif';
+      ctx.fillText(venueName, w / 2, quoteStart + quoteBlock + 118);
 
-      ctx.fillStyle = "#8A8780";
-      ctx.font = '22px "Noto Sans TC", sans-serif';
-      ctx.fillText(venueAddress, w / 2, 1185);
-
-      ctx.font = '20px "Noto Sans TC", sans-serif';
-      ctx.fillText("主辦｜" + host, w / 2, 1230);
-      ctx.fillText("指導｜" + guidance, w / 2, 1265);
+      drawOrgCredits(ctx, w, quoteStart + quoteBlock + 188, host, guidance);
 
       ctx.fillStyle = "#3A4A38";
       ctx.font = '24px "Noto Serif TC", serif';
-      ctx.fillText(cfg.wishCard.hashtag || "#竹山開飯了", w / 2, 1330);
+      ctx.fillText(hashtag, w / 2, footerTop - 8);
 
-      ctx.fillStyle = "#8A8780";
-      ctx.font = '22px "Noto Sans TC", sans-serif';
-      ctx.fillText(footerHint, w / 2, 1450);
-      ctx.fillText("hoyao.com/zhushan", w / 2, 1490);
-
-      if (qr) {
-        ctx.drawImage(qr, w / 2 - 56, 1560, 112, 112);
-      }
+      drawQrBlock(ctx, qr, w, footerTop + 24);
     }
 
-    return loadQr().then(function (qr) {
+    return createQrImage(shareUrl).then(function (qr) {
       if (document.fonts && document.fonts.ready) {
         return document.fonts.ready.then(function () {
           paint(qr);

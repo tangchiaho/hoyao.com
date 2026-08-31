@@ -95,12 +95,16 @@ window.ZHUSHAN_CONFIG = {
     validSampleRequires: "researchConsent",
   },
 
-  /* 社群挑戰 */
+  /* 社群分享（竹山片刻）— 審核後隨機顯示 */
   communityHashtag: "#竹山開飯了",
   communityMention: "",
   communityPrizeText: "",
   communitySubmissionFormUrl: "",
   communityShareFormUrl: "",
+  googleFormCommunityLinkEntry: "",
+  communityApiUrl: "",
+  communityLinkMaxLength: 500,
+  communityDisplayMax: 12,
   communityDataUrl: "/assets/data/zhushan-community.json",
 
   contactEmail: "",

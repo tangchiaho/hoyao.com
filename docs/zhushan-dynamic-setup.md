@@ -91,9 +91,41 @@ useMockWishes: false,
 
 `useMockWishes: true` 僅供本機開發，production 必須是 `false`。
 
-## H. 更新 Community Moments
+## H. 社群分享（竹山片刻）
 
-編輯 `/assets/data/zhushan-community.json`：
+### 網站行為
+
+- 「分享你的竹山片刻」有**連結輸入框**；訪客貼上 http/https 連結後送出。
+- 審核通過的項目會在「竹山片刻」**隨機**顯示（每次重新整理順序不同）。
+- 沒有已審核項目時，「竹山片刻」整區隱藏。
+
+### 方式 A — Apps Script（建議，一鍵送出）
+
+1. 在專案資料庫新增工作表 `Community`（或由 `docs/zhushan-community-apps-script.js` 自動建立）
+2. 部署 `docs/zhushan-community-apps-script.js` 為 Web App
+3. 設定：
+
+```js
+dataMode: "api",
+communityApiUrl: "https://script.google.com/macros/s/XXXX/exec",
+```
+
+4. 訪客送出 → Sheet 新增一列（`approved=FALSE`）
+5. 你審核後補 `platform` / `handle` / `text` / `image`，設 `approved=TRUE`
+6. 網站自動讀取已審核項目
+
+### 方式 B — Google 表單 + 靜態 JSON
+
+```js
+communityShareFormUrl: "https://docs.google.com/forms/d/e/YYYY/viewform",
+googleFormCommunityLinkEntry: "entry.1234567890",
+dataMode: "static",
+communityDataUrl: "/assets/data/zhushan-community.json",
+```
+
+表單建議題目：平台、公開貼文連結、暱稱（選填）、一句話（選填）、同意公開顯示（必填）。
+
+人工核對後寫入 `/assets/data/zhushan-community.json`：
 
 ```json
 {
@@ -110,19 +142,7 @@ useMockWishes: false,
 }
 ```
 
-圖片放在 `assets/images/projects/zhushan/community/`。  
-只有 `approved: true` 會顯示。陣列為空時，整個區塊隱藏。
-
-社群分享表單（`communityShareFormUrl`）建議題目：
-
-- 平台：Instagram / Facebook / Threads / LINE / 其他
-- 公開貼文連結（優先）
-- 暱稱（選填）
-- 一句話（選填）
-- 是否同意作品頁公開顯示（必填）
-- 是否同意作為成果紀錄引用（必填）
-
-人工核對後再寫入 JSON。
+圖片放在 `assets/images/projects/zhushan/community/`。只有 `approved: true` 會顯示。
 
 ## I. 測試 Wish Card 分享
 
@@ -142,7 +162,7 @@ useMockWishes: false,
 | 竹願表單區 | `googleFormUrl: ""`（整區隱藏） |
 | 竹願牆／統計 | `wishesApiUrl: ""` 且 `dataMode` 不是有內容的 static |
 | 竹願卡 | `wishCard.enabled: false` |
-| 社群分享按鈕 | `communityShareFormUrl: ""` |
+| 社群分享 | 設定 `communityApiUrl` 或 `communityShareFormUrl` |
 | 竹山片刻 | `communityDataUrl` 指到空 JSON，或清空 `items` |
 | Process | `images.process: []` 且 `video.url: ""` |
 | 場域圖 | `images.venue.src: ""` |

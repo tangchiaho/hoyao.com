@@ -33,7 +33,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
 <link rel="preload" href="/assets/data/zhushan-outcomes.json" as="fetch" crossorigin>
-<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260830-v62">
+<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260831-v64">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -87,7 +87,7 @@
   ]
 }
 </script>
-<script src="/assets/js/zhushan-config.js?v=20260830-v61"></script>
+<script src="/assets/js/zhushan-config.js?v=20260831-v64"></script>
 <script>
 /* Early outcomes fetch — reduce mid-scroll layout insertion */
 window.__ZS_OUTCOMES_P = (function () {
@@ -429,11 +429,16 @@ window.__ZS_OUTCOMES_P = (function () {
 <li>分享至 Instagram／Facebook／其他社群</li>
 <li>使用 <span id="zs-challenge-hashtag">#竹山開飯了</span></li>
 <li id="zs-challenge-mention-wrap" hidden>標記 <span id="zs-challenge-mention"></span></li>
-<li>回網站送出分享資訊</li>
+<li>在此貼上分享連結並送出</li>
 </ol>
 <p class="zs-form-note" id="zs-challenge-prize" hidden></p>
-<p class="zs-challenge__note">IG 限動若沒有永久網址，可改上傳截圖（經表單）。</p>
-<button type="button" class="zs-btn" id="zs-community-share-btn" hidden>送出我的分享</button>
+<div class="zs-composer zs-composer--compact zs-challenge__form">
+<label class="zs-composer__label" for="zs-community-link">貼上你的貼文連結</label>
+<input type="url" id="zs-community-link" class="zs-composer__field zs-composer__field--url" inputmode="url" autocomplete="url" maxlength="500" placeholder="https://instagram.com/…">
+<p class="zs-form-note zs-form-note--share" id="zs-community-submit-note" hidden role="status" aria-live="polite"></p>
+</div>
+<p class="zs-challenge__note">IG 限動若沒有永久網址，可改於表單上傳截圖。審核通過的分享會隨機顯示在下方「竹山片刻」。</p>
+<button type="button" class="zs-btn" id="zs-community-share-btn">送出分享連結</button>
 </div>
 </section>
 
@@ -442,6 +447,7 @@ window.__ZS_OUTCOMES_P = (function () {
 <section class="zs-section zs-section--wide zs-section--editorial" id="community-moments" aria-labelledby="community-title" hidden>
 <p class="zs-section__label">Community Moments</p>
 <h2 class="zs-section__title" id="community-title">竹山片刻</h2>
+<p class="zs-section__lead">經審核的社群分享，每次瀏覽隨機呈現。</p>
 <div class="zs-moments" id="zs-moments"></div>
 </section>
 
@@ -524,7 +530,7 @@ window.__ZS_OUTCOMES_P = (function () {
 </footer>
 </div>
 
-<script src="/assets/js/zhushan.js?v=20260830-v61"></script>
-<script src="/assets/js/zhushan-participation.js?v=20260830-v61"></script>
+<script src="/assets/js/zhushan.js?v=20260831-v64"></script>
+<script src="/assets/js/zhushan-participation.js?v=20260831-v64"></script>
 </body>
 </html>

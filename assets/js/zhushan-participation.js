@@ -154,6 +154,60 @@
     return base + 1;
   }
 
+  function cardEventMeta() {
+    var event = cfg.event || {};
+    var host = event.host || "南投縣青年發展所";
+    var venueName =
+      event.venueName || "台西客運竹山站・竹青庭人文空間";
+    return {
+      hostLine: host + " × 竹山開飯了",
+      venueLine: String(venueName).replace(/・/g, "、"),
+      address:
+        event.venueAddress || "南投縣竹山鎮中山里菜園路27號",
+    };
+  }
+
+  function drawCardHostLine(ctx, w, y, text) {
+    ctx.textAlign = "center";
+    ctx.fillStyle = CARD_COLORS.secondary;
+    ctx.font =
+      '400 20px "Noto Sans TC", "PingFang TC", sans-serif';
+    ctx.letterSpacing = "0.08em";
+    ctx.fillText(text, w / 2, y);
+    ctx.letterSpacing = "0px";
+  }
+
+  function measureCardVenueMeta(ctx, w, venueLine, address) {
+    var maxW = w * 0.74;
+    var lineH = 26;
+    ctx.font =
+      '400 18px "Noto Serif TC", "Songti TC", "PingFang TC", serif';
+    var venueLines = wrapText(ctx, venueLine, maxW).slice(0, 2);
+    return venueLines.length * lineH + lineH + 16;
+  }
+
+  function drawCardVenueMeta(ctx, w, bottomY, venueLine, address) {
+    var maxW = w * 0.74;
+    var lineH = 26;
+    ctx.textAlign = "center";
+    ctx.fillStyle = CARD_COLORS.secondary;
+    ctx.font =
+      '400 18px "Noto Serif TC", "Songti TC", "PingFang TC", serif';
+    var venueLines = wrapText(ctx, venueLine, maxW).slice(0, 2);
+    var blockH = venueLines.length * lineH + lineH;
+    var startY = bottomY - blockH + 16;
+
+    venueLines.forEach(function (line, idx) {
+      ctx.fillText(line, w / 2, startY + idx * lineH);
+    });
+
+    ctx.globalAlpha = 0.82;
+    ctx.font =
+      '400 16px "Noto Sans TC", "PingFang TC", sans-serif';
+    ctx.fillText(address, w / 2, startY + venueLines.length * lineH);
+    ctx.globalAlpha = 1;
+  }
+
   function wrapText(ctx, text, maxWidth) {
     var chars = String(text).split("");
     var lines = [];
@@ -277,24 +331,26 @@
 
     var marginX = w * 0.14;
     var contentW = w - marginX * 2;
-    var headerY = 132;
+    var meta = cardEventMeta();
+    var headerY = 128;
     var footerUrlY = h - 72;
     var qrReserve = qrImg ? 132 : 0;
     var footerLineY = h - 118 - qrReserve;
-    var serialY = h - 248 - qrReserve;
-    var heroTop = 220;
-    var heroBottom = serialY - 72;
+    var venueReserve = measureCardVenueMeta(
+      ctx,
+      w,
+      meta.venueLine,
+      meta.address
+    );
+    var serialY = footerLineY - 20 - venueReserve - 36;
+    var heroTop = 196;
+    var heroBottom = serialY - 56;
     var heroHeight = heroBottom - heroTop;
 
     ctx.textAlign = "center";
     ctx.textBaseline = "alphabetic";
 
-    ctx.fillStyle = CARD_COLORS.secondary;
-    ctx.font =
-      '400 22px "Noto Sans TC", "PingFang TC", "Helvetica Neue", sans-serif';
-    ctx.letterSpacing = "0.28em";
-    ctx.fillText("竹山開飯了", w / 2, headerY);
-    ctx.letterSpacing = "0px";
+    drawCardHostLine(ctx, w, headerY, meta.hostLine);
 
     var heroLen = heroText.length;
     var maxSize = heroLen <= 14 ? 78 : heroLen <= 24 ? 64 : heroLen <= 36 ? 54 : 46;
@@ -323,6 +379,14 @@
     ctx.letterSpacing = "0.12em";
     ctx.fillText(serialLabel, w / 2, serialY);
     ctx.letterSpacing = "0px";
+
+    drawCardVenueMeta(
+      ctx,
+      w,
+      footerLineY - 20,
+      meta.venueLine,
+      meta.address
+    );
 
     ctx.fillStyle = CARD_COLORS.secondary;
     ctx.font =

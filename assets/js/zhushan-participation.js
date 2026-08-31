@@ -11,7 +11,7 @@
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var animOn = cfg.animations && cfg.animations.enabled !== false && !reduceMotion;
 
-  var WISH_MAX = (cfg.wishCard && cfg.wishCard.maxLength) || 70;
+  var WISH_MAX = (cfg.wishCard && cfg.wishCard.maxLength) || 40;
   var EPH_MAX =
     (cfg.ephemeral && cfg.ephemeral.maxLength) || 40;
   var EPH_POLL =
@@ -133,13 +133,31 @@
     return loadQr();
   }
 
-  var CARD_COLORS = {
+  var SHARE = {
+    MARGIN_L: 100,
+    HERO_MAX_W: 820,
+    BOTTOM_TOP: 1480,
+    SERIF: '"Noto Serif TC", "Songti TC", "PingFang TC", serif',
+    SANS: '"Noto Sans TC", "PingFang TC", "Helvetica Neue", sans-serif',
+  };
+
+  var SHARE_COLORS = {
     bg: "#F7F3EC",
     primary: "#26231F",
-    secondary: "#6F6358",
-    accent: "#8A745C",
-    bamboo: "#A8B09A",
+    secondary: "#736657",
+    wishHero: "#5C4A3A",
+    phraseAccent: "#5B7A64",
+    wishAccent: "#8B6A4A",
+    shadowGreen: "#8FA487",
+    shadowBrown: "#C9B59A",
+    faint: "rgba(115, 102, 87, 0.58)",
+    credits: "rgba(115, 102, 87, 0.42)",
+    venueShort: "rgba(115, 102, 87, 0.50)",
+    creditsFoot: "rgba(115, 102, 87, 0.48)",
   };
+
+  var CJK_LEADING_PUNCT = "，。、；：？！）」】》…";
+  var CJK_TRAILING_PUNCT = "（「【《";
 
   function formatSerial(n) {
     var num = Math.max(1, parseInt(n, 10) || 1);
@@ -154,58 +172,21 @@
     return base + 1;
   }
 
-  function cardEventMeta() {
+  function shareCardMeta() {
     var event = cfg.event || {};
-    var host = event.host || "南投縣青年發展所";
-    var venueName =
-      event.venueName || "台西客運竹山站・竹青庭人文空間";
     return {
-      hostLine: host + " × 竹山開飯了",
-      venueLine: String(venueName).replace(/・/g, "、"),
-      address:
-        event.venueAddress || "南投縣竹山鎮中山里菜園路27號",
+      venueLine:
+        "展出地點｜" +
+        (event.venueName || "台西客運竹山站・竹青庭人文空間"),
+      venueShort: event.venueShort || "南投竹山",
+      guidance: event.guidance || "南投縣政府",
+      host: event.host || "南投縣青年發展所",
+      executor: event.executor || "廣德國際整合行銷有限公司",
     };
   }
 
-  function drawCardHostLine(ctx, w, y, text) {
-    ctx.textAlign = "center";
-    ctx.fillStyle = CARD_COLORS.secondary;
-    ctx.font =
-      '400 20px "Noto Sans TC", "PingFang TC", sans-serif';
-    ctx.letterSpacing = "0.08em";
-    ctx.fillText(text, w / 2, y);
-    ctx.letterSpacing = "0px";
-  }
-
-  function measureCardVenueMeta(ctx, w, venueLine, address) {
-    var maxW = w * 0.74;
-    var lineH = 26;
-    ctx.font =
-      '400 18px "Noto Serif TC", "Songti TC", "PingFang TC", serif';
-    var venueLines = wrapText(ctx, venueLine, maxW).slice(0, 2);
-    return venueLines.length * lineH + lineH + 16;
-  }
-
-  function drawCardVenueMeta(ctx, w, bottomY, venueLine, address) {
-    var maxW = w * 0.74;
-    var lineH = 26;
-    ctx.textAlign = "center";
-    ctx.fillStyle = CARD_COLORS.secondary;
-    ctx.font =
-      '400 18px "Noto Serif TC", "Songti TC", "PingFang TC", serif';
-    var venueLines = wrapText(ctx, venueLine, maxW).slice(0, 2);
-    var blockH = venueLines.length * lineH + lineH;
-    var startY = bottomY - blockH + 16;
-
-    venueLines.forEach(function (line, idx) {
-      ctx.fillText(line, w / 2, startY + idx * lineH);
-    });
-
-    ctx.globalAlpha = 0.82;
-    ctx.font =
-      '400 16px "Noto Sans TC", "PingFang TC", sans-serif';
-    ctx.fillText(address, w / 2, startY + venueLines.length * lineH);
-    ctx.globalAlpha = 1;
+  function shareBottomTop(h) {
+    return SHARE.BOTTOM_TOP || Math.round(h * 0.77);
   }
 
   function wrapText(ctx, text, maxWidth) {
@@ -225,204 +206,436 @@
     return lines;
   }
 
-  function drawPaperBackground(ctx, w, h) {
-    ctx.fillStyle = CARD_COLORS.bg;
-    ctx.fillRect(0, 0, w, h);
-    var wash = ctx.createLinearGradient(0, 0, w * 0.15, h);
-    wash.addColorStop(0, "#FAF7F1");
-    wash.addColorStop(0.55, CARD_COLORS.bg);
-    wash.addColorStop(1, "#F0EBE2");
-    ctx.fillStyle = wash;
-    ctx.fillRect(0, 0, w, h);
+  function applyCjkKinsoku(lines) {
+    var i;
+    for (i = 1; i < lines.length; i++) {
+      while (lines[i] && CJK_LEADING_PUNCT.indexOf(lines[i][0]) >= 0) {
+        lines[i - 1] += lines[i][0];
+        lines[i] = lines[i].slice(1);
+      }
+    }
+    for (i = 0; i < lines.length - 1; i++) {
+      while (
+        lines[i] &&
+        lines[i].length &&
+        CJK_TRAILING_PUNCT.indexOf(lines[i][lines[i].length - 1]) >= 0
+      ) {
+        lines[i + 1] = lines[i].slice(-1) + (lines[i + 1] || "");
+        lines[i] = lines[i].slice(0, -1);
+      }
+    }
+    return lines.filter(function (l) {
+      return l && l.length;
+    });
   }
 
-  function drawLeafSilhouette(ctx, x, y, scale, rotation) {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(rotation || 0);
-    ctx.scale(scale, scale);
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.bezierCurveTo(18, -8, 42, -4, 56, 12);
-    ctx.bezierCurveTo(38, 18, 16, 14, 0, 0);
-    ctx.fill();
-    ctx.restore();
+  function wrapTextCJK(ctx, text, maxWidth) {
+    return applyCjkKinsoku(wrapText(ctx, text, maxWidth));
   }
 
-  function drawBambooShadow(ctx, w, h, variant) {
-    ctx.save();
-    ctx.fillStyle = CARD_COLORS.bamboo;
-    ctx.strokeStyle = CARD_COLORS.bamboo;
-
-    ctx.globalAlpha = variant === "phrase" ? 0.045 : 0.038;
-    drawLeafSilhouette(ctx, w * 0.86, h * 0.1, 2.4, -0.35);
-    drawLeafSilhouette(ctx, w * 0.92, h * 0.16, 1.6, 0.2);
-    drawLeafSilhouette(ctx, w * 0.78, h * 0.08, 1.2, -0.8);
-
-    ctx.globalAlpha = 0.035;
-    ctx.lineWidth = 2.2;
-    ctx.beginPath();
-    ctx.moveTo(w * 0.9, h * 0.82);
-    ctx.lineTo(w * 0.9, h * 0.58);
-    ctx.stroke();
-    ctx.lineWidth = 1.4;
-    ctx.beginPath();
-    ctx.moveTo(w * 0.935, h * 0.88);
-    ctx.lineTo(w * 0.935, h * 0.66);
-    ctx.stroke();
-
-    ctx.globalAlpha = 0.03;
-    drawLeafSilhouette(ctx, w * 0.84, h * 0.9, 1.8, 2.4);
-    drawLeafSilhouette(ctx, w * 0.94, h * 0.94, 1.3, 1.9);
-
-    ctx.restore();
+  function heroSizeRange(textLen, kind) {
+    if (kind === "phrase") {
+      if (textLen <= 14) return { min: 88, max: 102 };
+      if (textLen <= 22) return { min: 74, max: 88 };
+      return { min: 60, max: 74 };
+    }
+    if (textLen <= 14) return { min: 84, max: 96 };
+    if (textLen <= 28) return { min: 68, max: 80 };
+    if (textLen <= 35) return { min: 58, max: 66 };
+    return { min: 52, max: 62 };
   }
 
-  function fitHeroTypography(ctx, text, maxWidth, maxHeight, minSize, maxSize) {
-    var size = maxSize;
-    var min = minSize || 34;
-    var fitted = { lines: [text], size: min, lineHeight: min * 1.55 };
+  function shareHeroLineRatio(kind, textLen) {
+    if (kind === "wish" && textLen >= 36) return 1.56;
+    return 1.48;
+  }
+
+  function fitShareCardTypography(ctx, text, maxWidth, maxHeight, kind) {
+    var len = String(text).length;
+    var range = heroSizeRange(len, kind);
+    var size = range.max;
+    var min = Math.max(54, range.min);
+    if (kind === "wish" && len >= 36) min = 52;
+    var lineRatio = shareHeroLineRatio(kind, len);
+    var fitted = null;
+
     while (size >= min) {
-      ctx.font =
-        size +
-        'px "Noto Serif TC", "Songti TC", "PingFang TC", serif';
-      var lines = wrapText(ctx, text, maxWidth);
-      var lineHeight = Math.round(size * 1.55);
-      var blockHeight = lines.length * lineHeight;
-      if (blockHeight <= maxHeight) {
+      ctx.font = "500 " + size + "px " + SHARE.SERIF;
+      var lines = wrapTextCJK(ctx, text, maxWidth);
+      var lineHeight = Math.round(size * lineRatio);
+      if (lines.length * lineHeight <= maxHeight) {
         fitted = { lines: lines, size: size, lineHeight: lineHeight };
-        if (lines.length <= 6 || size <= min + 4) break;
+        break;
       }
       size -= 2;
+    }
+
+    if (!fitted) {
+      size = min;
+      ctx.font = "500 " + size + "px " + SHARE.SERIF;
+      fitted = {
+        lines: wrapTextCJK(ctx, text, maxWidth),
+        size: size,
+        lineHeight: Math.round(size * lineRatio),
+      };
     }
     return fitted;
   }
 
-  function drawCardQr(ctx, w, h, qrImg) {
-    if (!qrImg) return;
-    var size = 96;
-    var pad = 6;
-    var box = size + pad * 2;
-    var x = w / 2 - box / 2;
-    var y = h - 196 - box;
+  function waitForShareCardFonts() {
+    if (!document.fonts) return Promise.resolve();
+    return Promise.all([
+      document.fonts.load('500 94px "Noto Serif TC"'),
+      document.fonts.load('400 22px "Noto Sans TC"'),
+      document.fonts.load('400 18px "Noto Sans TC"'),
+    ])
+      .catch(function () {
+        return null;
+      })
+      .then(function () {
+        return document.fonts.ready;
+      });
+  }
+
+  function drawShareCardBackground(ctx, w, h) {
+    ctx.fillStyle = SHARE_COLORS.bg;
+    ctx.fillRect(0, 0, w, h);
+    var wash = ctx.createRadialGradient(
+      w * 0.28,
+      h * 0.18,
+      40,
+      w * 0.55,
+      h * 0.45,
+      h * 0.75
+    );
+    wash.addColorStop(0, "#FBF8F2");
+    wash.addColorStop(1, SHARE_COLORS.bg);
+    ctx.fillStyle = wash;
+    ctx.fillRect(0, 0, w, h);
+  }
+
+  function drawBambooLeafShadow(ctx, x, y, w, h, rot, color, alpha) {
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rot || 0);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, w, h, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(-w * 0.15, 0);
+    ctx.quadraticCurveTo(w * 0.35, -h * 0.55, w * 0.85, -h * 0.15);
+    ctx.quadraticCurveTo(w * 0.45, h * 0.35, -w * 0.2, h * 0.08);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawShareCardBamboo(ctx, w, h, kind) {
+    var color =
+      kind === "phrase" ? SHARE_COLORS.shadowGreen : SHARE_COLORS.shadowBrown;
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineCap = "round";
+
+    ctx.globalAlpha = kind === "phrase" ? 0.1 : 0.07;
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.82, -40);
+    ctx.lineTo(w * 0.78, h * 0.42);
+    ctx.stroke();
+    ctx.lineWidth = 3.5;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.9, 20);
+    ctx.lineTo(w * 0.86, h * 0.36);
+    ctx.stroke();
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(w * 0.72, 80);
+    ctx.lineTo(w * 0.7, h * 0.3);
+    ctx.stroke();
+
+    drawBambooLeafShadow(ctx, w * 0.76, h * 0.1, 110, 34, -0.45, color, 0.11);
+    drawBambooLeafShadow(ctx, w * 0.88, h * 0.16, 96, 28, 0.25, color, 0.1);
+    drawBambooLeafShadow(ctx, w * 0.68, h * 0.2, 88, 26, -0.9, color, 0.08);
+    drawBambooLeafShadow(ctx, w * 0.84, h * 0.28, 120, 36, -0.2, color, 0.09);
+    drawBambooLeafShadow(ctx, w * 0.94, h * 0.34, 72, 22, 0.55, color, 0.07);
+
+    ctx.globalAlpha = 0.06;
+    ctx.lineWidth = 1.5;
+    [0.18, 0.28, 0.38].forEach(function (t, idx) {
+      ctx.beginPath();
+      ctx.moveTo(w * (0.76 + idx * 0.05), h * t);
+      ctx.lineTo(w * (0.8 + idx * 0.04), h * (t + 0.04));
+      ctx.stroke();
+    });
+
+    ctx.restore();
+  }
+
+  function drawShareCardWishTag(ctx, w, h) {
+    var tagX = w - 184;
+    var tagY = 108;
+    var tagW = 118;
+    var tagH = 468;
+    var cx = tagX + tagW / 2;
 
     ctx.save();
+    ctx.fillStyle = "rgba(38, 35, 31, 0.055)";
+    ctx.beginPath();
+    ctx.ellipse(cx + 10, tagY + tagH + 20, tagW * 0.44, 18, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = "#A89278";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, 0);
+    ctx.quadraticCurveTo(cx + 10, tagY * 0.45, cx - 2, tagY - 6);
+    ctx.stroke();
+    ctx.lineWidth = 1.2;
+    ctx.strokeStyle = "#C4B29A";
+    ctx.beginPath();
+    ctx.moveTo(cx + 4, 0);
+    ctx.quadraticCurveTo(cx + 14, tagY * 0.42, cx + 2, tagY - 6);
+    ctx.stroke();
+
+    var bodyGrad = ctx.createLinearGradient(tagX, tagY, tagX + tagW, tagY + tagH);
+    bodyGrad.addColorStop(0, "#EDE2D0");
+    bodyGrad.addColorStop(0.45, "#DCCAB0");
+    bodyGrad.addColorStop(1, "#C8B092");
+
+    ctx.fillStyle = bodyGrad;
+    ctx.strokeStyle = "#B49A7E";
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(tagX + 16, tagY);
+    ctx.lineTo(tagX + tagW - 16, tagY);
+    ctx.quadraticCurveTo(tagX + tagW, tagY, tagX + tagW, tagY + 20);
+    ctx.lineTo(tagX + tagW, tagY + tagH - 24);
+    ctx.quadraticCurveTo(tagX + tagW, tagY + tagH, tagX + tagW - 18, tagY + tagH);
+    ctx.lineTo(tagX + 18, tagY + tagH);
+    ctx.quadraticCurveTo(tagX, tagY + tagH, tagX, tagY + tagH - 24);
+    ctx.lineTo(tagX, tagY + 20);
+    ctx.quadraticCurveTo(tagX, tagY, tagX + 16, tagY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = SHARE_COLORS.bg;
+    ctx.beginPath();
+    ctx.arc(cx, tagY + 34, 11, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "#A08870";
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(cx, tagY + 34, 6, 0, Math.PI * 2);
+    ctx.strokeStyle = "rgba(160, 136, 112, 0.45)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(139, 106, 74, 0.14)";
+    ctx.lineWidth = 1;
+    var gy;
+    for (gy = tagY + 72; gy < tagY + tagH - 36; gy += 18) {
+      ctx.beginPath();
+      ctx.moveTo(tagX + 18, gy);
+      ctx.lineTo(tagX + tagW - 18, gy + (gy % 36 === 0 ? 2 : -1));
+      ctx.stroke();
+    }
+
+    ctx.globalAlpha = 0.08;
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(tagX + 14, tagY + 12, 16, tagH - 40);
+    ctx.restore();
+  }
+
+  function drawShareCardLogo(ctx, x, y) {
+    ctx.save();
+    ctx.strokeStyle = SHARE_COLORS.primary;
+    ctx.fillStyle = SHARE_COLORS.primary;
+    ctx.lineWidth = 1.4;
+    ctx.globalAlpha = 0.88;
+    ctx.beginPath();
+    ctx.arc(x + 20, y, 18, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.lineWidth = 1.8;
+    [[20, -12, 10], [14, -10, 8], [26, -11, 9]].forEach(function (stem) {
+      ctx.beginPath();
+      ctx.moveTo(x + stem[0], y + stem[1]);
+      ctx.lineTo(x + stem[0], y + stem[2]);
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+
+  function drawShareCardHeader(ctx) {
+    var x = SHARE.MARGIN_L;
+    drawShareCardLogo(ctx, x, 82);
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = SHARE_COLORS.primary;
+    ctx.font = "500 28px " + SHARE.SANS;
+    ctx.fillText("竹山開飯了", x + 56, 88);
+    ctx.fillStyle = SHARE_COLORS.secondary;
+    ctx.font = "400 16px " + SHARE.SANS;
+    ctx.fillText("竹子重生的永續花園", x + 56, 116);
+    ctx.fillStyle = SHARE_COLORS.faint;
+    ctx.font = "400 18px " + SHARE.SERIF;
+    ctx.fillText("從竹林到餐桌，", x, 176);
+    ctx.fillText("再從餐桌回到土地。", x, 202);
+  }
+
+  function drawShareCardHero(ctx, w, h, text, kind) {
+    var heroTop = 252;
+    var serialLineY = shareBottomTop(h) - 118;
+    var heroBottom = serialLineY - 56;
+    var heroHeight = heroBottom - heroTop;
+    var fitted = fitShareCardTypography(
+      ctx,
+      text,
+      SHARE.HERO_MAX_W,
+      heroHeight,
+      kind
+    );
+
+    ctx.textAlign = "left";
+    ctx.fillStyle =
+      kind === "wish" ? SHARE_COLORS.wishHero : SHARE_COLORS.primary;
+    ctx.font = "500 " + fitted.size + "px " + SHARE.SERIF;
+    var blockH = fitted.lines.length * fitted.lineHeight;
+    var startY = heroTop + (heroHeight - blockH) / 2 + fitted.size * 0.76;
+    fitted.lines.forEach(function (line, idx) {
+      ctx.fillText(line, SHARE.MARGIN_L, startY + idx * fitted.lineHeight);
+    });
+    return serialLineY;
+  }
+
+  function drawShareCardSerialBlock(ctx, kind, serial, lineY) {
+    var accent =
+      kind === "phrase" ? SHARE_COLORS.phraseAccent : SHARE_COLORS.wishAccent;
+    var label =
+      (kind === "phrase" ? "竹語・" : "竹願・") + formatSerial(serial);
+    var tagline =
+      kind === "phrase" ? "一句竹語，一個想法。" : "一個願望，一份期待。";
+
+    ctx.strokeStyle = "rgba(115, 102, 87, 0.28)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(SHARE.MARGIN_L, lineY);
+    ctx.lineTo(SHARE.MARGIN_L + 92, lineY);
+    ctx.stroke();
+
+    ctx.textAlign = "left";
+    ctx.fillStyle = accent;
+    ctx.font = "500 22px " + SHARE.SANS;
+    ctx.fillText(label, SHARE.MARGIN_L, lineY + 34);
+    ctx.fillStyle = SHARE_COLORS.faint;
+    ctx.font = "400 17px " + SHARE.SANS;
+    ctx.fillText(tagline, SHARE.MARGIN_L, lineY + 62);
+  }
+
+  function drawLocationPin(ctx, x, y) {
+    ctx.save();
+    ctx.fillStyle = SHARE_COLORS.secondary;
+    ctx.beginPath();
+    ctx.arc(x, y - 10, 5.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x, y - 2);
+    ctx.lineTo(x - 5, y - 8);
+    ctx.lineTo(x + 5, y - 8);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawShareCardQr(ctx, x, y, qrImg, size) {
+    if (!qrImg) return { textX: x, labelY: y + 12, urlY: y + 34 };
+    size = size || 92;
+    var quiet = 7;
+    var box = size + quiet * 2;
     ctx.fillStyle = "#FFFFFF";
     ctx.globalAlpha = 0.94;
     ctx.fillRect(x, y, box, box);
     ctx.globalAlpha = 1;
-    ctx.strokeStyle = "rgba(138, 116, 92, 0.22)";
-    ctx.lineWidth = 1;
-    ctx.strokeRect(x + 0.5, y + 0.5, box - 1, box - 1);
-    ctx.drawImage(qrImg, x + pad, y + pad, size, size);
-    ctx.restore();
+    ctx.drawImage(qrImg, x + quiet, y + quiet, size, size);
+    return {
+      textX: x + box + 16,
+      labelY: y + quiet + 20,
+      urlY: y + quiet + 44,
+    };
   }
 
-  function drawStoryCardBase(ctx, w, h, options) {
-    options = options || {};
-    var heroText = options.heroText || "";
-    var serialLabel = options.serialLabel || "";
-    var footerLine = options.footerLine || "";
-    var variant = options.variant || "phrase";
-    var qrImg = options.qr || null;
+  function drawShareCardMeta(ctx, w, h, qrImg) {
+    var meta = shareCardMeta();
+    var x = SHARE.MARGIN_L;
+    var blockTop = shareBottomTop(h) + 6;
+    var qrY = blockTop + 92;
+    var qrPos = drawShareCardQr(ctx, x, qrY, qrImg, 92);
 
-    drawPaperBackground(ctx, w, h);
-    drawBambooShadow(ctx, w, h, variant);
+    ctx.textAlign = "left";
+    ctx.fillStyle = SHARE_COLORS.secondary;
+    ctx.font = "400 16px " + SHARE.SANS;
+    ctx.fillText("作品頁", qrPos.textX, qrPos.labelY);
+    ctx.fillStyle = SHARE_COLORS.faint;
+    ctx.font = "400 15px " + SHARE.SANS;
+    ctx.fillText("hoyao.com/zhushan", qrPos.textX, qrPos.urlY);
 
-    var marginX = w * 0.14;
-    var contentW = w - marginX * 2;
-    var meta = cardEventMeta();
-    var headerY = 128;
-    var footerUrlY = h - 72;
-    var qrReserve = qrImg ? 132 : 0;
-    var footerLineY = h - 118 - qrReserve;
-    var venueReserve = measureCardVenueMeta(
+    var venueY = qrY + 122;
+    drawLocationPin(ctx, x + 7, venueY);
+    ctx.fillStyle = SHARE_COLORS.secondary;
+    ctx.font = "400 17px " + SHARE.SANS;
+    wrapText(ctx, meta.venueLine, w - x - 40)
+      .slice(0, 2)
+      .forEach(function (line, idx) {
+        ctx.fillText(line, x + 22, venueY + idx * 24);
+      });
+    ctx.fillStyle = SHARE_COLORS.venueShort;
+    ctx.font = "400 15px " + SHARE.SANS;
+    ctx.fillText(meta.venueShort, x + 22, venueY + 52);
+
+    var creditsY = h - 46;
+    ctx.fillStyle = SHARE_COLORS.creditsFoot;
+    ctx.font = "400 16px " + SHARE.SANS;
+    ctx.fillText(
+      "指導｜" + meta.guidance + "　主辦｜" + meta.host,
+      x,
+      creditsY - 18
+    );
+    ctx.fillText("執行｜" + meta.executor, x, creditsY);
+  }
+
+  function drawPhraseShareCard(ctx, w, h, phrase, serial, qr) {
+    drawShareCardBackground(ctx, w, h);
+    drawShareCardBamboo(ctx, w, h, "phrase");
+    drawShareCardHeader(ctx);
+    var serialLineY = drawShareCardHero(
       ctx,
       w,
-      meta.venueLine,
-      meta.address
+      h,
+      String(phrase || "").trim(),
+      "phrase"
     );
-    var serialY = footerLineY - 20 - venueReserve - 36;
-    var heroTop = 196;
-    var heroBottom = serialY - 56;
-    var heroHeight = heroBottom - heroTop;
+    drawShareCardSerialBlock(ctx, "phrase", serial, serialLineY);
+    drawShareCardMeta(ctx, w, h, qr);
+  }
 
-    ctx.textAlign = "center";
-    ctx.textBaseline = "alphabetic";
-
-    drawCardHostLine(ctx, w, headerY, meta.hostLine);
-
-    var heroLen = heroText.length;
-    var maxSize = heroLen <= 14 ? 78 : heroLen <= 24 ? 64 : heroLen <= 36 ? 54 : 46;
-    var fitted = fitHeroTypography(
-      ctx,
-      heroText,
-      contentW,
-      heroHeight,
-      34,
-      maxSize
-    );
-    ctx.fillStyle = CARD_COLORS.primary;
-    ctx.font =
-      fitted.size +
-      'px "Noto Serif TC", "Songti TC", "PingFang TC", serif';
-    var blockHeight = fitted.lines.length * fitted.lineHeight;
-    var startY =
-      heroTop + (heroHeight - blockHeight) / 2 + fitted.size * 0.82;
-    fitted.lines.forEach(function (line, idx) {
-      ctx.fillText(line, w / 2, startY + idx * fitted.lineHeight);
-    });
-
-    ctx.fillStyle = CARD_COLORS.accent;
-    ctx.font =
-      '500 24px "Noto Sans TC", "PingFang TC", sans-serif';
-    ctx.letterSpacing = "0.12em";
-    ctx.fillText(serialLabel, w / 2, serialY);
-    ctx.letterSpacing = "0px";
-
-    drawCardVenueMeta(
+  function drawWishShareCard(ctx, w, h, wishText, serial, qr) {
+    drawShareCardBackground(ctx, w, h);
+    drawShareCardBamboo(ctx, w, h, "wish");
+    drawShareCardWishTag(ctx, w, h);
+    drawShareCardHeader(ctx);
+    var serialLineY = drawShareCardHero(
       ctx,
       w,
-      footerLineY - 20,
-      meta.venueLine,
-      meta.address
+      h,
+      String(wishText || "").trim(),
+      "wish"
     );
-
-    ctx.fillStyle = CARD_COLORS.secondary;
-    ctx.font =
-      '400 20px "Noto Sans TC", "PingFang TC", sans-serif';
-    ctx.fillText(footerLine, w / 2, footerLineY);
-
-    if (qrImg) {
-      drawCardQr(ctx, w, h, qrImg);
-    }
-
-    ctx.fillStyle = CARD_COLORS.secondary;
-    ctx.globalAlpha = 0.72;
-    ctx.font =
-      '400 18px "Noto Sans TC", "PingFang TC", sans-serif';
-    ctx.fillText("hoyao.com/zhushan", w / 2, footerUrlY);
-    ctx.globalAlpha = 1;
-  }
-
-  function drawPhraseCard(ctx, w, h, phrase, serial, qr) {
-    drawStoryCardBase(ctx, w, h, {
-      heroText: "「" + String(phrase || "").trim() + "」",
-      serialLabel: "竹語 No. " + formatSerial(serial),
-      footerLine: "從竹林到餐桌，再從餐桌回到土地。",
-      variant: "phrase",
-      qr: qr,
-    });
-  }
-
-  function drawWishCard(ctx, w, h, wishText, serial, qr) {
-    drawStoryCardBase(ctx, w, h, {
-      heroText: String(wishText || "").trim(),
-      serialLabel: "竹願 No. " + formatSerial(serial),
-      footerLine: "留下一個願望，也留下一段此刻。",
-      variant: "wish",
-      qr: qr,
-    });
+    drawShareCardSerialBlock(ctx, "wish", serial, serialLineY);
+    drawShareCardMeta(ctx, w, h, qr);
   }
 
   /* —— Story card painter (9:16) —— */
@@ -444,19 +657,16 @@
 
     function paint(qr) {
       if (kind === "phrase") {
-        drawPhraseCard(ctx, w, h, message, serial, qr);
+        drawPhraseShareCard(ctx, w, h, message, serial, qr);
       } else {
-        drawWishCard(ctx, w, h, message, serial, qr);
+        drawWishShareCard(ctx, w, h, message, serial, qr);
       }
     }
 
     return createQrImage(shareUrl).then(function (qr) {
-      if (document.fonts && document.fonts.ready) {
-        return document.fonts.ready.then(function () {
-          paint(qr);
-        });
-      }
-      paint(qr);
+      return waitForShareCardFonts().then(function () {
+        paint(qr);
+      });
     });
   }
 
@@ -948,14 +1158,23 @@
     var shareBtn = document.getElementById("zs-card-share");
     var dlBtn = document.getElementById("zs-card-download");
     var status = document.getElementById("zs-card-action-status");
+    var hint = document.getElementById("zs-thought-hint");
+
+    function updateWishInputUi() {
+      if (!input) return;
+      var len = input.value.length;
+      if (count) count.textContent = String(len);
+      if (hint) {
+        hint.hidden = !(len >= 32 && len <= 39);
+      }
+    }
 
     if (input) {
       input.setAttribute("maxlength", String(WISH_MAX));
-      if (count) {
-        input.addEventListener("input", function () {
-          count.textContent = String(input.value.length);
-        });
-      }
+      input.addEventListener("input", function () {
+        updateWishInputUi();
+      });
+      updateWishInputUi();
     }
 
     if (passBtn && input) {

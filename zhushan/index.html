@@ -31,7 +31,7 @@
 <link rel="apple-touch-icon" href="/assets/logo/apple-touch-icon-v2.png" sizes="180x180">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="preload" href="/assets/data/zhushan-outcomes.json" as="fetch" crossorigin>
 <link rel="stylesheet" href="/assets/css/zhushan.css?v=20260831-v70">
 <script type="application/ld+json">
@@ -88,7 +88,7 @@
 }
 </script>
 <script src="/assets/js/qrcode-generator.js?v=20260831-v70"></script>
-<script src="/assets/js/zhushan-config.js?v=20260831-v72"></script>
+<script src="/assets/js/zhushan-config.js?v=20260831-v75"></script>
 <script>
 /* Early outcomes fetch — reduce mid-scroll layout insertion */
 window.__ZS_OUTCOMES_P = (function () {
@@ -314,8 +314,9 @@ window.__ZS_OUTCOMES_P = (function () {
 <div class="zs-wish-unit__core">
 <div class="zs-composer zs-composer--compact">
 <label class="zs-composer__label zs-visually-hidden" for="zs-thought-input">留一句話給竹山</label>
-<textarea id="zs-thought-input" class="zs-composer__field zs-composer__field--compact" maxlength="70" rows="3" placeholder="留一句話給竹山……"></textarea>
-<p class="zs-composer__count"><span id="zs-thought-count">0</span> / 70</p>
+<textarea id="zs-thought-input" class="zs-composer__field zs-composer__field--compact" maxlength="40" rows="3" placeholder="留一句話給竹山……"></textarea>
+<p class="zs-composer__count"><span id="zs-thought-count">0</span> / 40</p>
+<p class="zs-form-note" id="zs-thought-hint" hidden>再精簡一點，分享卡會更好看。</p>
 
 <div class="zs-wish-actions" role="group" aria-label="竹願操作">
 <button type="button" class="zs-btn zs-btn-ghost" id="zs-ephemeral-btn">讓它飄過</button>
@@ -541,6 +542,6 @@ window.__ZS_OUTCOMES_P = (function () {
 </div>
 
 <script src="/assets/js/zhushan.js?v=20260831-v70"></script>
-<script src="/assets/js/zhushan-participation.js?v=20260831-v73"></script>
+<script src="/assets/js/zhushan-participation.js?v=20260831-v76"></script>
 </body>
 </html>

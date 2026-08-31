@@ -157,24 +157,14 @@ window.ZHUSHAN_CONFIG = {
       caption: "作品預組裝紀錄",
     },
     venue: {
-      src: "/assets/images/projects/zhushan/site-entrance.webp",
-      placeholder: false,
-      alt: "作品進場｜台西客運竹山站／竹青庭",
+      src: "",
+      placeholder: true,
+      alt: "",
       width: 1600,
       height: 900,
-      caption: "作品進場｜台西客運竹山站／竹青庭",
+      caption: "",
     },
-    venueGallery: [
-      {
-        src: "/assets/images/projects/zhushan/site-entrance.webp",
-        placeholder: false,
-        alt: "作品進場｜台西客運竹山站／竹青庭",
-        width: 1600,
-        height: 900,
-        caption: "作品進場｜台西客運竹山站／竹青庭",
-        size: "large",
-      },
-    ],
+    venueGallery: [],
     process: [
       {
         id: "01",

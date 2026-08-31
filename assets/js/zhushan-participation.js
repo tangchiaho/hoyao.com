@@ -58,7 +58,7 @@
     if (qrPromise) return qrPromise;
     var src =
       (cfg.placeholders && cfg.placeholders.qr) ||
-      "/assets/images/projects/zhushan/qr-zhushan.png";
+      "/assets/placeholders/zhushan/qr-zhushan.svg";
     qrPromise = new Promise(function (resolve) {
       var img = new Image();
       img.onload = function () {
@@ -125,7 +125,7 @@
         var qr = qrcode(0, "M");
         qr.addData(url);
         qr.make();
-        return qrImageFromModel(qr, 420);
+        return qrImageFromModel(qr, 320);
       } catch (err) {
         /* fall through to static asset */
       }
@@ -244,12 +244,33 @@
     return fitted;
   }
 
+  function drawCardQr(ctx, w, h, qrImg) {
+    if (!qrImg) return;
+    var size = 96;
+    var pad = 6;
+    var box = size + pad * 2;
+    var x = w / 2 - box / 2;
+    var y = h - 196 - box;
+
+    ctx.save();
+    ctx.fillStyle = "#FFFFFF";
+    ctx.globalAlpha = 0.94;
+    ctx.fillRect(x, y, box, box);
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = "rgba(138, 116, 92, 0.22)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x + 0.5, y + 0.5, box - 1, box - 1);
+    ctx.drawImage(qrImg, x + pad, y + pad, size, size);
+    ctx.restore();
+  }
+
   function drawStoryCardBase(ctx, w, h, options) {
     options = options || {};
     var heroText = options.heroText || "";
     var serialLabel = options.serialLabel || "";
     var footerLine = options.footerLine || "";
     var variant = options.variant || "phrase";
+    var qrImg = options.qr || null;
 
     drawPaperBackground(ctx, w, h);
     drawBambooShadow(ctx, w, h, variant);
@@ -258,8 +279,9 @@
     var contentW = w - marginX * 2;
     var headerY = 132;
     var footerUrlY = h - 72;
-    var footerLineY = h - 118;
-    var serialY = h - 248;
+    var qrReserve = qrImg ? 132 : 0;
+    var footerLineY = h - 118 - qrReserve;
+    var serialY = h - 248 - qrReserve;
     var heroTop = 220;
     var heroBottom = serialY - 72;
     var heroHeight = heroBottom - heroTop;
@@ -307,6 +329,10 @@
       '400 20px "Noto Sans TC", "PingFang TC", sans-serif';
     ctx.fillText(footerLine, w / 2, footerLineY);
 
+    if (qrImg) {
+      drawCardQr(ctx, w, h, qrImg);
+    }
+
     ctx.fillStyle = CARD_COLORS.secondary;
     ctx.globalAlpha = 0.72;
     ctx.font =
@@ -315,21 +341,23 @@
     ctx.globalAlpha = 1;
   }
 
-  function drawPhraseCard(ctx, w, h, phrase, serial) {
+  function drawPhraseCard(ctx, w, h, phrase, serial, qr) {
     drawStoryCardBase(ctx, w, h, {
       heroText: "「" + String(phrase || "").trim() + "」",
       serialLabel: "竹語 No. " + formatSerial(serial),
       footerLine: "從竹林到餐桌，再從餐桌回到土地。",
       variant: "phrase",
+      qr: qr,
     });
   }
 
-  function drawWishCard(ctx, w, h, wishText, serial) {
+  function drawWishCard(ctx, w, h, wishText, serial, qr) {
     drawStoryCardBase(ctx, w, h, {
       heroText: String(wishText || "").trim(),
       serialLabel: "竹願 No. " + formatSerial(serial),
       footerLine: "留下一個願望，也留下一段此刻。",
       variant: "wish",
+      qr: qr,
     });
   }
 
@@ -348,22 +376,24 @@
         : kind === "phrase"
           ? currentPhraseIndex || 1
           : getWishSerial();
+    var shareUrl = cardShareUrl(kind);
 
-    function paint() {
+    function paint(qr) {
       if (kind === "phrase") {
-        drawPhraseCard(ctx, w, h, message, serial);
+        drawPhraseCard(ctx, w, h, message, serial, qr);
       } else {
-        drawWishCard(ctx, w, h, message, serial);
+        drawWishCard(ctx, w, h, message, serial, qr);
       }
     }
 
-    if (document.fonts && document.fonts.ready) {
-      return document.fonts.ready.then(function () {
-        paint();
-      });
-    }
-    paint();
-    return Promise.resolve();
+    return createQrImage(shareUrl).then(function (qr) {
+      if (document.fonts && document.fonts.ready) {
+        return document.fonts.ready.then(function () {
+          paint(qr);
+        });
+      }
+      paint(qr);
+    });
   }
 
   function canvasFile(canvas, name) {

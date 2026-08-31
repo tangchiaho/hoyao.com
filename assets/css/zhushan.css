@@ -1772,12 +1772,25 @@ html.zs-page {
   margin: 20px 0 0;
   font-size: 12px;
   line-height: 1.6;
+  color: var(--zs-warm);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 12px;
+}
+
+.zs-venue-quiet__label {
+  letter-spacing: 0.04em;
+}
+
+.zs-venue-quiet__name {
+  color: var(--zs-muted);
 }
 
 .zs-venue-quiet a {
   color: var(--zs-muted);
   text-decoration: none;
-  border-bottom: 1px solid var(--zs-rule);
+  border-bottom: none;
 }
 
 .zs-venue-quiet a:hover {
@@ -1871,6 +1884,51 @@ html.zs-page {
 
 .zs-credits dd:last-of-type {
   border-bottom: none;
+}
+
+.zs-credits__names {
+  display: block;
+}
+
+.zs-credits__outlinks {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.zs-outlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--zs-muted);
+  text-decoration: none;
+  border-bottom: none;
+  transition: color 280ms var(--zs-ease);
+}
+
+.zs-page a.zs-outlink,
+.zs-page a.zs-outlink:visited {
+  color: var(--zs-muted);
+  text-decoration: none;
+}
+
+.zs-page a.zs-outlink:hover,
+.zs-page a.zs-outlink:focus-visible,
+.zs-outlink:hover,
+.zs-outlink:focus-visible {
+  color: var(--zs-ink);
+  opacity: 1;
+}
+
+.zs-outlink__icon {
+  font-size: 0.9em;
+  line-height: 1;
+  opacity: 0.72;
 }
 
 .zs-credits a,
@@ -1975,18 +2033,11 @@ html.zs-page {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
-.zs-related__links a {
-  font-size: 12px;
-  color: var(--zs-muted);
-  text-decoration: none;
-  border-bottom: none;
-}
-
-.zs-related__links a:hover {
-  color: var(--zs-ink);
+.zs-related__links .zs-outlink {
+  align-self: flex-start;
 }
 
 /* —— Footer —— */

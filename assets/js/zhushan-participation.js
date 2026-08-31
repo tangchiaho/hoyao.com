@@ -98,6 +98,11 @@
     var kind = opts.kind || "wish";
     var footerHint =
       kind === "phrase" ? "掃描帶走你的竹語" : "掃描留下你的竹願";
+    var event = cfg.event || {};
+    var venueName = event.venueName || "台西客運竹山站・竹青庭人文空間";
+    var venueAddress = event.venueAddress || "南投縣竹山鎮中山里菜園路27號";
+    var host = event.host || "南投縣青年發展所";
+    var guidance = event.guidance || "南投縣政府";
 
     function paint(qr) {
       ctx.fillStyle = "#F5F3EC";
@@ -180,20 +185,31 @@
 
       ctx.fillStyle = "#8A8780";
       ctx.font = '26px "Noto Sans TC", sans-serif';
-      ctx.fillText(kind === "phrase" ? "竹語" : "我的竹願", w / 2, 1180);
-      ctx.fillText("2026・竹山", w / 2, 1230);
+      ctx.fillText(kind === "phrase" ? "竹語" : "我的竹願", w / 2, 1100);
 
-      ctx.fillStyle = "#3A4A38";
-      ctx.font = '24px "Noto Serif TC", serif';
-      ctx.fillText(cfg.wishCard.hashtag || "#竹山開飯了", w / 2, 1380);
+      ctx.fillStyle = "#5A5852";
+      ctx.font = '24px "Noto Sans TC", sans-serif';
+      ctx.fillText(venueName, w / 2, 1145);
 
       ctx.fillStyle = "#8A8780";
       ctx.font = '22px "Noto Sans TC", sans-serif';
-      ctx.fillText(footerHint, w / 2, 1520);
-      ctx.fillText("hoyao.com/zhushan", w / 2, 1570);
+      ctx.fillText(venueAddress, w / 2, 1185);
+
+      ctx.font = '20px "Noto Sans TC", sans-serif';
+      ctx.fillText("主辦｜" + host, w / 2, 1230);
+      ctx.fillText("指導｜" + guidance, w / 2, 1265);
+
+      ctx.fillStyle = "#3A4A38";
+      ctx.font = '24px "Noto Serif TC", serif';
+      ctx.fillText(cfg.wishCard.hashtag || "#竹山開飯了", w / 2, 1330);
+
+      ctx.fillStyle = "#8A8780";
+      ctx.font = '22px "Noto Sans TC", sans-serif';
+      ctx.fillText(footerHint, w / 2, 1450);
+      ctx.fillText("hoyao.com/zhushan", w / 2, 1490);
 
       if (qr) {
-        ctx.drawImage(qr, w / 2 - 56, 1620, 112, 112);
+        ctx.drawImage(qr, w / 2 - 56, 1560, 112, 112);
       }
     }
 

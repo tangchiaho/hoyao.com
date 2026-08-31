@@ -111,6 +111,14 @@ window.ZHUSHAN_CONFIG = {
     qr: "/assets/placeholders/zhushan/qr-zhushan.png",
   },
 
+  /* 展出與活動資訊（竹語卡／竹願卡、作品資訊共用） */
+  event: {
+    venueName: "台西客運竹山站・竹青庭人文空間",
+    venueAddress: "南投縣竹山鎮中山里菜園路27號",
+    host: "南投縣青年發展所",
+    guidance: "南投縣政府",
+  },
+
   wishCard: {
     enabled: true,
     maxLength: 70,

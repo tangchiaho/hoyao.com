@@ -911,7 +911,8 @@ html.zs-page {
   appearance: none;
   border: 1px solid var(--zs-ink);
   background: var(--zs-ink);
-  color: var(--zs-white);
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
   font-family: inherit;
   font-size: 14px;
   letter-spacing: 0.04em;
@@ -1448,25 +1449,32 @@ html.zs-page {
   font-weight: 400;
 }
 
-.zs-page a#zs-survey-btn.zs-btn {
+#zs-survey-btn.zs-btn {
   color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
   background: #1a1a18;
   border-color: #1a1a18;
   box-shadow: none;
   font-weight: 500;
 }
 
-.zs-page a#zs-survey-btn.zs-btn:hover,
-.zs-page a#zs-survey-btn.zs-btn:active,
-.zs-page a#zs-survey-btn.zs-btn:focus-visible {
+#zs-survey-btn.zs-btn:hover,
+#zs-survey-btn.zs-btn:active,
+#zs-survey-btn.zs-btn:focus-visible {
   color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
   background: #111110;
   opacity: 1;
 }
 
 @media (max-width: 600px) {
-  .zs-obs-leadline__t {
-    font-size: 1.15rem;
+  .zs-shell {
+    padding: 0 16px 72px;
+  }
+
+  #zs-survey-btn.zs-btn {
+    width: 100%;
+    max-width: 22rem;
   }
 }
 

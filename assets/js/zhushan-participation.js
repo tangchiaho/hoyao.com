@@ -878,16 +878,9 @@
       }
     }
     if (btn) {
-      if (btn.tagName === "A") {
-        btn.href = url;
-        btn.target = "_blank";
-        btn.rel = "noopener noreferrer";
-      }
       btn.addEventListener("click", function () {
         track("survey_open", { page: "zhushan" });
-        if (btn.tagName !== "A") {
-          window.open(url, "_blank", "noopener,noreferrer");
-        }
+        window.open(url, "_blank", "noopener,noreferrer");
       });
     }
   }

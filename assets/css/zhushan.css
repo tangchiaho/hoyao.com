@@ -2046,7 +2046,7 @@ html.zs-page {
 }
 
 .zs-related__kicker {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -2055,11 +2055,11 @@ html.zs-page {
 
 .zs-related__name {
   margin: 0;
-  font-family: var(--zs-serif);
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 1.55;
-  color: var(--zs-ink);
+  font-family: var(--zs-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--zs-muted);
 }
 
 .zs-related__name a {

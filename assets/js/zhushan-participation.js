@@ -303,8 +303,8 @@
   }
 
   function drawQrBlock(ctx, qr, w, topY) {
-    var box = 220;
-    var qrSize = 184;
+    var box = 196;
+    var qrSize = 164;
     var x = w / 2 - box / 2;
     ctx.save();
     ctx.fillStyle = "#FFFFFF";
@@ -318,10 +318,10 @@
     ctx.restore();
     ctx.textAlign = "center";
     ctx.fillStyle = "#8A8780";
-    ctx.font = '22px "Noto Sans TC", sans-serif';
-    ctx.fillText("掃描進入作品頁", w / 2, topY + box + 36);
     ctx.font = '20px "Noto Sans TC", sans-serif';
-    ctx.fillText("hoyao.com/zhushan", w / 2, topY + box + 68);
+    ctx.fillText("掃描進入作品頁", w / 2, topY + box + 30);
+    ctx.font = '18px "Noto Sans TC", sans-serif';
+    ctx.fillText("hoyao.com/zhushan", w / 2, topY + box + 56);
   }
 
   function wrapText(ctx, text, maxWidth) {
@@ -358,9 +358,16 @@
     var hashtag = cfg.wishCard.hashtag || "#竹山開飯了";
 
     function paint(qr) {
+      var footerH = 450;
+      var footerStart = h - footerH;
+      var headerEnd = 300;
+      var heroTop = headerEnd + 12;
+      var heroBottom = footerStart - 20;
+      var heroCenter = (heroTop + heroBottom) / 2;
+
       drawCardBackground(ctx, w, h, kind);
-      drawSideBamboo(ctx, 118, 140, h - 420);
-      drawBambooEmblem(ctx, w / 2, 248, 118);
+      drawSideBamboo(ctx, 118, 140, footerStart - 20);
+      drawBambooEmblem(ctx, w / 2, 210, 100);
 
       ctx.strokeStyle = "rgba(212, 209, 201, 0.95)";
       ctx.lineWidth = 1;
@@ -370,11 +377,11 @@
       ctx.textAlign = "center";
       ctx.fillStyle = "#8A8780";
       ctx.font = '500 20px "Noto Sans TC", sans-serif';
-      ctx.fillText("ZHUSHAN · 竹山開飯了", w / 2, 196);
+      ctx.fillText("ZHUSHAN · 竹山開飯了", w / 2, 168);
       ctx.fillStyle = "#1A1A18";
       ctx.font = '600 44px "Noto Serif TC", serif';
-      ctx.fillText("竹子重生的永續花園", w / 2, 252);
-      drawRule(ctx, w * 0.26, w * 0.74, 292);
+      ctx.fillText("竹子重生的永續花園", w / 2, 228);
+      drawRule(ctx, w * 0.26, w * 0.74, 268);
 
       var quoteSize = message.length > 42 ? 44 : message.length > 28 ? 50 : 56;
       ctx.font = quoteSize + 'px "Noto Serif TC", serif';
@@ -383,29 +390,32 @@
       var maxLines = 6;
       lines = lines.slice(0, maxLines);
       var quoteBlock = lines.length * lineHeight;
-      var footerTop = h - 380;
-      var panelTop = Math.max(340, footerTop - quoteBlock - 220);
-      var panelHeight = quoteBlock + 96;
+      var panelPad = 52;
+      var maxPanelH = heroBottom - heroTop;
+      var panelHeight = Math.min(quoteBlock + panelPad * 2, maxPanelH);
+      var panelTop = heroCenter - panelHeight / 2;
+      panelTop = Math.max(heroTop, Math.min(panelTop, heroBottom - panelHeight));
+      var quoteStart =
+        panelTop + (panelHeight - quoteBlock) / 2 + quoteSize * 0.35;
+
       drawQuotePanel(ctx, w, panelTop, panelHeight);
-      var quoteStart = panelTop + (panelHeight - quoteBlock) / 2 + quoteSize * 0.35;
+      drawKindBadge(ctx, w, panelTop + 36, kind);
       ctx.fillStyle = "#1A1A18";
       lines.forEach(function (line, idx) {
         ctx.fillText(line, w / 2, quoteStart + idx * lineHeight);
       });
 
-      drawKindBadge(ctx, w, panelTop + panelHeight + 44, kind);
-
       ctx.fillStyle = "#5A5852";
       ctx.font = '24px "Noto Serif TC", serif';
-      ctx.fillText(venueName, w / 2, panelTop + panelHeight + 108);
+      ctx.fillText(venueName, w / 2, footerStart + 32);
 
-      drawOrgCredits(ctx, w, panelTop + panelHeight + 178, host, guidance);
+      drawOrgCredits(ctx, w, footerStart + 88, host, guidance);
 
       ctx.fillStyle = "#3A4A38";
       ctx.font = '24px "Noto Serif TC", serif';
-      ctx.fillText(hashtag, w / 2, footerTop - 4);
+      ctx.fillText(hashtag, w / 2, footerStart + 168);
 
-      drawQrBlock(ctx, qr, w, footerTop + 20);
+      drawQrBlock(ctx, qr, w, footerStart + 188);
     }
 
     return createQrImage(shareUrl).then(function (qr) {

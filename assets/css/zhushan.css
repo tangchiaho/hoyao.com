@@ -1675,15 +1675,23 @@ html.zs-page {
 
 .zs-challenge__form {
   margin: 16px 0 0;
+  max-width: 420px;
+}
+
+.zs-challenge__form .zs-composer__label {
+  margin-bottom: 8px;
+  font-size: 13px;
 }
 
 .zs-composer__field--url {
   min-height: 0;
   height: auto;
-  padding: 14px 16px;
+  width: 100%;
+  max-width: 420px;
+  padding: 10px 14px;
   font-family: var(--zs-sans);
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.45;
 }
 
 .zs-ph-note {
@@ -1882,8 +1890,7 @@ html.zs-page {
 
 .zs-credits {
   margin: 2.75em 0 0;
-  padding: 28px 0 0;
-  border-top: 1px solid var(--zs-rule);
+  padding: 0;
   font-size: 14px;
   line-height: 1.85;
 }
@@ -2057,7 +2064,7 @@ html.zs-page {
   margin: 0;
   font-family: var(--zs-sans);
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.65;
   color: var(--zs-muted);
 }

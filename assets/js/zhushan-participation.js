@@ -131,6 +131,141 @@
     return loadQr();
   }
 
+  function drawCardBackground(ctx, w, h, kind) {
+    var grad = ctx.createLinearGradient(0, 0, w * 0.2, h);
+    grad.addColorStop(0, kind === "phrase" ? "#F3F6EF" : "#F8F4EA");
+    grad.addColorStop(0.45, "#F5F0E6");
+    grad.addColorStop(1, "#E9E3D6");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.save();
+    ctx.globalAlpha = 0.035;
+    ctx.strokeStyle = "#3A4A38";
+    ctx.lineWidth = 1;
+    var gx;
+    for (gx = 0; gx < w + 120; gx += 48) {
+      ctx.beginPath();
+      ctx.moveTo(gx, 0);
+      ctx.lineTo(gx - 120, h);
+      ctx.stroke();
+    }
+    var gy;
+    for (gy = 0; gy < h; gy += 48) {
+      ctx.beginPath();
+      ctx.moveTo(0, gy);
+      ctx.lineTo(w, gy);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    ctx.save();
+    ctx.globalAlpha = 0.055;
+    var wash = ctx.createRadialGradient(w * 0.82, h * 0.12, 20, w * 0.82, h * 0.12, 420);
+    wash.addColorStop(0, kind === "phrase" ? "#5A7A52" : "#8A7A52");
+    wash.addColorStop(1, "rgba(90, 90, 80, 0)");
+    ctx.fillStyle = wash;
+    ctx.fillRect(0, 0, w, h);
+    ctx.restore();
+  }
+
+  function drawBambooEmblem(ctx, cx, cy, radius) {
+    ctx.save();
+    ctx.strokeStyle = "#3A4A38";
+    ctx.fillStyle = "#3A4A38";
+    [radius, radius * 0.72, radius * 0.46].forEach(function (r, idx) {
+      ctx.globalAlpha = 0.1 - idx * 0.02;
+      ctx.lineWidth = idx === 0 ? 2 : 1.2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.stroke();
+    });
+    ctx.globalAlpha = 0.16;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 0.08;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - radius * 0.35);
+    ctx.lineTo(cx, cy + radius * 0.35);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawSideBamboo(ctx, x, top, bottom) {
+    ctx.save();
+    [[x, 0.14, 1.1], [x + 28, 0.22, 1.4], [x + 54, 0.1, 1]].forEach(function (stem) {
+      ctx.globalAlpha = stem[1];
+      ctx.strokeStyle = "#3A4A38";
+      ctx.fillStyle = "#3A4A38";
+      ctx.lineWidth = stem[2];
+      ctx.beginPath();
+      ctx.moveTo(stem[0], bottom);
+      ctx.lineTo(stem[0], top);
+      ctx.stroke();
+      var nodeY = top + 80;
+      while (nodeY < bottom - 40) {
+        ctx.beginPath();
+        ctx.arc(stem[0], nodeY, 2.8, 0, Math.PI * 2);
+        ctx.fill();
+        nodeY += 95;
+      }
+    });
+    ctx.restore();
+  }
+
+  function drawCornerMarks(ctx, x, y, width, height) {
+    var len = 22;
+    ctx.save();
+    ctx.strokeStyle = "rgba(58, 74, 56, 0.22)";
+    ctx.lineWidth = 1.2;
+    [
+      [x, y + len, x, y, x + len, y],
+      [x + width - len, y, x + width, y, x + width, y + len],
+      [x, y + height - len, x, y + height, x + len, y + height],
+      [x + width - len, y + height, x + width, y + height, x + width, y + height - len],
+    ].forEach(function (pts) {
+      ctx.beginPath();
+      ctx.moveTo(pts[0], pts[1]);
+      ctx.lineTo(pts[2], pts[3]);
+      ctx.lineTo(pts[4], pts[5]);
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+
+  function drawKindBadge(ctx, w, y, kind) {
+    var label = kind === "phrase" ? "竹語" : "竹願";
+    ctx.save();
+    ctx.font = '500 20px "Noto Sans TC", sans-serif';
+    var tw = ctx.measureText(label).width + 36;
+    var bx = w / 2 - tw / 2;
+    ctx.fillStyle = "rgba(255, 255, 255, 0.58)";
+    ctx.strokeStyle = "rgba(58, 74, 56, 0.18)";
+    ctx.lineWidth = 1;
+    ctx.fillRect(bx, y - 24, tw, 36);
+    ctx.strokeRect(bx, y - 24, tw, 36);
+    ctx.fillStyle = "#3A4A38";
+    ctx.textAlign = "center";
+    ctx.fillText(label, w / 2, y);
+    ctx.restore();
+  }
+
+  function drawQuotePanel(ctx, w, top, height) {
+    var panelW = w * 0.82;
+    var panelX = (w - panelW) / 2;
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.56)";
+    ctx.fillRect(panelX, top, panelW, height);
+    ctx.strokeStyle = "rgba(58, 74, 56, 0.1)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(panelX, top, panelW, height);
+    drawCornerMarks(ctx, panelX + 18, top + 18, panelW - 36, height - 36);
+    ctx.restore();
+    return { x: panelX, width: panelW, centerY: top + height / 2 };
+  }
+
   function drawRule(ctx, x1, x2, y) {
     ctx.save();
     ctx.strokeStyle = "#D4D1C9";
@@ -150,16 +285,21 @@
   function drawOrgCredits(ctx, w, y, host, guidance) {
     var leftCx = w * 0.32;
     var rightCx = w * 0.68;
+    var colW = w * 0.28;
     drawRule(ctx, w * 0.16, w * 0.84, y - 24);
     ctx.textAlign = "center";
     ctx.fillStyle = "#9A9690";
-    ctx.font = '500 17px "Noto Sans TC", "PingFang TC", sans-serif';
+    ctx.font = '500 16px "Noto Sans TC", "PingFang TC", sans-serif';
     ctx.fillText("主辦", leftCx, y);
     ctx.fillText("指導", rightCx, y);
     ctx.fillStyle = "#2A2A28";
-    ctx.font = '500 28px "Noto Serif TC", "PingFang TC", serif';
-    ctx.fillText(host, leftCx, y + 42);
-    ctx.fillText(guidance, rightCx, y + 42);
+    ctx.font = '500 24px "Noto Serif TC", "PingFang TC", serif';
+    wrapText(ctx, host, colW).slice(0, 2).forEach(function (line, idx) {
+      ctx.fillText(line, leftCx, y + 38 + idx * 30);
+    });
+    wrapText(ctx, guidance, colW).slice(0, 2).forEach(function (line, idx) {
+      ctx.fillText(line, rightCx, y + 38 + idx * 30);
+    });
   }
 
   function drawQrBlock(ctx, qr, w, topY) {
@@ -218,80 +358,54 @@
     var hashtag = cfg.wishCard.hashtag || "#竹山開飯了";
 
     function paint(qr) {
-      ctx.fillStyle = "#F7F5EE";
-      ctx.fillRect(0, 0, w, h);
+      drawCardBackground(ctx, w, h, kind);
+      drawSideBamboo(ctx, 118, 140, h - 420);
+      drawBambooEmblem(ctx, w / 2, 248, 118);
 
-      ctx.save();
-      ctx.globalAlpha = 0.028;
-      ctx.strokeStyle = "#3A4A38";
+      ctx.strokeStyle = "rgba(212, 209, 201, 0.95)";
       ctx.lineWidth = 1;
-      var i;
-      for (i = 0; i < 18; i++) {
-        ctx.beginPath();
-        ctx.moveTo(60 + i * 58, 0);
-        ctx.lineTo(10 + i * 58, h);
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      ctx.save();
-      ctx.globalAlpha = 0.045;
-      var glow = ctx.createRadialGradient(w * 0.5, h * 0.28, 40, w * 0.5, h * 0.28, 520);
-      glow.addColorStop(0, "#3A4A38");
-      glow.addColorStop(1, "rgba(58,74,56,0)");
-      ctx.fillStyle = glow;
-      ctx.fillRect(0, 0, w, h);
-      ctx.restore();
-
-      ctx.strokeStyle = "#D4D1C9";
-      ctx.lineWidth = 1;
-      ctx.strokeRect(64, 88, w - 128, h - 176);
-      ctx.strokeRect(76, 100, w - 152, h - 200);
+      ctx.strokeRect(56, 72, w - 112, h - 144);
+      ctx.strokeRect(72, 88, w - 144, h - 176);
 
       ctx.textAlign = "center";
       ctx.fillStyle = "#8A8780";
-      ctx.font = '500 22px "Noto Sans TC", sans-serif';
-      ctx.fillText("ZHUSHAN", w / 2, 168);
+      ctx.font = '500 20px "Noto Sans TC", sans-serif';
+      ctx.fillText("ZHUSHAN · 竹山開飯了", w / 2, 196);
       ctx.fillStyle = "#1A1A18";
-      ctx.font = '500 40px "Noto Serif TC", serif';
-      ctx.fillText("竹山開飯了", w / 2, 228);
-      ctx.fillStyle = "#5A5852";
-      ctx.font = '30px "Noto Serif TC", serif';
-      ctx.fillText("竹子重生的永續花園", w / 2, 278);
-      drawRule(ctx, w * 0.28, w * 0.72, 318);
+      ctx.font = '600 44px "Noto Serif TC", serif';
+      ctx.fillText("竹子重生的永續花園", w / 2, 252);
+      drawRule(ctx, w * 0.26, w * 0.74, 292);
 
-      var quoteSize = message.length > 42 ? 46 : message.length > 28 ? 52 : 58;
-      ctx.fillStyle = "#1A1A18";
+      var quoteSize = message.length > 42 ? 44 : message.length > 28 ? 50 : 56;
       ctx.font = quoteSize + 'px "Noto Serif TC", serif';
-      var lines = wrapText(ctx, "「" + message + "」", w * 0.72);
-      var lineHeight = quoteSize + 18;
+      var lines = wrapText(ctx, "「" + message + "」", w * 0.66);
+      var lineHeight = quoteSize + 20;
       var maxLines = 6;
       lines = lines.slice(0, maxLines);
       var quoteBlock = lines.length * lineHeight;
-      var footerTop = h - 360;
-      var quoteEnd = footerTop - 300;
-      var quoteStart = Math.max(360, quoteEnd - quoteBlock);
+      var footerTop = h - 380;
+      var panelTop = Math.max(340, footerTop - quoteBlock - 220);
+      var panelHeight = quoteBlock + 96;
+      drawQuotePanel(ctx, w, panelTop, panelHeight);
+      var quoteStart = panelTop + (panelHeight - quoteBlock) / 2 + quoteSize * 0.35;
+      ctx.fillStyle = "#1A1A18";
       lines.forEach(function (line, idx) {
         ctx.fillText(line, w / 2, quoteStart + idx * lineHeight);
       });
 
-      drawRule(ctx, w * 0.24, w * 0.76, quoteStart + quoteBlock + 28);
-
-      ctx.fillStyle = "#3A4A38";
-      ctx.font = '500 22px "Noto Sans TC", sans-serif';
-      ctx.fillText(kind === "phrase" ? "竹語" : "竹願", w / 2, quoteStart + quoteBlock + 72);
+      drawKindBadge(ctx, w, panelTop + panelHeight + 44, kind);
 
       ctx.fillStyle = "#5A5852";
-      ctx.font = '26px "Noto Serif TC", serif';
-      ctx.fillText(venueName, w / 2, quoteStart + quoteBlock + 118);
+      ctx.font = '24px "Noto Serif TC", serif';
+      ctx.fillText(venueName, w / 2, panelTop + panelHeight + 108);
 
-      drawOrgCredits(ctx, w, quoteStart + quoteBlock + 188, host, guidance);
+      drawOrgCredits(ctx, w, panelTop + panelHeight + 178, host, guidance);
 
       ctx.fillStyle = "#3A4A38";
       ctx.font = '24px "Noto Serif TC", serif';
-      ctx.fillText(hashtag, w / 2, footerTop - 8);
+      ctx.fillText(hashtag, w / 2, footerTop - 4);
 
-      drawQrBlock(ctx, qr, w, footerTop + 24);
+      drawQrBlock(ctx, qr, w, footerTop + 20);
     }
 
     return createQrImage(shareUrl).then(function (qr) {

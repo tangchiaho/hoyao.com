@@ -908,11 +908,59 @@
     }
   }
 
+  function isAbsoluteHttpUrl(url) {
+    if (!url || typeof url !== "string") return false;
+    try {
+      var parsed = new URL(url);
+      return parsed.protocol === "http:" || parsed.protocol === "https:";
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function communityFormUrl() {
+    return (cfg.communitySubmissionFormUrl || cfg.communityShareFormUrl || "").trim();
+  }
+
+  function communityApi() {
+    return (cfg.communityApiUrl || "").trim();
+  }
+
+  function buildCommunityFormUrl(link) {
+    var formUrl = communityFormUrl();
+    if (!isSafeHttpUrl(formUrl)) return "";
+    var entry = (cfg.googleFormCommunityLinkEntry || "").trim();
+    if (!entry || !/^entry\.\d+$/.test(entry) || !link) return formUrl;
+    var sep = formUrl.indexOf("?") >= 0 ? "&" : "?";
+    return formUrl + sep + entry + "=" + encodeURIComponent(link);
+  }
+
+  function postCommunityLink(link) {
+    var api = communityApi();
+    if (!api || !isSafeHttpUrl(api)) {
+      return Promise.resolve({ ok: false, error: "no_api" });
+    }
+    var url =
+      api +
+      (api.indexOf("?") >= 0 ? "&" : "?") +
+      "action=post&url=" +
+      encodeURIComponent(link);
+    return fetch(url, { method: "GET", credentials: "omit", cache: "no-store" })
+      .then(function (r) {
+        return r.json();
+      })
+      .catch(function () {
+        return { ok: false, error: "network" };
+      });
+  }
+
   function initCommunityChallenge() {
     var hashtagEl = document.getElementById("zs-challenge-hashtag");
     var mentionWrap = document.getElementById("zs-challenge-mention-wrap");
     var mentionEl = document.getElementById("zs-challenge-mention");
     var prize = document.getElementById("zs-challenge-prize");
+    var input = document.getElementById("zs-community-link");
+    var note = document.getElementById("zs-community-submit-note");
     var btn = document.getElementById("zs-community-share-btn");
 
     var hashtag = cfg.communityHashtag || "#竹山開飯了";
@@ -932,18 +980,75 @@
       } else prize.hidden = true;
     }
 
-    var formUrl =
-      (cfg.communitySubmissionFormUrl || cfg.communityShareFormUrl || "").trim();
+    function showNote(message, isError) {
+      if (!note) return;
+      note.hidden = false;
+      note.textContent = message;
+      note.classList.toggle("is-error", !!isError);
+    }
+
     if (btn) {
-      if (!isSafeHttpUrl(formUrl)) {
-        btn.hidden = true;
-      } else {
-        btn.hidden = false;
-        btn.addEventListener("click", function () {
-          track("community_post_submit", { page: "zhushan" });
-          window.open(formUrl, "_blank", "noopener,noreferrer");
-        });
-      }
+      btn.addEventListener("click", function () {
+        var link = input ? input.value.trim() : "";
+        var maxLen = cfg.communityLinkMaxLength || 500;
+        var formUrl = communityFormUrl();
+        var apiUrl = communityApi();
+        var hasApi = isSafeHttpUrl(apiUrl);
+        var hasForm = isSafeHttpUrl(formUrl);
+
+        if (!link) {
+          showNote("請貼上你的貼文連結。", true);
+          if (input) input.focus();
+          return;
+        }
+        if (!isAbsoluteHttpUrl(link)) {
+          showNote("請輸入有效的 http 或 https 連結。", true);
+          if (input) input.focus();
+          return;
+        }
+        if (link.length > maxLen) {
+          showNote("連結過長，請確認是否正確。", true);
+          return;
+        }
+        if (!hasApi && !hasForm) {
+          showNote("分享功能即將開放，請稍後再試。", true);
+          return;
+        }
+
+        btn.disabled = true;
+        track("community_post_submit", { page: "zhushan", has_api: hasApi });
+
+        if (hasApi) {
+          postCommunityLink(link).then(function (res) {
+            btn.disabled = false;
+            if (res && res.ok) {
+              showNote(
+                "已收到你的分享，審核通過後會隨機顯示在「竹山片刻」。",
+                false
+              );
+              if (input) input.value = "";
+              return;
+            }
+            if (hasForm) {
+              window.open(buildCommunityFormUrl(link), "_blank", "noopener,noreferrer");
+              showNote(
+                "請在開啟的表單中確認並送出，審核通過後會顯示在頁面。",
+                false
+              );
+              return;
+            }
+            showNote("送出失敗，請稍後再試。", true);
+          });
+          return;
+        }
+
+        window.open(buildCommunityFormUrl(link), "_blank", "noopener,noreferrer");
+        showNote(
+          "請在開啟的表單中確認並送出，審核通過後會顯示在頁面。",
+          false
+        );
+        btn.disabled = false;
+      });
     }
   }
 

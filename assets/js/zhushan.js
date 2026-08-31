@@ -548,67 +548,96 @@
     /* V5: community challenge in zhushan-participation.js */
   }
 
+  function renderCommunityMoments(items) {
+    var section = document.getElementById("community-moments");
+    var grid = document.getElementById("zs-moments");
+    if (!section || !grid) return;
+    if (!items.length) {
+      showSection("community-moments", false);
+      return;
+    }
+    showSection("community-moments", true);
+    grid.innerHTML = items
+      .map(function (it) {
+        var img =
+          it.image && isSafeHttpUrl(it.image)
+            ? '<img src="' +
+              escapeHtml(it.image) +
+              '" alt="' +
+              escapeHtml(it.text || "竹山片刻") +
+              '" width="800" height="1000" loading="lazy">'
+            : it.image && String(it.image).charAt(0) === "/"
+            ? '<img src="' +
+              escapeHtml(it.image) +
+              '" alt="' +
+              escapeHtml(it.text || "竹山片刻") +
+              '" width="800" height="1000" loading="lazy">'
+            : "";
+        return (
+          '<article class="zs-moment">' +
+          img +
+          (it.text ? "<p>「" + escapeHtml(it.text) + "」</p>" : "") +
+          '<p class="zs-moment__meta">' +
+          escapeHtml(it.handle || "") +
+          (it.platform ? " ・ " + escapeHtml(it.platform) : "") +
+          "</p>" +
+          (it.url && isSafeHttpUrl(it.url)
+            ? '<a href="' +
+              escapeHtml(it.url) +
+              '" rel="noopener noreferrer" target="_blank" data-entity="community_moment" data-channel="original_post">查看原分享</a>'
+            : "") +
+          "</article>"
+        );
+      })
+      .join("");
+  }
+
+  function approvedCommunityItems(data) {
+    var max = cfg.communityDisplayMax || 12;
+    return shuffle(
+      (data.items || []).filter(function (it) {
+        return it.approved === true && (!it.url || isSafeHttpUrl(it.url));
+      })
+    ).slice(0, max);
+  }
+
   function initCommunityMoments() {
     var section = document.getElementById("community-moments");
     var grid = document.getElementById("zs-moments");
     if (!section || !grid) return;
-    var url = cfg.communityDataUrl;
+
+    var apiUrl = (cfg.communityApiUrl || "").trim();
+    var staticUrl = cfg.communityDataUrl;
+    var url =
+      cfg.dataMode !== "static" && isSafeHttpUrl(apiUrl) ? apiUrl : staticUrl;
     if (!url) {
       showSection("community-moments", false);
       return;
     }
 
-    fetch(url)
+    fetch(url, { credentials: "omit", cache: "no-store" })
       .then(function (r) {
         if (!r.ok) throw new Error("community");
         return r.json();
       })
       .then(function (data) {
-        var items = (data.items || [])
-          .filter(function (it) {
-            return it.approved === true && (!it.url || isSafeHttpUrl(it.url));
-          })
-          .slice(0, 12);
-        if (!items.length) {
-          showSection("community-moments", false);
-          return;
-        }
-        showSection("community-moments", true);
-        grid.innerHTML = items
-          .map(function (it) {
-            var img =
-              it.image && isSafeHttpUrl(it.image)
-                ? '<img src="' +
-                  escapeHtml(it.image) +
-                  '" alt="' +
-                  escapeHtml(it.text || "竹山片刻") +
-                  '" width="800" height="1000" loading="lazy">'
-                : it.image && String(it.image).charAt(0) === "/"
-                ? '<img src="' +
-                  escapeHtml(it.image) +
-                  '" alt="' +
-                  escapeHtml(it.text || "竹山片刻") +
-                  '" width="800" height="1000" loading="lazy">'
-                : "";
-            return (
-              '<article class="zs-moment">' +
-              img +
-              (it.text ? "<p>「" + escapeHtml(it.text) + "」</p>" : "") +
-              '<p class="zs-moment__meta">' +
-              escapeHtml(it.handle || "") +
-              (it.platform ? " ・ " + escapeHtml(it.platform) : "") +
-              "</p>" +
-              (it.url && isSafeHttpUrl(it.url)
-                ? '<a href="' +
-                  escapeHtml(it.url) +
-                  '" rel="noopener noreferrer" target="_blank" data-entity="community_moment" data-channel="original_post">查看原分享</a>'
-                : "") +
-              "</article>"
-            );
-          })
-          .join("");
+        renderCommunityMoments(approvedCommunityItems(data));
       })
       .catch(function () {
+        if (url !== staticUrl && staticUrl) {
+          fetch(staticUrl, { credentials: "omit", cache: "no-store" })
+            .then(function (r) {
+              if (!r.ok) throw new Error("community");
+              return r.json();
+            })
+            .then(function (data) {
+              renderCommunityMoments(approvedCommunityItems(data));
+            })
+            .catch(function () {
+              showSection("community-moments", false);
+            });
+          return;
+        }
         showSection("community-moments", false);
       });
   }

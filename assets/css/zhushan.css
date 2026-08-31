@@ -2072,6 +2072,14 @@ html.zs-page {
   opacity: 1;
 }
 
+.zs-foot-block__discover {
+  margin: 0 0 16px;
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--zs-warm);
+  max-width: 36rem;
+}
+
 .zs-foot-block__credit {
   margin: 0 0 8px;
   font-size: 13px;

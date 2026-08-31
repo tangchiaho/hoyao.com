@@ -112,7 +112,7 @@ window.ZHUSHAN_CONFIG = {
   placeholders: {
     enabled: false,
     base: "/assets/placeholders/zhushan/",
-    qr: "/assets/placeholders/zhushan/qr-zhushan.png",
+    qr: "/assets/images/projects/zhushan/qr-zhushan.png",
   },
 
   /* 展出與活動資訊（竹語卡／竹願卡、作品資訊共用） */

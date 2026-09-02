@@ -876,10 +876,10 @@
       parts.push(
         '<a href="' +
           escapeHtml(hoyao) +
-          '" data-entity="hoyao" data-channel="website" data-zs-link="hoyaoWebsite">HOYAO 和曜應用科技</a>'
+          '" data-entity="hoyao" data-channel="website" data-zs-link="hoyaoWebsite">和曜應用科技股份有限公司</a>'
       );
     } else {
-      parts.push("HOYAO 和曜應用科技");
+      parts.push("和曜應用科技股份有限公司");
     }
 
     if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {

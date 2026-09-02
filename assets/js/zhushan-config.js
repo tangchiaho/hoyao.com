@@ -127,7 +127,7 @@ window.ZHUSHAN_CONFIG = {
 
   wishCard: {
     enabled: true,
-    maxLength: 40,
+    maxLength: 80,
     hashtag: "#竹山開飯了",
     url: "https://hoyao.com/zhushan/",
     format: "story",

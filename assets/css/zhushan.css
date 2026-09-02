@@ -2674,12 +2674,30 @@ html.zs-page {
 }
 
 .zs-card-preview--story {
+  width: min(100%, 430px);
+  max-width: 430px;
+  height: auto;
   aspect-ratio: 9 / 16;
-  max-width: 300px;
 }
 
-.zs-card-result--story .zs-card-result__preview {
-  max-width: 300px;
+.zs-card-result--story .zs-card-result__preview,
+.card-preview {
+  width: min(100%, 430px);
+  max-width: 430px;
+}
+
+.zs-card-generator {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(58, 74, 56, 0.1);
+}
+
+.zs-card-generator__title {
+  margin: 0 0 12px;
+  font-family: var(--zs-serif);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--zs-ink);
 }
 
 .zs-challenge__steps {

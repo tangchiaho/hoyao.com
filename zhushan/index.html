@@ -33,7 +33,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="preload" href="/assets/data/zhushan-outcomes.json" as="fetch" crossorigin>
-<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260831-v70">
+<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260902-1">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -290,15 +290,24 @@ window.__ZS_OUTCOMES_P = (function () {
 <button type="button" class="zs-btn zs-btn-ghost" id="zs-phrase-card-btn" hidden>做成竹語卡</button>
 </div>
 
+<div class="zs-card-generator" id="zs-phrase-card-generator">
+<h3 class="zs-card-generator__title">製作我的竹語卡</h3>
+<label class="zs-composer__label" for="zs-phrase-input">寫下一句你想留下的竹語</label>
+<textarea id="zs-phrase-input" class="zs-composer__field zs-composer__field--compact" maxlength="80" rows="3" placeholder="寫下一句你想留下的竹語"></textarea>
+<p class="zs-composer__count"><span id="zs-phrase-count">0</span> / 80</p>
+<button type="button" class="zs-btn" id="zs-phrase-generate-btn">生成竹語卡</button>
+</div>
+
 <div id="zs-phrase-card-result" class="zs-card-result zs-card-result--story" hidden>
-<div class="zs-card-result__preview">
+<div class="zs-card-result__preview card-preview">
 <img id="zs-phrase-card-preview" class="zs-card-preview zs-card-preview--story" alt="你的竹語卡預覽" width="1080" height="1920">
 <canvas id="zs-phrase-card-canvas" width="1080" height="1920" hidden aria-hidden="true"></canvas>
 <p class="zs-card-save-hint">長按卡片也可以儲存圖片</p>
 </div>
 <div class="zs-card-actions">
-<button type="button" class="zs-btn" id="zs-phrase-card-share">分享竹語卡</button>
-<button type="button" class="zs-btn zs-btn-ghost" id="zs-phrase-card-download">儲存圖片</button>
+<button type="button" class="zs-btn zs-btn-ghost" id="zs-phrase-card-edit">重新編輯</button>
+<button type="button" class="zs-btn" id="zs-phrase-card-share">分享圖片</button>
+<button type="button" class="zs-btn zs-btn-ghost" id="zs-phrase-card-download">下載圖片</button>
 </div>
 <p class="zs-form-note" id="zs-phrase-card-status" hidden></p>
 </div>
@@ -312,16 +321,18 @@ window.__ZS_OUTCOMES_P = (function () {
 <p class="zs-section__lead">留一句話給竹山。</p>
 
 <div class="zs-wish-unit__core">
+<div class="zs-card-generator" id="zs-wish-card-generator">
+<h3 class="zs-card-generator__title">製作我的竹願卡</h3>
 <div class="zs-composer zs-composer--compact">
-<label class="zs-composer__label zs-visually-hidden" for="zs-thought-input">留一句話給竹山</label>
-<textarea id="zs-thought-input" class="zs-composer__field zs-composer__field--compact" maxlength="40" rows="3" placeholder="留一句話給竹山……"></textarea>
-<p class="zs-composer__count"><span id="zs-thought-count">0</span> / 40</p>
+<label class="zs-composer__label" for="zs-thought-input">寫下一個你想留給竹山的願望</label>
+<textarea id="zs-thought-input" class="zs-composer__field zs-composer__field--compact" maxlength="80" rows="3" placeholder="寫下一個你想留給竹山的願望"></textarea>
+<p class="zs-composer__count"><span id="zs-thought-count">0</span> / 80</p>
 <p class="zs-form-note" id="zs-thought-hint" hidden>再精簡一點，分享卡會更好看。</p>
 
 <div class="zs-wish-actions" role="group" aria-label="竹願操作">
 <button type="button" class="zs-btn zs-btn-ghost" id="zs-ephemeral-btn">讓它飄過</button>
 <button type="button" class="zs-btn" id="zs-keep-wish-btn">留下竹願</button>
-<button type="button" class="zs-btn zs-btn-ghost" id="zs-to-card-btn">做成竹願卡</button>
+<button type="button" class="zs-btn" id="zs-wish-generate-btn">生成竹願卡</button>
 </div>
 <p class="zs-thought-status" id="zs-ephemeral-status" hidden></p>
 <p class="zs-thought-status" id="zs-keep-status" hidden></p>
@@ -350,13 +361,14 @@ window.__ZS_OUTCOMES_P = (function () {
 
 <div id="zs-card-result" class="zs-card-result zs-card-result--story" hidden>
 <h3 class="zs-card-result__title" id="zs-card-result-title">你的竹願卡</h3>
-<div class="zs-card-result__preview">
+<div class="zs-card-result__preview card-preview">
 <img id="zs-card-preview" class="zs-card-preview zs-card-preview--story" alt="你的竹願卡預覽" width="1080" height="1920">
 <canvas id="zs-card-canvas" width="1080" height="1920" hidden aria-hidden="true"></canvas>
 </div>
 <div class="zs-card-actions">
-<button type="button" class="zs-btn" id="zs-card-share">分享竹願卡</button>
-<button type="button" class="zs-btn zs-btn-ghost" id="zs-card-download">儲存圖片</button>
+<button type="button" class="zs-btn zs-btn-ghost" id="zs-card-edit">重新編輯</button>
+<button type="button" class="zs-btn" id="zs-card-share">分享圖片</button>
+<button type="button" class="zs-btn zs-btn-ghost" id="zs-card-download">下載圖片</button>
 </div>
 <p class="zs-card-save-hint">長按卡片也可以儲存圖片。</p>
 <p class="zs-form-note" id="zs-card-action-status" hidden></p>
@@ -541,7 +553,8 @@ window.__ZS_OUTCOMES_P = (function () {
 </footer>
 </div>
 
-<script src="/assets/js/zhushan.js?v=20260831-v70"></script>
-<script src="/assets/js/zhushan-participation.js?v=20260831-v76"></script>
+<script src="/assets/js/bamboo-share-card.js?v=20260902-1"></script>
+<script src="/assets/js/zhushan.js?v=20260902-1"></script>
+<script src="/assets/js/zhushan-participation.js?v=20260902-1"></script>
 </body>
 </html>

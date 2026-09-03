@@ -866,10 +866,10 @@
       parts.push(
         '<a href="' +
           escapeHtml(harmony) +
-          '" target="_blank" rel="noopener noreferrer" data-entity="harmony_culture" data-channel="website" data-zs-link="harmonyCultureWebsite">和聲文化音樂</a>'
+          '" target="_blank" rel="noopener noreferrer" data-entity="harmony_culture" data-channel="website" data-zs-link="harmonyCultureWebsite">和聲文化音樂股份有限公司</a>'
       );
     } else {
-      parts.push("和聲文化音樂");
+      parts.push("和聲文化音樂股份有限公司");
     }
 
     if (isSafeHttpUrl(hoyao)) {

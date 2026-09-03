@@ -38,7 +38,7 @@
       type: "竹願",
       contentBox: { x: 95, y: 318, width: 800, height: 868 },
       contentPadding: { top: 36, right: 48, bottom: 36, left: 44 },
-      numberPosition: { x: 274, y: 1396 },
+      numberPosition: { x: 272, y: 1385 },
       textColor: "#352D24",
       numberColor: "#5C4030",
       numberFontSize: 40,

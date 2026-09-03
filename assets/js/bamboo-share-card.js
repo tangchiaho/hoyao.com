@@ -38,10 +38,11 @@
       type: "竹願",
       contentBox: { x: 95, y: 318, width: 800, height: 868 },
       contentPadding: { top: 36, right: 48, bottom: 36, left: 44 },
-      numberPosition: { x: 272, y: 1385 },
+      numberPosition: { x: 279, y: 1392 },
       textColor: "#352D24",
-      numberColor: "#5C4030",
+      numberColor: "#7C5835",
       numberFontSize: 40,
+      numberFontWeight: "500",
       lineHeight: 1.62,
     },
   };
@@ -150,7 +151,8 @@
     }
     fontsReady = Promise.all([
       document.fonts.load('400 64px "Noto Serif TC"'),
-      document.fonts.load('400 38px "Noto Serif TC"'),
+      document.fonts.load('400 40px "Noto Serif TC"'),
+      document.fonts.load('500 40px "Noto Serif TC"'),
     ])
       .catch(function () {
         return null;
@@ -205,12 +207,13 @@
   }
 
   function drawNumber(ctx, serial, template) {
+    var weight = template.numberFontWeight || "400";
     ctx.save();
     ctx.textAlign = "left";
     ctx.textBaseline = "alphabetic";
     ctx.fillStyle = template.numberColor;
     ctx.font =
-      "400 " + (template.numberFontSize || 38) + "px " + SERIF;
+      weight + " " + (template.numberFontSize || 38) + "px " + SERIF;
     ctx.fillText(
       formatSerial(serial),
       template.numberPosition.x,

@@ -2,3 +2,6 @@ User-agent: *
 Allow: /
 
 Sitemap: https://hoyao.com/sitemap.xml
+
+# Machine-readable company summary for AI crawlers
+# https://hoyao.com/llms.txt

@@ -146,10 +146,11 @@ window.ZHUSHAN_CONFIG = {
 
   video: {
     type: "youtube",
-    youtubeId: "",
-    url: "",
-    poster: "",
-    title: "從材料到作品",
+    youtubeId: "w8BHARucXWc",
+    url: "https://youtu.be/w8BHARucXWc",
+    poster: "/assets/images/projects/zhushan/process-video-poster.jpg",
+    title: "從竹林到餐桌，再從餐桌回到土地",
+    caption: "《竹山開飯了》紀錄從竹林到餐桌、再回到土地的材料旅程。",
     duration: "",
   },
 

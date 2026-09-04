@@ -33,7 +33,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="preload" href="/assets/data/zhushan-outcomes.json" as="fetch" crossorigin>
-<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260902-1">
+<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260904-video">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -82,13 +82,27 @@
           "postalCode": "557",
           "addressCountry": "TW"
         }
-      }
+      },
+      "subjectOf": { "@id": "https://hoyao.com/zhushan/#video" }
+    },
+    {
+      "@type": "VideoObject",
+      "@id": "https://hoyao.com/zhushan/#video",
+      "name": "從竹林到餐桌，再從餐桌回到土地｜竹山開飯了",
+      "description": "《竹山開飯了》紀錄片：從竹林到餐桌，再從餐桌回到土地。紀錄於台西客運竹山站／竹青庭人文空間。",
+      "thumbnailUrl": "https://hoyao.com/assets/images/projects/zhushan/process-video-poster.jpg",
+      "uploadDate": "2026-09-01",
+      "inLanguage": "zh-Hant",
+      "embedUrl": "https://www.youtube-nocookie.com/embed/w8BHARucXWc",
+      "contentUrl": "https://www.youtube.com/watch?v=w8BHARucXWc",
+      "url": "https://youtu.be/w8BHARucXWc",
+      "isPartOf": { "@id": "https://hoyao.com/zhushan/#artwork" }
     }
   ]
 }
 </script>
 <script src="/assets/js/qrcode-generator.js?v=20260831-v70"></script>
-<script src="/assets/js/zhushan-config.js?v=20260831-v75"></script>
+<script src="/assets/js/zhushan-config.js?v=20260904-video"></script>
 <script>
 /* Early outcomes fetch — reduce mid-scroll layout insertion */
 window.__ZS_OUTCOMES_P = (function () {
@@ -380,9 +394,9 @@ window.__ZS_OUTCOMES_P = (function () {
 <section class="zs-section zs-section--wide zs-section--editorial" id="process" aria-labelledby="process-title">
 <p class="zs-section__label"><span class="zs-section__idx">06</span> / Process</p>
 <h2 class="zs-section__title" id="process-title">從材料到作品</h2>
-<p class="zs-section__lead">從竹構插桿到預組裝——材料如何一步步形成作品。</p>
-<div class="zs-process-seq" id="zs-process-grid"></div>
+<p class="zs-section__lead">從竹林到餐桌——完整旅程收錄於作品影片；下方靜態圖則展開材料如何一步步成形。</p>
 <div class="zs-video" id="zs-video" hidden></div>
+<div class="zs-process-seq" id="zs-process-grid"></div>
 </section>
 
 <div class="zs-divider" aria-hidden="true"><span class="zs-divider__line"></span><span class="zs-divider__node"></span><span class="zs-divider__line"></span></div>
@@ -554,7 +568,7 @@ window.__ZS_OUTCOMES_P = (function () {
 </div>
 
 <script src="/assets/js/bamboo-share-card.js?v=20260903-4"></script>
-<script src="/assets/js/zhushan.js?v=20260903-1"></script>
+<script src="/assets/js/zhushan.js?v=20260904-video"></script>
 <script src="/assets/js/zhushan-participation.js?v=20260902-1"></script>
 </body>
 </html>

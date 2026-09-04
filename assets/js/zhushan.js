@@ -657,7 +657,10 @@
     var youtubeId = cfg.video && cfg.video.youtubeId;
     var videoUrl = cfg.video && cfg.video.url;
     var hasYt = youtubeIdSafe(youtubeId);
-    var hasMp4 = isSafeHttpUrl(videoUrl);
+    var hasMp4 =
+      !hasYt &&
+      isSafeHttpUrl(videoUrl) &&
+      (!(cfg.video && cfg.video.type) || cfg.video.type === "mp4" || /\.mp4(\?|$)/i.test(videoUrl));
 
     function paint(items) {
       if (!items.length && !hasYt && !hasMp4) {
@@ -701,20 +704,65 @@
       if (!videoWrap) return;
       if (hasYt) {
         videoWrap.hidden = false;
-        var title = cfg.video.title || "播放影片";
+        var title = (cfg.video && cfg.video.title) || "播放影片";
+        var caption = (cfg.video && cfg.video.caption) || "";
+        var poster = cfg.video && cfg.video.poster;
+        var hasPoster = poster && isRealSrc(poster);
+        var watchUrl =
+          (cfg.video && isSafeHttpUrl(cfg.video.url) && cfg.video.url) ||
+          "https://www.youtube.com/watch?v=" + youtubeId;
+        var posterInner = hasPoster
+          ? '<img class="zs-video__thumb" src="' +
+            escapeHtml(poster) +
+            '" width="1280" height="720" alt="' +
+            escapeHtml(title) +
+            '" loading="lazy" decoding="async">'
+          : "";
         videoWrap.innerHTML =
-          '<button type="button" class="zs-video__poster" id="zs-yt-play"><span>播放「' +
+          '<header class="zs-video__head">' +
+          '<p class="zs-video__eyebrow">作品影片</p>' +
+          '<h3 class="zs-video__title">' +
           escapeHtml(title) +
-          "」</span></button>";
+          "</h3>" +
+          '<p class="zs-video__meta">紀錄片 · YouTube</p>' +
+          "</header>" +
+          '<div class="zs-video__frame" id="zs-video-frame">' +
+          '<button type="button" class="zs-video__poster' +
+          (hasPoster ? " zs-video__poster--media" : "") +
+          '" id="zs-yt-play" aria-label="播放影片：' +
+          escapeHtml(title) +
+          '">' +
+          posterInner +
+          '<span class="zs-video__play" aria-hidden="true">' +
+          '<span class="zs-video__play-icon"></span>' +
+          "</span>" +
+          (hasPoster
+            ? ""
+            : '<span class="zs-video__poster-label">播放「' +
+              escapeHtml(title) +
+              "」</span>") +
+          "</button>" +
+          "</div>" +
+          (caption
+            ? '<p class="zs-video__caption">' +
+              escapeHtml(caption) +
+              ' <a class="zs-video__external" href="' +
+              escapeHtml(watchUrl) +
+              '" target="_blank" rel="noopener noreferrer">於 YouTube 開啟</a></p>'
+            : '<p class="zs-video__caption"><a class="zs-video__external" href="' +
+              escapeHtml(watchUrl) +
+              '" target="_blank" rel="noopener noreferrer">於 YouTube 開啟</a></p>');
+
         var play = document.getElementById("zs-yt-play");
-        if (play) {
+        var frame = document.getElementById("zs-video-frame");
+        if (play && frame) {
           play.addEventListener("click", function () {
-            videoWrap.innerHTML =
+            frame.innerHTML =
               '<iframe src="https://www.youtube-nocookie.com/embed/' +
               youtubeId +
-              '?autoplay=1" title="' +
+              '?autoplay=1&rel=0" title="' +
               escapeHtml(title) +
-              '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+              '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>';
             track("process_video_play", { page: "zhushan", type: "youtube" });
           });
         }

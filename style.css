@@ -115,7 +115,7 @@ img{max-width:100%;display:block}
 .nav-mobile[hidden]{display:none !important}
 
 /* Hero */
-.hero{padding:72px 0 56px}
+.hero{padding:72px 0 40px}
 .eyebrow{
   font-size:11px;
   letter-spacing:.16em;
@@ -178,6 +178,69 @@ img{max-width:100%;display:block}
 }
 .btn-ghost:hover{opacity:.7;background:var(--surface)}
 
+/* Full-bleed homepage visual */
+.home-bleed{
+  margin:8px calc(50% - 50vw) 0;
+  width:100vw;
+  max-width:100vw;
+  background:#1a1a1a;
+  overflow:hidden;
+}
+.home-bleed a{
+  display:block;
+  color:inherit;
+}
+.home-bleed a:hover{opacity:1}
+.home-bleed img{
+  width:100%;
+  height:clamp(280px, 58vw, 640px);
+  object-fit:cover;
+  display:block;
+  transform:scale(1.01);
+  transition:transform 1.1s ease;
+}
+.home-bleed a:hover img{transform:scale(1.04)}
+.home-bleed-caption{
+  max-width:var(--max);
+  margin:0 auto;
+  padding:14px 24px 0;
+  font-size:13px;
+  color:var(--muted);
+  line-height:1.6;
+}
+.home-bleed-caption strong{
+  color:var(--ink);
+  font-weight:550;
+}
+.section-visual{
+  margin:0 0 24px;
+  padding:0;
+  overflow:hidden;
+  background:var(--surface);
+  aspect-ratio:16 / 10;
+}
+.section-visual img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+@media (prefers-reduced-motion: no-preference){
+  .hero .claim{animation:hoyao-rise .7s ease both}
+  .hero .company-names{animation:hoyao-rise .7s .06s ease both}
+  .hero .lead{animation:hoyao-rise .7s .1s ease both}
+  .hero .actions{animation:hoyao-rise .7s .16s ease both}
+  .home-bleed{animation:hoyao-fade 1s .12s ease both}
+}
+@keyframes hoyao-rise{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:none}
+}
+@keyframes hoyao-fade{
+  from{opacity:0}
+  to{opacity:1}
+}
 .section{
   padding:56px 0;
   border-top:1px solid var(--line);
@@ -244,22 +307,28 @@ img{max-width:100%;display:block}
 }
 .progress-item--media{
   display:grid;
-  grid-template-columns:minmax(180px, 300px) minmax(0, 1fr);
-  gap:28px;
+  grid-template-columns:1fr;
+  gap:18px;
   align-items:start;
+  padding:36px 0;
 }
 .progress-thumb{
   margin:0;
   overflow:hidden;
   background:var(--surface);
-  aspect-ratio:4 / 3;
+  aspect-ratio:16 / 10;
 }
 .progress-thumb img{
   width:100%;
   height:100%;
   object-fit:cover;
   display:block;
+  transition:transform .8s ease;
 }
+.progress-item--media:hover .progress-thumb img{
+  transform:scale(1.03);
+}
+.progress-item--media:hover{opacity:1}
 .progress-body{min-width:0}
 .project-figure{
   margin:28px 0 0;
@@ -386,7 +455,9 @@ img{max-width:100%;display:block}
   align-items:start;
 }
 .update-row--media{
-  grid-template-columns:110px 132px minmax(0, 1fr);
+  grid-template-columns:110px minmax(180px, 260px) minmax(0, 1fr);
+  gap:24px;
+  padding:24px 0;
 }
 .update-row:last-child{border-bottom:1px solid var(--line)}
 .update-row .date{
@@ -399,14 +470,19 @@ img{max-width:100%;display:block}
   margin:0;
   overflow:hidden;
   background:var(--surface);
-  aspect-ratio:4 / 3;
+  aspect-ratio:3 / 2;
 }
 .update-thumb img{
   width:100%;
   height:100%;
   object-fit:cover;
   display:block;
+  transition:transform .7s ease;
 }
+.update-row--media:hover .update-thumb img{
+  transform:scale(1.04);
+}
+.update-row--media:hover{opacity:1}
 .update-row h3{
   margin:0 0 4px;
   font-size:17px;
@@ -703,13 +779,14 @@ img{max-width:100%;display:block}
   .stream-more{display:none}
   .contact-row{grid-template-columns:1fr;gap:6px}
   .progress-item--media{
-    grid-template-columns:minmax(140px, 220px) minmax(0, 1fr);
-    gap:20px;
+    gap:14px;
+    padding:28px 0;
   }
   .update-row--media{
-    grid-template-columns:88px 112px minmax(0, 1fr);
+    grid-template-columns:88px minmax(140px, 180px) minmax(0, 1fr);
     gap:16px;
   }
+  .home-bleed-caption{padding-left:16px;padding-right:16px}
 }
 
 @media (max-width:760px){
@@ -804,16 +881,17 @@ img{max-width:100%;display:block}
   .section{padding:40px 0}
   .progress-item--media{
     grid-template-columns:1fr;
-    gap:16px;
-  }
-  .progress-thumb{max-width:100%}
-  .update-row{grid-template-columns:1fr;gap:6px}
-  .update-row--media{
-    grid-template-columns:112px minmax(0, 1fr);
     gap:14px;
   }
-  .update-row--media .date{grid-column:1 / -1;padding-top:0}
-  .update-thumb{width:112px}
+  .progress-thumb{max-width:100%}
+  .home-bleed img{height:clamp(220px, 62vw, 420px)}
+  .update-row{grid-template-columns:1fr;gap:6px}
+  .update-row--media{
+    grid-template-columns:minmax(0, 1fr);
+    gap:12px;
+  }
+  .update-row--media .date{grid-column:auto;padding-top:0}
+  .update-thumb{width:100%;max-width:none;aspect-ratio:16 / 10}
   .footer-wordmark{
     width:112px;
     height:auto;

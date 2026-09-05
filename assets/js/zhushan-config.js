@@ -120,8 +120,7 @@ window.ZHUSHAN_CONFIG = {
     venueName: "台西客運竹山站・竹青庭人文空間",
     venueAddress: "南投縣竹山鎮中山里菜園路27號",
     venueShort: "南投竹山",
-    host: "南投縣青年發展所",
-    guidance: "南投縣政府",
+    support: "南投縣政府・南投縣青年發展所",
     executor: "廣德國際整合行銷有限公司",
   },
 

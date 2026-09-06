@@ -662,16 +662,9 @@
     var configured = ((cfg.images && cfg.images.process) || []).filter(function (it) {
       return it && it.src && !it.placeholder && isRealSrc(it.src);
     });
-    var youtubeId = cfg.video && cfg.video.youtubeId;
-    var videoUrl = cfg.video && cfg.video.url;
-    var hasYt = youtubeIdSafe(youtubeId);
-    var hasMp4 =
-      !hasYt &&
-      isSafeHttpUrl(videoUrl) &&
-      (!(cfg.video && cfg.video.type) || cfg.video.type === "mp4" || /\.mp4(\?|$)/i.test(videoUrl));
 
     function paint(items) {
-      if (!items.length && !hasYt && !hasMp4) {
+      if (!items.length) {
         showSection("process", false);
         return;
       }
@@ -704,93 +697,6 @@
           );
         })
         .join("");
-      paintVideo();
-    }
-
-    function paintVideo() {
-      var videoWrap = document.getElementById("zs-video");
-      if (!videoWrap) return;
-      if (hasYt) {
-        videoWrap.hidden = false;
-        var title = (cfg.video && cfg.video.title) || ui("playVideo", "播放影片");
-        var caption = (cfg.video && cfg.video.caption) || "";
-        var poster = cfg.video && cfg.video.poster;
-        var hasPoster = poster && isRealSrc(poster);
-        var watchUrl =
-          (cfg.video && isSafeHttpUrl(cfg.video.url) && cfg.video.url) ||
-          "https://www.youtube.com/watch?v=" + youtubeId;
-        var posterInner = hasPoster
-          ? '<img class="zs-video__thumb" src="' +
-            escapeHtml(poster) +
-            '" width="1280" height="720" alt="' +
-            escapeHtml(title) +
-            '" loading="lazy" decoding="async">'
-          : "";
-        videoWrap.innerHTML =
-          '<header class="zs-video__head">' +
-          '<p class="zs-video__eyebrow">' + ui("videoEyebrow", "作品影片") + '</p>' +
-          '<h3 class="zs-video__title">' +
-          escapeHtml(title) +
-          "</h3>" +
-          '<p class="zs-video__meta">' + ui("videoMeta", "紀錄片 · YouTube") + '</p>' +
-          "</header>" +
-          '<div class="zs-video__frame" id="zs-video-frame">' +
-          '<button type="button" class="zs-video__poster' +
-          (hasPoster ? " zs-video__poster--media" : "") +
-          '" id="zs-yt-play" aria-label="' + ui("playVideo", "播放影片") + '：' +
-          escapeHtml(title) +
-          '">' +
-          posterInner +
-          '<span class="zs-video__play" aria-hidden="true">' +
-          '<span class="zs-video__play-icon"></span>' +
-          "</span>" +
-          (hasPoster
-            ? ""
-            : '<span class="zs-video__poster-label">播放「' +
-              escapeHtml(title) +
-              "」</span>") +
-          "</button>" +
-          "</div>" +
-          (caption
-            ? '<p class="zs-video__caption">' +
-              escapeHtml(caption) +
-              ' <a class="zs-video__external" href="' +
-              escapeHtml(watchUrl) +
-              '" target="_blank" rel="noopener noreferrer">' +
-              ui("openYoutube", "於 YouTube 開啟") +
-              "</a></p>"
-            : '<p class="zs-video__caption"><a class="zs-video__external" href="' +
-              escapeHtml(watchUrl) +
-              '" target="_blank" rel="noopener noreferrer">' +
-              ui("openYoutube", "於 YouTube 開啟") +
-              "</a></p>");
-
-        var play = document.getElementById("zs-yt-play");
-        var frame = document.getElementById("zs-video-frame");
-        if (play && frame) {
-          play.addEventListener("click", function () {
-            frame.innerHTML =
-              '<iframe src="https://www.youtube-nocookie.com/embed/' +
-              youtubeId +
-              '?autoplay=1&rel=0" title="' +
-              escapeHtml(title) +
-              '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>';
-            track("process_video_play", { page: "zhushan", type: "youtube" });
-          });
-        }
-        return;
-      }
-      if (hasMp4) {
-        videoWrap.hidden = false;
-        videoWrap.innerHTML =
-          '<video class="zs-video__player" controls preload="metadata" playsinline' +
-          (cfg.video.poster && isRealSrc(cfg.video.poster)
-            ? ' poster="' + escapeHtml(cfg.video.poster) + '"'
-            : "") +
-          ' width="1280" height="720"><source src="' +
-          escapeHtml(videoUrl) +
-          '" type="video/mp4"></video>';
-      }
     }
 
     if (!configured.length) {

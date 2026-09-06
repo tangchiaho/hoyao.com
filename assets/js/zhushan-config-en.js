@@ -24,9 +24,9 @@
       url: "https://hoyao.com/zhushan/en/",
     }),
     video: Object.assign({}, base.video || {}, {
-      title: "From Bamboo Forest to Table, and from Table Back to Land",
+      title: "Dinner's Ready, Zhushan — From Bamboo to Table, From Table Back to Earth | Taixi Bus Zhushan Station",
       caption:
-        "Dinner's Ready, Zhushan documents the material journey from bamboo forest to table, and back to the land.",
+        "Initiated by Tang Chia-Ho, Dinner's Ready, Zhushan documents the material journey from bamboo to table, and from table back to earth.",
     }),
     research: Object.assign({}, base.research || {}, {
       title: "Bamboo Applications & Local Participation Study",

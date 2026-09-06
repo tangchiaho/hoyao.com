@@ -1469,6 +1469,91 @@
       });
   }
 
+  function initFilmShare() {
+    var root = document.querySelector(".zs-film__actions");
+    if (!root) return;
+
+    var copyBtn = document.getElementById("zs-film-copy");
+    var shareBtn = document.getElementById("zs-film-share");
+    var status = document.getElementById("zs-film-status");
+    var isEn = (cfg.locale || document.documentElement.lang || "").indexOf("en") === 0;
+    var url =
+      root.getAttribute("data-film-url") ||
+      (cfg.video && cfg.video.url) ||
+      "https://youtu.be/M5rjYNHwBAE";
+    var title =
+      root.getAttribute("data-film-title") ||
+      (cfg.video && cfg.video.title) ||
+      (isEn ? "Dinner's Ready, Zhushan" : "竹山開飯了");
+
+    function setStatus(msg) {
+      if (!status) return;
+      status.hidden = !msg;
+      status.textContent = msg || "";
+    }
+
+    function copyLink() {
+      var done = isEn ? "Link copied" : "已複製連結";
+      var fail = isEn ? "Could not copy. Please copy manually." : "無法自動複製，請手動選取連結。";
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(url).then(
+          function () {
+            setStatus(done);
+            track("film_copy_link", { page: "zhushan" });
+          },
+          function () {
+            setStatus(fail);
+          }
+        );
+      }
+      try {
+        var ta = document.createElement("textarea");
+        ta.value = url;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        setStatus(done);
+        track("film_copy_link", { page: "zhushan" });
+      } catch (err) {
+        setStatus(fail);
+      }
+      return Promise.resolve();
+    }
+
+    function shareFilm() {
+      var nav = navigator;
+      if (nav.share) {
+        return nav
+          .share({ title: title, text: title, url: url })
+          .then(function () {
+            setStatus(isEn ? "Shared" : "已分享");
+            track("film_share", { page: "zhushan", mode: "native" });
+          })
+          .catch(function (err) {
+            if (err && err.name === "AbortError") return;
+            return copyLink().then(function () {
+              track("film_share", { page: "zhushan", mode: "copy_fallback" });
+            });
+          });
+      }
+      return copyLink().then(function () {
+        setStatus(
+          isEn
+            ? "Sharing isn’t supported here — link copied instead."
+            : "此裝置不支援系統分享，已改為複製連結。"
+        );
+        track("film_share", { page: "zhushan", mode: "copy_fallback" });
+      });
+    }
+
+    if (copyBtn) copyBtn.addEventListener("click", function () { copyLink(); });
+    if (shareBtn) shareBtn.addEventListener("click", function () { shareFilm(); });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     track("zhushan_project_view", { page: "zhushan" });
     loadQrImage();
@@ -1484,5 +1569,6 @@
     initProjectContact();
     initScrollDepth();
     initOutcomes();
+    initFilmShare();
   });
 })();

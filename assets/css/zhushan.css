@@ -22,10 +22,11 @@ html.zs-page {
   --zs-bamboo-mute: #c8cfc4;
 
   /* Type measure */
-  --zs-prose: 740px;
-  --zs-content: 940px;
-  --zs-data: 1080px;
+  --zs-prose: 720px;
+  --zs-content: 1120px;
+  --zs-data: 1120px;
   --zs-hero: 1240px;
+  --zs-gutter: 34px;
 
   /* 4-layer type scale (px — rem root stays 16px on html)
      1 Hero · 2 Section · 3 Body · 4 Caption / EN secondary
@@ -141,13 +142,17 @@ html.zs-page {
   width: 100%;
   max-width: min(100%, var(--zs-hero));
   margin: 0 auto;
-  padding: 0 24px 88px;
+  padding: 0 28px 88px;
+  padding-left: max(28px, env(safe-area-inset-left, 0px));
+  padding-right: max(28px, env(safe-area-inset-right, 0px));
   overflow-x: clip;
 }
 
 @media (min-width: 1100px) {
   .zs-shell {
     padding: 0 40px 112px;
+    padding-left: max(40px, env(safe-area-inset-left, 0px));
+    padding-right: max(40px, env(safe-area-inset-right, 0px));
   }
 }
 
@@ -216,7 +221,7 @@ html.zs-page {
 .zs-lang {
   position: absolute;
   top: 18px;
-  right: max(16px, env(safe-area-inset-right));
+  right: max(var(--zs-gutter), env(safe-area-inset-right, 0px));
   z-index: 5;
   display: inline-flex;
   align-items: center;
@@ -1687,7 +1692,13 @@ html.zs-page {
 
 @media (max-width: 600px) {
   .zs-shell {
-    padding: 0 16px 72px;
+    padding: 0 var(--zs-gutter) 80px;
+    padding-left: max(var(--zs-gutter), env(safe-area-inset-left, 0px));
+    padding-right: max(var(--zs-gutter), env(safe-area-inset-right, 0px));
+  }
+
+  .zs-section {
+    padding-top: 44px;
   }
 
   #zs-survey-btn.zs-btn {
@@ -2327,6 +2338,61 @@ br.zs-br {
   font-size: var(--zs-fs-caption);
   line-height: var(--zs-lh-caption);
   color: var(--zs-muted);
+}
+
+@media (max-width: 599px) {
+  #credits.zs-section {
+    padding-top: 52px;
+  }
+
+  #credits .zs-section__title {
+    margin-bottom: 24px;
+  }
+
+  .zs-credits dt {
+    padding-top: 18px;
+  }
+
+  .zs-credits dd {
+    margin-top: 6px;
+    padding-bottom: 18px;
+    line-height: 1.7;
+  }
+
+  .zs-credits__venue-addr {
+    margin-top: 5px;
+  }
+
+  .zs-credits__outlinks {
+    margin-top: 10px;
+    gap: 6px;
+  }
+
+  .zs-related {
+    margin-top: 10px;
+  }
+
+  .zs-related__group {
+    padding: 22px 0;
+  }
+
+  .zs-related__kicker {
+    margin-bottom: 8px;
+  }
+
+  .zs-related__name {
+    line-height: 1.75;
+  }
+
+  .zs-related__links {
+    margin-top: 10px;
+    gap: 10px 16px;
+  }
+
+  .zs-foot-block {
+    margin-top: 44px;
+    padding-top: 28px;
+  }
 }
 
 .zs-credits__names {

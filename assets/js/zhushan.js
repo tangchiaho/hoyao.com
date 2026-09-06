@@ -1520,7 +1520,7 @@
     var title =
       root.getAttribute("data-film-title") ||
       (cfg.video && cfg.video.title) ||
-      (isEn ? "Dinner's Ready, Zhushan" : "竹山開飯了");
+      (isEn ? "ZHUSHAN KAI FAN LE" : "竹山開飯了");
 
     function setStatus(msg) {
       if (!status) return;

@@ -8,7 +8,7 @@
   var en = {
     locale: "en",
     canonicalUrl: "https://hoyao.com/zhushan/en/",
-    communityHashtag: "#ZhushanDinnerIsServed",
+    communityHashtag: "#ZHUSHANKAIFANLE",
     event: {
       venueName: "Taixi Bus Zhushan Station · Zhuqingting Cultural Space",
       venueAddress: "No. 27, Caiyuan Rd., Zhongshan Village, Zhushan Township, Nantou County",
@@ -17,26 +17,26 @@
       executor: "Kuangte International Integrated Marketing Co., Ltd.",
     },
     wishCard: Object.assign({}, base.wishCard || {}, {
-      hashtag: "#ZhushanDinnerIsServed",
+      hashtag: "#ZHUSHANKAIFANLE",
       url: "https://hoyao.com/zhushan/en/",
     }),
     bambooCard: Object.assign({}, base.bambooCard || {}, {
       url: "https://hoyao.com/zhushan/en/",
     }),
     video: Object.assign({}, base.video || {}, {
-      title: "Dinner's Ready, Zhushan — From Bamboo to Table, From Table Back to Earth | Taixi Bus Zhushan Station",
+      title: "竹山開飯了 ZHUSHAN KAI FAN LE — From Bamboo to Table, From Table Back to Earth | Taixi Bus Zhushan Station",
       caption:
-        "Initiated by Tang Chia-Ho, Dinner's Ready, Zhushan documents the material journey from bamboo to table, and from table back to earth.",
+        "Initiated by Tang Chia-Ho, 竹山開飯了 (ZHUSHAN KAI FAN LE) documents the material journey from bamboo to table, and from table back to earth.",
     }),
     research: Object.assign({}, base.research || {}, {
       title: "Bamboo Applications & Local Participation Study",
-      subtitle: "Dinner's Ready, Zhushan — participation study",
+      subtitle: "竹山開飯了 ZHUSHAN KAI FAN LE — participation study",
       disclaimer:
         "Valid responses come from work participants and site visitors. This is an exploratory participation study and does not represent general Taiwanese consumers or Zhushan residents.",
     }),
     images: Object.assign({}, base.images || {}, {
       hero: Object.assign({}, (base.images && base.images.hero) || {}, {
-        alt: "Dinner's Ready, Zhushan — work pre-assembly record",
+        alt: "竹山開飯了 ZHUSHAN KAI FAN LE — work pre-assembly record",
         caption: "Work pre-assembly record",
       }),
       process: ((base.images && base.images.process) || []).map(function (item, i) {
@@ -80,7 +80,7 @@
       wishCardUpdate: "Update wish card",
       wishKept: "Your wish is kept; after review, it may appear among the wishes.",
       wishCardFail: "Could not make the wish card. Please try again.",
-      defaultHashtag: "#ZhushanDinnerIsServed",
+      defaultHashtag: "#ZHUSHANKAIFANLE",
       needLink: "Please paste your post link.",
       needValidLink: "Please enter a valid http or https link.",
       linkTooLong: "That link is too long — please check it.",

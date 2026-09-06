@@ -27,14 +27,14 @@ html.zs-page {
   --zs-data: 1080px;
   --zs-hero: 1240px;
 
-  /* 4-layer type scale
+  /* 4-layer type scale (px — rem root stays 16px on html)
      1 Hero · 2 Section · 3 Body · 4 Caption / EN secondary */
-  --zs-fs-hero: clamp(2.25rem, 1.1rem + 5vw, 4.5rem);         /* 36 → 72px */
-  --zs-fs-slogan: clamp(1.375rem, 1rem + 1.8vw, 2rem);         /* 22 → 32px */
-  --zs-fs-slogan-en: clamp(0.9375rem, 0.85rem + 0.55vw, 1.25rem); /* 15 → 20px */
-  --zs-fs-section: clamp(1.375rem, 1.15rem + 1.6vw, 2.25rem);  /* 22 → 36px */
-  --zs-fs-body: clamp(0.9375rem, 0.9rem + 0.4vw, 1.1875rem);   /* 15 → 19px */
-  --zs-fs-caption: clamp(0.8125rem, 0.78rem + 0.25vw, 0.9375rem); /* 13 → 15px */
+  --zs-fs-hero: clamp(36px, 17.6px + 5vw, 72px);
+  --zs-fs-slogan: clamp(22px, 16px + 1.8vw, 32px);
+  --zs-fs-slogan-en: clamp(15px, 13.6px + 0.55vw, 20px);
+  --zs-fs-section: clamp(22px, 18.4px + 1.6vw, 36px);
+  --zs-fs-body: clamp(15px, 14.4px + 0.4vw, 19px);
+  --zs-fs-caption: clamp(13px, 12.5px + 0.25vw, 15px);
   --zs-lh-body: 1.8;
   --zs-lh-tight: 1.18;
   --zs-lh-title: 1.32;
@@ -45,13 +45,16 @@ html.zs-page {
   --zs-ease: cubic-bezier(.22, 1, .36, 1);
 }
 
+html.zs-page {
+  /* Keep rem stable so type clamps don't compound against body size */
+  font-size: 16px;
+}
+
 .zs-page {
   margin: 0;
   padding: 0;
   font-family: var(--zs-sans);
-  font-size: var(--zs-fs-body);
   font-weight: 400;
-  line-height: var(--zs-lh-body);
   color: var(--zs-ink);
   background:
     radial-gradient(ellipse 90% 55% at 12% -8%, rgba(74, 92, 70, 0.045), transparent 55%),
@@ -63,6 +66,15 @@ html.zs-page {
   max-width: 100%;
   width: 100%;
   position: relative;
+}
+
+.zs-page body {
+  margin: 0;
+  font-family: var(--zs-sans);
+  font-size: var(--zs-fs-body);
+  font-weight: 400;
+  line-height: var(--zs-lh-body);
+  color: var(--zs-ink);
 }
 
 .zs-page *,
@@ -651,12 +663,12 @@ html.zs-page {
 
 @media (max-width: 600px) {
   .zs-page {
-    --zs-fs-hero: clamp(2.25rem, 8vw, 2.75rem);       /* 36–44px */
-    --zs-fs-slogan: clamp(1.25rem, 4vw, 1.5rem);       /* 20–24px */
-    --zs-fs-slogan-en: 0.9375rem;                     /* 15px */
-    --zs-fs-section: clamp(1.375rem, 4vw, 1.75rem);   /* 22–28px */
-    --zs-fs-body: clamp(0.9375rem, 2.5vw, 1.0625rem); /* 15–17px */
-    --zs-fs-caption: 0.8125rem;                       /* 13px */
+    --zs-fs-hero: clamp(36px, 8vw, 44px);
+    --zs-fs-slogan: clamp(20px, 4vw, 24px);
+    --zs-fs-slogan-en: 15px;
+    --zs-fs-section: clamp(22px, 4vw, 28px);
+    --zs-fs-body: clamp(15px, 2.5vw, 17px);
+    --zs-fs-caption: 13px;
   }
 
   .zs-section__label {
@@ -1868,7 +1880,7 @@ html.zs-page {
 .zs-video__title {
   margin: 0;
   font-family: var(--zs-serif);
-  font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.625rem);
+  font-size: clamp(20px, 16.8px + 0.9vw, 26px);
   font-weight: 500;
   line-height: 1.35;
   letter-spacing: 0.02em;
@@ -2284,7 +2296,7 @@ html.zs-page {
 
 /* —— Related (quiet) —— */
 .zs-section--quiet .zs-section__title {
-  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.375rem);
+  font-size: clamp(18px, 16px + 0.6vw, 22px);
   font-weight: 500;
   margin-bottom: 12px;
 }
@@ -3256,7 +3268,7 @@ html.zs-page {
 .zs-mode__name {
   margin: 10px 0 0;
   font-family: var(--zs-serif);
-  font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.625rem); /* below section title */
+  font-size: clamp(20px, 16.8px + 0.9vw, 26px); /* below section title */
   font-weight: 500;
   line-height: 1.3;
   letter-spacing: 0.01em;
@@ -3287,7 +3299,7 @@ html.zs-page {
 .zs-material-quote p {
   margin: 0;
   font-family: var(--zs-serif);
-  font-size: clamp(1.125rem, 1rem + 0.8vw, 1.5rem); /* between body and section */
+  font-size: clamp(18px, 16px + 0.8vw, 24px); /* between body and section */
   font-weight: 400;
   line-height: 1.55;
   color: var(--zs-ink);

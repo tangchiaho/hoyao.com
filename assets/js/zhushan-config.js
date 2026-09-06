@@ -155,12 +155,12 @@ window.ZHUSHAN_CONFIG = {
 
   images: {
     hero: {
-      src: "/assets/images/projects/zhushan/hero-installation.webp",
+      src: "/assets/images/projects/zhushan/hero-installation-v2.webp?v=20260906-photo1",
       placeholder: false,
-      alt: "竹山開飯了－完整作品呈現",
+      alt: "竹山開飯了－竹管與竹纖維餐具構成的裝置全景，右側為竹願架",
       width: 1448,
       height: 1086,
-      caption: "完整作品呈現",
+      caption: "台西客運竹山站・竹青庭｜作品全景：竹林、餐具花朵與竹願架",
     },
     venue: {
       src: "",
@@ -175,8 +175,8 @@ window.ZHUSHAN_CONFIG = {
       {
         id: "01",
         stage: "竹構",
-        label: "從孔板與竹桿開始，建立作品最初的垂直節奏。",
-        alt: "竹構插桿施工",
+        label: "孔板底座鑽孔、竹桿試插，作品的垂直節奏從這裡開始。",
+        alt: "木工場中孔板底座與竹桿試組裝，旁有電鑽與木屑",
         src: "/assets/images/projects/zhushan/process-01-bamboo-frame.webp",
         placeholder: false,
         layout: "hero",
@@ -186,8 +186,8 @@ window.ZHUSHAN_CONFIG = {
       {
         id: "02",
         stage: "協作",
-        label: "木工製作與現場預組裝，讓概念逐步形成可落地的結構。",
-        alt: "木工場竹構與協作",
+        label: "木工場預組裝：竹林的疏密與高度，一寸寸被調出來。",
+        alt: "四位木工與預組裝中的竹構合影",
         src: "/assets/images/projects/zhushan/process-02-workshop.webp",
         placeholder: false,
         layout: "pair-left",
@@ -197,8 +197,8 @@ window.ZHUSHAN_CONFIG = {
       {
         id: "03",
         stage: "手作",
-        label: "竹纖維餐具重新被組合成花朵與放射形構件。",
-        alt: "竹材與餐具花件手作",
+        label: "竹纖維碗、叉、匙在案上堆疊，被重組為花朵與放射形構件。",
+        alt: "手作現場：竹纖維餐具與竹材堆滿桌面與地面",
         src: "/assets/images/projects/zhushan/process-03-handcraft.webp",
         placeholder: false,
         layout: "pair-right",
@@ -208,8 +208,8 @@ window.ZHUSHAN_CONFIG = {
       {
         id: "04",
         stage: "形成",
-        label: "材料逐步從零散單元變成完整竹林。",
-        alt: "作品預組裝正面",
+        label: "餐具花朵掛上竹桿，預組裝中的作品輪廓逐漸清晰。",
+        alt: "預組裝中的作品正面，竹桿上掛有餐具花朵",
         src: "/assets/images/projects/zhushan/process-04-preassembly.webp",
         placeholder: false,
         layout: "wide",
@@ -219,8 +219,8 @@ window.ZHUSHAN_CONFIG = {
       {
         id: "05",
         stage: "細節",
-        label: "底座植栽鋪設，讓地面也成為作品的一部分。",
-        alt: "底座植栽鋪設",
+        label: "底座試作：植栽與竹材並置，確認地面也成為作品的一部分。",
+        alt: "孔板底座上的植栽與竹材細節試作",
         src: "/assets/images/projects/zhushan/process-05-ground-detail.webp",
         placeholder: false,
         layout: "detail",
@@ -230,8 +230,8 @@ window.ZHUSHAN_CONFIG = {
       {
         id: "06",
         stage: "全景",
-        label: "預組裝完成後的作品樣貌。",
-        alt: "作品預組裝全景",
+        label: "現場試擺：作品對準窗前山巒布景，確認整體節奏。",
+        alt: "現場窗前試擺的作品全景，背景為山巒布景",
         src: "/assets/images/projects/zhushan/process-06-full-preassembly.webp",
         placeholder: false,
         layout: "finale",
@@ -241,8 +241,8 @@ window.ZHUSHAN_CONFIG = {
       {
         id: "07",
         stage: "協作",
-        label: "現場協作與組裝過程。",
-        alt: "木工底座孔板合影",
+        label: "孔板底座完工：木工場合影，準備進入組裝。",
+        alt: "兩位木工展示已鑽孔完成的木質底座",
         src: "/assets/images/projects/zhushan/people-01.webp",
         placeholder: false,
         layout: "pair-left",
@@ -252,9 +252,9 @@ window.ZHUSHAN_CONFIG = {
       },
       {
         id: "08",
-        stage: "竹語",
-        label: "竹語吊牌試作。",
-        alt: "竹語吊牌試作",
+        stage: "竹願",
+        label: "竹願吊牌試作：木牌與麻繩，留給現場書寫的空白。",
+        alt: "手持木製竹願吊牌試作，上方穿有麻繩",
         src: "/assets/images/projects/zhushan/bamboo-message-detail.webp",
         placeholder: false,
         layout: "detail",
@@ -264,9 +264,9 @@ window.ZHUSHAN_CONFIG = {
       },
       {
         id: "09",
-        stage: "協作",
-        label: "預組裝階段的現場合影。",
-        alt: "作品預組裝合影",
+        stage: "現場",
+        label: "作品成形後，創作者與協力者於裝置前留影。",
+        alt: "創作者與協力者在完成裝設的作品前自拍合影",
         src: "/assets/images/projects/zhushan/people-02.webp",
         placeholder: false,
         layout: "pair-right",

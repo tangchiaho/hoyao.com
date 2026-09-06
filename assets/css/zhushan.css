@@ -432,6 +432,8 @@ html.zs-page {
   width: 100%;
   background: var(--zs-white);
   border: 1px solid var(--zs-rule);
+  /* Soften residual window blowout without washing midtones */
+  filter: brightness(0.97) contrast(0.98) saturate(1.04);
 }
 
 .zs-hero__caption {
@@ -440,6 +442,8 @@ html.zs-page {
   font-size: var(--zs-fs-caption);
   letter-spacing: 0.04em;
   color: var(--zs-warm);
+  text-wrap: pretty;
+  max-width: 42em;
 }
 
 /* —— Sections —— */
@@ -1938,8 +1942,11 @@ html.zs-page {
 
 .zs-process-item figcaption {
   margin-top: 10px;
+  max-width: 36em;
   font-size: 14px;
+  line-height: 1.7;
   color: var(--zs-muted);
+  text-wrap: pretty;
 }
 
 .zs-video {

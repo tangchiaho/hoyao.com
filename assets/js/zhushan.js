@@ -1494,7 +1494,9 @@
 
     function copyLink() {
       var done = isEn ? "Link copied" : "已複製連結";
-      var fail = isEn ? "Could not copy. Please copy manually." : "無法自動複製，請手動選取連結。";
+      var fail = isEn
+        ? "Could not copy automatically. Link: " + url
+        : "無法自動複製，請手動複製：" + url;
       if (navigator.clipboard && navigator.clipboard.writeText) {
         return navigator.clipboard.writeText(url).then(
           function () {
@@ -1514,8 +1516,9 @@
         ta.style.opacity = "0";
         document.body.appendChild(ta);
         ta.select();
-        document.execCommand("copy");
+        var ok = document.execCommand("copy");
         document.body.removeChild(ta);
+        if (!ok) throw new Error("copy failed");
         setStatus(done);
         track("film_copy_link", { page: "zhushan" });
       } catch (err) {

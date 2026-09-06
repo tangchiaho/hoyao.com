@@ -178,6 +178,51 @@ html.zs-page {
   opacity: 0.7;
 }
 
+
+/* Language switch */
+.zs-lang {
+  position: absolute;
+  top: 18px;
+  right: max(16px, env(safe-area-inset-right));
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--zs-warm);
+}
+.zs-lang a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+}
+.zs-lang a:hover,
+.zs-lang a:focus-visible {
+  color: var(--zs-ink);
+  border-bottom-color: var(--zs-ink);
+  opacity: 1;
+}
+.zs-lang a[aria-current="page"] {
+  color: var(--zs-ink);
+  border-bottom-color: var(--zs-ink);
+  font-weight: 500;
+  pointer-events: none;
+}
+.zs-lang__sep {
+  opacity: 0.45;
+}
+.zs-shell {
+  position: relative;
+}
+@media (min-width: 900px) {
+  .zs-lang {
+    top: 28px;
+    right: max(24px, env(safe-area-inset-right));
+  }
+}
+
 /* —— Hero —— */
 .zs-hero {
   padding: 48px 0 28px;

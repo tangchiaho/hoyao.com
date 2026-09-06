@@ -6,6 +6,12 @@
   "use strict";
 
   var cfg = window.ZHUSHAN_CONFIG || {};
+  var isEn = cfg.locale === "en" || document.documentElement.lang === "en";
+  function ui(key, zh) {
+    var pack = (cfg.ui && cfg.ui[key]) || null;
+    if (isEn && pack) return pack;
+    return zh;
+  }
   var reduceMotion =
     window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -237,7 +243,7 @@
       }
       if (redrawBtn) redrawBtn.hidden = false;
       if (cardBtn) cardBtn.hidden = false;
-      if (drawBtn) drawBtn.textContent = "再抽一句";
+      if (drawBtn) drawBtn.textContent = ui("drawAgain", "再抽一句");
     }
 
     function draw() {
@@ -261,11 +267,11 @@
       .then(function (data) {
         phrases = (data && data.phrases) || [];
         if (!phrases.length) {
-          phrases = ["從竹林到餐桌，再從餐桌回到土地。"];
+          phrases = [ui("fallbackPhrase", "從竹林到餐桌，再從餐桌回到土地。")];
         }
       })
       .catch(function () {
-        phrases = ["從竹林到餐桌，再從餐桌回到土地。"];
+        phrases = [ui("fallbackPhrase", "從竹林到餐桌，再從餐桌回到土地。")];
       });
 
     if (drawBtn) drawBtn.addEventListener("click", draw);
@@ -310,7 +316,7 @@
           if (status) {
             status.hidden = false;
             status.textContent =
-              (err && err.message) || "無法生成竹語卡，請稍後再試。";
+              (err && err.message) || ui("phraseCardFail", "無法生成竹語卡，請稍後再試。");
           }
         });
     }
@@ -341,8 +347,8 @@
             status.hidden = false;
             status.textContent =
               mode === "shared"
-                ? "已開啟系統分享"
-                : "此裝置不支援圖片分享，已改為下載 PNG。";
+                ? ui("shareOpened", "已開啟系統分享")
+                : ui("shareFallbackDownload", "此裝置不支援圖片分享，已改為下載 PNG。");
           }
         });
       });
@@ -352,7 +358,7 @@
         downloadCanvas(canvas, "zhuyu", currentPhraseIndex || 1);
         if (status) {
           status.hidden = false;
-          status.textContent = "已開始下載。也可長按卡片儲存。";
+          status.textContent = ui("downloadStarted", "已開始下載。也可長按卡片儲存。");
         }
         track("bamboo_phrase_download", { page: "zhushan" });
       });
@@ -666,17 +672,17 @@
     spawnOnStage(clean, { mine: true });
     announce(
       ephemeralApi()
-        ? "已飄過——現場朋友短時間內也可能看到。"
-        : "已在你的畫面飄過。（公開彈幕 API 尚未設定）"
+        ? ui("driftPublic", "已飄過——現場朋友短時間內也可能看到。")
+        : ui("driftLocal", "已在你的畫面飄過。（公開彈幕 API 尚未設定）")
     );
     track("passing_thought", { page: "zhushan", action: "ephemeral_sent" });
 
     postEphemeral(clean).then(function (res) {
       if (res && res.item && res.item.id) seenIds[res.item.id] = true;
       if (res && res.error === "rate_limited") {
-        announce("送出稍快，請稍候再試。");
+        announce(ui("submitTooFast", "送出稍快，請稍候再試。"));
       } else if (res && res.error === "blocked") {
-        announce("這句話無法公開飄過。");
+        announce(ui("driftBlocked", "這句話無法公開飄過。"));
       }
     });
   }
@@ -735,11 +741,11 @@
       if (!cardBtn || !input) return;
       var msg = input.value.trim();
       if (!cardReady) {
-        cardBtn.textContent = "生成竹願卡";
+        cardBtn.textContent = ui("wishCardMake", "生成竹願卡");
       } else if (msg && msg === lastCardText) {
-        cardBtn.textContent = "查看我的竹願卡";
+        cardBtn.textContent = ui("wishCardView", "查看我的竹願卡");
       } else {
-        cardBtn.textContent = "更新竹願卡";
+        cardBtn.textContent = ui("wishCardUpdate", "更新竹願卡");
       }
     }
 
@@ -770,9 +776,9 @@
         if (keepStatus) {
           keepStatus.hidden = false;
           keepStatus.textContent =
-            "你的竹願已留下；經整理後，可能出現在竹願中。";
+            ui("wishKept", "你的竹願已留下；經整理後，可能出現在竹願中。");
         }
-        announce("你的竹願已留下；經整理後，可能出現在竹願中。");
+        announce(ui("wishKept", "你的竹願已留下；經整理後，可能出現在竹願中。"));
         if (!isSafeHttpUrl(formUrl)) {
           return;
         }
@@ -826,7 +832,7 @@
           if (status) {
             status.hidden = false;
             status.textContent =
-              (err && err.message) || "無法生成竹願卡，請稍後再試。";
+              (err && err.message) || ui("wishCardFail", "無法生成竹願卡，請稍後再試。");
           }
         });
     }
@@ -850,8 +856,8 @@
             status.hidden = false;
             status.textContent =
               mode === "shared"
-                ? "已開啟系統分享"
-                : "此裝置不支援圖片分享，已改為下載 PNG。";
+                ? ui("shareOpened", "已開啟系統分享")
+                : ui("shareFallbackDownload", "此裝置不支援圖片分享，已改為下載 PNG。");
           }
           if (mode === "shared") track("wish_card_share", { page: "zhushan" });
         });
@@ -862,7 +868,7 @@
         downloadCanvas(canvas, "zhuyuan", getWishSerial());
         if (status) {
           status.hidden = false;
-          status.textContent = "已開始下載。也可長按卡片儲存。";
+          status.textContent = ui("downloadStarted", "已開始下載。也可長按卡片儲存。");
         }
         track("wish_card_download", { page: "zhushan" });
       });
@@ -981,7 +987,7 @@
     var note = document.getElementById("zs-community-submit-note");
     var btn = document.getElementById("zs-community-share-btn");
 
-    var hashtag = cfg.communityHashtag || "#竹山開飯了";
+    var hashtag = cfg.communityHashtag || ui("defaultHashtag", "#竹山開飯了");
     if (hashtagEl) hashtagEl.textContent = hashtag;
 
     var mention = (cfg.communityMention || "").trim();
@@ -1015,21 +1021,21 @@
         var hasForm = isSafeHttpUrl(formUrl);
 
         if (!link) {
-          showNote("請貼上你的貼文連結。", true);
+          showNote(ui("needLink", "請貼上你的貼文連結。"), true);
           if (input) input.focus();
           return;
         }
         if (!isAbsoluteHttpUrl(link)) {
-          showNote("請輸入有效的 http 或 https 連結。", true);
+          showNote(ui("needValidLink", "請輸入有效的 http 或 https 連結。"), true);
           if (input) input.focus();
           return;
         }
         if (link.length > maxLen) {
-          showNote("連結過長，請確認是否正確。", true);
+          showNote(ui("linkTooLong", "連結過長，請確認是否正確。"), true);
           return;
         }
         if (!hasApi && !hasForm) {
-          showNote("分享功能即將開放，請稍後再試。", true);
+          showNote(ui("shareSoon", "分享功能即將開放，請稍後再試。"), true);
           return;
         }
 
@@ -1041,7 +1047,7 @@
             btn.disabled = false;
             if (res && res.ok) {
               showNote(
-                "已收到你的分享，審核通過後會隨機顯示在「竹山片刻」。",
+                ui("shareReceived", "已收到你的分享，審核通過後會隨機顯示在「竹山片刻」。"),
                 false
               );
               if (input) input.value = "";
@@ -1050,19 +1056,19 @@
             if (hasForm) {
               window.open(buildCommunityFormUrl(link), "_blank", "noopener,noreferrer");
               showNote(
-                "請在開啟的表單中確認並送出，審核通過後會顯示在頁面。",
+                ui("confirmInForm", "請在開啟的表單中確認並送出，審核通過後會顯示在頁面。"),
                 false
               );
               return;
             }
-            showNote("送出失敗，請稍後再試。", true);
+            showNote(ui("submitFail", "送出失敗，請稍後再試。"), true);
           });
           return;
         }
 
         window.open(buildCommunityFormUrl(link), "_blank", "noopener,noreferrer");
         showNote(
-          "請在開啟的表單中確認並送出，審核通過後會顯示在頁面。",
+          ui("confirmInForm", "請在開啟的表單中確認並送出，審核通過後會顯示在頁面。"),
           false
         );
         btn.disabled = false;

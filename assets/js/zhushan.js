@@ -6,6 +6,12 @@
   "use strict";
 
   var cfg = window.ZHUSHAN_CONFIG || {};
+  var isEn = cfg.locale === "en" || document.documentElement.lang === "en";
+  function ui(key, zh) {
+    var pack = (cfg.ui && cfg.ui[key]) || null;
+    if (isEn && pack) return pack;
+    return zh;
+  }
   var reduceMotion =
     window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -564,13 +570,13 @@
             ? '<img src="' +
               escapeHtml(it.image) +
               '" alt="' +
-              escapeHtml(it.text || "竹山片刻") +
+              escapeHtml(it.text || ui("momentFallback", "竹山片刻")) +
               '" width="800" height="1000" loading="lazy">'
             : it.image && String(it.image).charAt(0) === "/"
             ? '<img src="' +
               escapeHtml(it.image) +
               '" alt="' +
-              escapeHtml(it.text || "竹山片刻") +
+              escapeHtml(it.text || ui("momentFallback", "竹山片刻")) +
               '" width="800" height="1000" loading="lazy">'
             : "";
         return (
@@ -584,7 +590,9 @@
           (it.url && isSafeHttpUrl(it.url)
             ? '<a href="' +
               escapeHtml(it.url) +
-              '" rel="noopener noreferrer" target="_blank" data-entity="community_moment" data-channel="original_post">查看原分享</a>'
+              '" rel="noopener noreferrer" target="_blank" data-entity="community_moment" data-channel="original_post">' +
+              ui("viewOriginal", "查看原分享") +
+              "</a>"
             : "") +
           "</article>"
         );
@@ -704,7 +712,7 @@
       if (!videoWrap) return;
       if (hasYt) {
         videoWrap.hidden = false;
-        var title = (cfg.video && cfg.video.title) || "播放影片";
+        var title = (cfg.video && cfg.video.title) || ui("playVideo", "播放影片");
         var caption = (cfg.video && cfg.video.caption) || "";
         var poster = cfg.video && cfg.video.poster;
         var hasPoster = poster && isRealSrc(poster);
@@ -720,16 +728,16 @@
           : "";
         videoWrap.innerHTML =
           '<header class="zs-video__head">' +
-          '<p class="zs-video__eyebrow">作品影片</p>' +
+          '<p class="zs-video__eyebrow">' + ui("videoEyebrow", "作品影片") + '</p>' +
           '<h3 class="zs-video__title">' +
           escapeHtml(title) +
           "</h3>" +
-          '<p class="zs-video__meta">紀錄片 · YouTube</p>' +
+          '<p class="zs-video__meta">' + ui("videoMeta", "紀錄片 · YouTube") + '</p>' +
           "</header>" +
           '<div class="zs-video__frame" id="zs-video-frame">' +
           '<button type="button" class="zs-video__poster' +
           (hasPoster ? " zs-video__poster--media" : "") +
-          '" id="zs-yt-play" aria-label="播放影片：' +
+          '" id="zs-yt-play" aria-label="' + ui("playVideo", "播放影片") + '：' +
           escapeHtml(title) +
           '">' +
           posterInner +
@@ -748,10 +756,14 @@
               escapeHtml(caption) +
               ' <a class="zs-video__external" href="' +
               escapeHtml(watchUrl) +
-              '" target="_blank" rel="noopener noreferrer">於 YouTube 開啟</a></p>'
+              '" target="_blank" rel="noopener noreferrer">' +
+              ui("openYoutube", "於 YouTube 開啟") +
+              "</a></p>"
             : '<p class="zs-video__caption"><a class="zs-video__external" href="' +
               escapeHtml(watchUrl) +
-              '" target="_blank" rel="noopener noreferrer">於 YouTube 開啟</a></p>');
+              '" target="_blank" rel="noopener noreferrer">' +
+              ui("openYoutube", "於 YouTube 開啟") +
+              "</a></p>");
 
         var play = document.getElementById("zs-yt-play");
         var frame = document.getElementById("zs-video-frame");
@@ -924,15 +936,17 @@
       parts.push(
         '<a href="' +
           escapeHtml(hoyao) +
-          '" data-entity="hoyao" data-channel="website" data-zs-link="hoyaoWebsite">和曜應用科技股份有限公司</a>'
+          '" data-entity="hoyao" data-channel="website" data-zs-link="hoyaoWebsite">' +
+          ui("hoyaoName", "和曜應用科技股份有限公司") +
+          "</a>"
       );
     } else {
-      parts.push("和曜應用科技股份有限公司");
+      parts.push(ui("hoyaoName", "和曜應用科技股份有限公司"));
     }
 
     if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       parts.push(
-        '合作與交流：<a href="mailto:' +
+        ui("contactPrefix", "合作與交流：") + '<a href="mailto:' +
           escapeHtml(email) +
           '">' +
           escapeHtml(email) +

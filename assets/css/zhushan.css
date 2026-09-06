@@ -1018,19 +1018,37 @@ html.zs-page {
   }
 }
 
-/* —— Buttons (crafted, exhibition feel) —— */
+/* —— Buttons (crafted paper / exhibition feel) —— */
 .zs-page {
-  --zs-btn-radius: 3px;
-  --zs-btn-ink: #24241f;
-  --zs-btn-ink-soft: #35352f;
-  --zs-btn-paper: #fbfaf6;
-  --zs-btn-paper-deep: #f3f1ea;
-  --zs-btn-edge: rgba(36, 36, 31, 0.16);
-  --zs-btn-edge-strong: rgba(36, 36, 31, 0.34);
-  --zs-btn-shadow: 0 1px 0 rgba(255, 255, 255, 0.55) inset,
-    0 8px 18px rgba(36, 36, 31, 0.06);
-  --zs-btn-shadow-hover: 0 1px 0 rgba(255, 255, 255, 0.7) inset,
-    0 10px 22px rgba(36, 36, 31, 0.09);
+  --zs-btn-radius: 8px;
+  --zs-btn-ink: #2a2621;
+  --zs-btn-ink-mid: #3a342e;
+  --zs-btn-ink-soft: #454039;
+  --zs-btn-cream: #f8f4ec;
+  --zs-btn-paper: #fffcf7;
+  --zs-btn-paper-deep: #efe8dc;
+  --zs-btn-edge: rgba(42, 38, 33, 0.18);
+  --zs-btn-edge-strong: rgba(42, 38, 33, 0.42);
+  --zs-btn-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    inset 0 -1px 0 rgba(42, 38, 33, 0.04),
+    0 1px 2px rgba(42, 38, 33, 0.05),
+    0 8px 18px rgba(42, 38, 33, 0.08);
+  --zs-btn-shadow-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    inset 0 -1px 0 rgba(42, 38, 33, 0.05),
+    0 2px 4px rgba(42, 38, 33, 0.06),
+    0 12px 26px rgba(42, 38, 33, 0.12);
+  --zs-btn-primary-face:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.04) 38%, transparent 62%),
+    linear-gradient(180deg, var(--zs-btn-ink-mid) 0%, var(--zs-btn-ink) 100%);
+  --zs-btn-primary-face-hover:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.06) 40%, transparent 64%),
+    linear-gradient(180deg, var(--zs-btn-ink-soft) 0%, var(--zs-btn-ink-mid) 100%);
+  --zs-btn-ghost-face:
+    linear-gradient(180deg, #ffffff 0%, var(--zs-btn-paper) 42%, var(--zs-btn-paper-deep) 100%);
+  --zs-btn-ghost-face-hover:
+    linear-gradient(180deg, #ffffff 0%, #faf6ef 48%, #e9e1d3 100%);
 }
 
 .zs-btn {
@@ -1038,26 +1056,27 @@ html.zs-page {
   align-items: center;
   justify-content: center;
   gap: 0.4em;
-  min-height: 44px;
+  min-height: 46px;
   appearance: none;
-  border: 1px solid var(--zs-btn-ink);
+  border: 1px solid rgba(20, 16, 12, 0.55);
   border-radius: var(--zs-btn-radius);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 42%),
-    var(--zs-btn-ink);
-  color: #f7f5ef;
-  -webkit-text-fill-color: #f7f5ef;
+  background: var(--zs-btn-primary-face);
+  color: var(--zs-btn-cream);
+  -webkit-text-fill-color: var(--zs-btn-cream);
   font-family: inherit;
   font-size: 13.5px;
   font-weight: 500;
   letter-spacing: 0.06em;
-  padding: 11px 22px;
+  padding: 12px 24px;
   text-decoration: none;
   cursor: pointer;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset,
-    0 6px 14px rgba(36, 36, 31, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+    0 1px 1px rgba(42, 38, 33, 0.08),
+    0 10px 22px rgba(42, 38, 33, 0.16);
   transition:
-    background-color 280ms var(--zs-ease),
+    background 280ms var(--zs-ease),
     border-color 280ms var(--zs-ease),
     color 280ms var(--zs-ease),
     box-shadow 280ms var(--zs-ease),
@@ -1067,8 +1086,8 @@ html.zs-page {
 /* Anchor CTAs must beat `.zs-page a { color: inherit }` */
 .zs-page a.zs-btn,
 .zs-page a.zs-btn:visited {
-  color: #f7f5ef;
-  -webkit-text-fill-color: #f7f5ef;
+  color: var(--zs-btn-cream);
+  -webkit-text-fill-color: var(--zs-btn-cream);
   text-decoration: none;
   -webkit-tap-highlight-color: transparent;
 }
@@ -1076,28 +1095,30 @@ html.zs-page {
 .zs-page a.zs-btn:hover,
 .zs-page a.zs-btn:active,
 .zs-page a.zs-btn:focus-visible {
-  color: #f7f5ef;
-  -webkit-text-fill-color: #f7f5ef;
+  color: var(--zs-btn-cream);
+  -webkit-text-fill-color: var(--zs-btn-cream);
   opacity: 1;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 42%),
-    var(--zs-btn-ink-soft);
+  background: var(--zs-btn-primary-face-hover);
 }
 
 .zs-btn:hover {
   opacity: 1;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 42%),
-    var(--zs-btn-ink-soft);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.16) inset,
-    0 10px 20px rgba(36, 36, 31, 0.16);
-  transform: translateY(-1px);
+  background: var(--zs-btn-primary-face-hover);
+  border-color: rgba(20, 16, 12, 0.62);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.16),
+    0 2px 4px rgba(42, 38, 33, 0.1),
+    0 14px 28px rgba(42, 38, 33, 0.2);
+  transform: translateY(-2px);
 }
 
 .zs-btn:active {
   transform: translateY(0);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.18) inset,
-    0 2px 6px rgba(36, 36, 31, 0.12);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 2px 6px rgba(42, 38, 33, 0.12);
 }
 
 .zs-btn:focus-visible {
@@ -1106,8 +1127,7 @@ html.zs-page {
 }
 
 .zs-btn-ghost {
-  background:
-    linear-gradient(180deg, #ffffff, var(--zs-btn-paper) 58%, var(--zs-btn-paper-deep));
+  background: var(--zs-btn-ghost-face);
   color: var(--zs-ink);
   -webkit-text-fill-color: var(--zs-ink);
   border-color: var(--zs-btn-edge-strong);
@@ -1121,22 +1141,22 @@ html.zs-page {
 .zs-page a.zs-btn-ghost:focus-visible {
   color: var(--zs-ink);
   -webkit-text-fill-color: var(--zs-ink);
-  background:
-    linear-gradient(180deg, #ffffff, var(--zs-btn-paper) 58%, var(--zs-btn-paper-deep));
+  background: var(--zs-btn-ghost-face);
 }
 
 .zs-btn-ghost:hover {
-  border-color: var(--zs-ink);
-  background:
-    linear-gradient(180deg, #ffffff, #f8f6f0 55%, #efece4);
+  border-color: rgba(42, 38, 33, 0.62);
+  background: var(--zs-btn-ghost-face-hover);
   box-shadow: var(--zs-btn-shadow-hover);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
 .zs-btn-ghost:active {
   transform: translateY(0);
-  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.06) inset,
-    0 2px 5px rgba(36, 36, 31, 0.06);
+  box-shadow:
+    inset 0 2px 3px rgba(42, 38, 33, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 2px 5px rgba(42, 38, 33, 0.06);
 }
 
 .zs-btn-link {
@@ -1641,28 +1661,27 @@ html.zs-page {
 }
 
 #zs-survey-btn.zs-btn {
-  color: #f7f5ef;
-  -webkit-text-fill-color: #f7f5ef;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 45%),
-    var(--zs-btn-ink);
-  border-color: var(--zs-btn-ink);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.14) inset,
-    0 10px 24px rgba(36, 36, 31, 0.14);
+  color: var(--zs-btn-cream);
+  -webkit-text-fill-color: var(--zs-btn-cream);
+  background: var(--zs-btn-primary-face);
+  border-color: rgba(20, 16, 12, 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18),
+    0 1px 1px rgba(42, 38, 33, 0.08),
+    0 12px 26px rgba(42, 38, 33, 0.18);
   font-weight: 500;
   letter-spacing: 0.07em;
-  min-height: 48px;
-  padding: 12px 26px;
+  min-height: 50px;
+  padding: 13px 28px;
 }
 
 #zs-survey-btn.zs-btn:hover,
 #zs-survey-btn.zs-btn:active,
 #zs-survey-btn.zs-btn:focus-visible {
-  color: #f7f5ef;
-  -webkit-text-fill-color: #f7f5ef;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.12), transparent 45%),
-    var(--zs-btn-ink-soft);
+  color: var(--zs-btn-cream);
+  -webkit-text-fill-color: var(--zs-btn-cream);
+  background: var(--zs-btn-primary-face-hover);
   opacity: 1;
 }
 

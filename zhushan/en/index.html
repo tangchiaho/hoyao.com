@@ -38,7 +38,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500&family=Noto+Serif+TC:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="preload" href="/assets/data/zhushan-outcomes.json" as="fetch" crossorigin>
-<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260906-btnflat1">
+<link rel="stylesheet" href="/assets/css/zhushan.css?v=20260906-filmposter1">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -210,14 +210,11 @@ window.__ZS_OUTCOMES_P = (function () {
 <h2 class="zs-section__title" id="film-title">Official Film</h2>
 <p class="zs-section__lead zs-section__lead--en">作品影片</p>
 <div class="zs-film">
-<div class="zs-film__frame">
-<iframe
-  src="https://www.youtube-nocookie.com/embed/M5rjYNHwBAE?rel=0"
-  title="Dinner's Ready, Zhushan — From Bamboo to Table, From Table Back to Earth | Taixi Bus Zhushan Station"
-  allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  allowfullscreen
-  loading="lazy"
-  referrerpolicy="strict-origin-when-cross-origin"></iframe>
+<div class="zs-film__frame" data-youtube-id="M5rjYNHwBAE">
+<button type="button" class="zs-film__poster" id="zs-film-poster" aria-label="Play official film">
+<img class="zs-film__thumb" src="/assets/images/projects/zhushan/process-video-poster.jpg" alt="Dinner's Ready, Zhushan film cover" width="1280" height="720" decoding="async" fetchpriority="low">
+<span class="zs-film__play" aria-hidden="true"><span class="zs-film__play-icon"></span></span>
+</button>
 </div>
 <p class="zs-film__caption"><em>Dinner's Ready, Zhushan</em> — From Bamboo to Table, From Table Back to Earth | Taixi Bus Zhushan Station</p>
 <div class="zs-film__actions" data-film-url="https://youtu.be/M5rjYNHwBAE" data-film-title="Dinner's Ready, Zhushan — From Bamboo to Table, From Table Back to Earth">
@@ -577,7 +574,7 @@ window.__ZS_OUTCOMES_P = (function () {
 </div>
 
 <script src="/assets/js/bamboo-share-card.js?v=20260903-4"></script>
-<script src="/assets/js/zhushan.js?v=20260906-film1"></script>
+<script src="/assets/js/zhushan.js?v=20260906-filmposter1"></script>
 <script src="/assets/js/zhushan-participation.js?v=20260906-phrase2"></script>
 </body>
 </html>

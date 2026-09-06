@@ -1469,6 +1469,42 @@
       });
   }
 
+  function initFilmPlayer() {
+    var frame = document.querySelector(".zs-film__frame");
+    var poster = document.getElementById("zs-film-poster");
+    if (!frame || !poster || frame.classList.contains("is-playing")) return;
+
+    var id =
+      frame.getAttribute("data-youtube-id") ||
+      (cfg.video && cfg.video.youtubeId) ||
+      "";
+    if (!youtubeIdSafe(id)) return;
+
+    var title =
+      (cfg.video && cfg.video.title) ||
+      poster.getAttribute("aria-label") ||
+      "Film";
+
+    function play() {
+      if (frame.classList.contains("is-playing")) return;
+      var iframe = document.createElement("iframe");
+      iframe.src =
+        "https://www.youtube-nocookie.com/embed/" +
+        id +
+        "?rel=0&autoplay=1&modestbranding=1";
+      iframe.title = title;
+      iframe.allow =
+        "accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+      iframe.setAttribute("allowfullscreen", "");
+      iframe.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+      frame.appendChild(iframe);
+      frame.classList.add("is-playing");
+      track("film_play", { page: "zhushan", youtubeId: id });
+    }
+
+    poster.addEventListener("click", play);
+  }
+
   function initFilmShare() {
     var root = document.querySelector(".zs-film__actions");
     if (!root) return;
@@ -1572,6 +1608,7 @@
     initProjectContact();
     initScrollDepth();
     initOutcomes();
+    initFilmPlayer();
     initFilmShare();
   });
 })();

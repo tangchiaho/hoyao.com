@@ -36,20 +36,20 @@
     }),
     images: Object.assign({}, base.images || {}, {
       hero: Object.assign({}, (base.images && base.images.hero) || {}, {
-        alt: "竹山開飯了 ZHUSHAN KAI FAN LE — complete work presentation",
-        caption: "Complete work presentation",
+        alt: "竹山開飯了 ZHUSHAN KAI FAN LE — bamboo poles and tableware blossoms with the Bamboo Wishes rack",
+        caption: "Taixi Bus Zhushan Station · Zhuqingting | Full view: bamboo grove, tableware blossoms, and Bamboo Wishes",
       }),
       process: ((base.images && base.images.process) || []).map(function (item, i) {
         var stages = [
-          { stage: "Structure", label: "From perforated base plates and bamboo poles, the work finds its first vertical rhythm.", alt: "Bamboo frame and pole installation" },
-          { stage: "Collaboration", label: "Workshop making and on-site pre-assembly turn the concept into a buildable structure.", alt: "Workshop bamboo structure and collaboration" },
-          { stage: "Handwork", label: "Bamboo-fiber tableware is recomposed into blossoms and radial components.", alt: "Handwork with bamboo and tableware flower pieces" },
-          { stage: "Formation", label: "Scattered units gradually become a complete bamboo grove.", alt: "Front view of the work in pre-assembly" },
-          { stage: "Detail", label: "Planting at the base makes the ground part of the work.", alt: "Base planting detail" },
-          { stage: "Overview", label: "The work after pre-assembly.", alt: "Full pre-assembly overview" },
-          { stage: "Collaboration", label: "On-site collaboration and assembly.", alt: "Group photo with woodworkers and base plates" },
-          { stage: "Bamboo Phrase", label: "Prototype bamboo-phrase tags.", alt: "Bamboo phrase tag prototype" },
-          { stage: "Collaboration", label: "Group photo during pre-assembly.", alt: "Group photo at pre-assembly" },
+          { stage: "Structure", label: "Drilling the perforated base and test-fitting bamboo poles — the work’s vertical rhythm begins here.", alt: "Workshop trial assembly of bamboo poles in a perforated wooden base" },
+          { stage: "Collaboration", label: "Workshop pre-assembly: density and height of the bamboo grove are tuned inch by inch.", alt: "Four woodworkers posing with the bamboo structure in pre-assembly" },
+          { stage: "Handwork", label: "Bamboo-fiber bowls, forks, and spoons stack on the table, then become blossoms and radial pieces.", alt: "Handwork scene with bamboo-fiber tableware and bamboo poles" },
+          { stage: "Formation", label: "Tableware blossoms hang on bamboo poles — the work’s outline grows clear in pre-assembly.", alt: "Front view of the work in pre-assembly with tableware flower motifs" },
+          { stage: "Detail", label: "Base trial: planting and bamboo side by side, so the ground becomes part of the work.", alt: "Close-up of planting and bamboo detail on the perforated base" },
+          { stage: "Overview", label: "On-site test placement against the mountain backdrop, checking the overall rhythm.", alt: "On-site test placement of the work before the mountain backdrop" },
+          { stage: "Collaboration", label: "Perforated base complete — workshop photo before assembly begins.", alt: "Two woodworkers holding the finished perforated wooden base" },
+          { stage: "Bamboo Wish", label: "Bamboo Wish tag prototype: wood and twine, left blank for on-site writing.", alt: "Hand holding a wooden Bamboo Wish tag with twine" },
+          { stage: "On site", label: "After the work takes shape, the creator and collaborators pose with the installation.", alt: "Creator and collaborator selfie in front of the finished installation" },
         ];
         var t = stages[i] || {};
         return Object.assign({}, item, t);

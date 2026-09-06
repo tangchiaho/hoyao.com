@@ -3362,15 +3362,20 @@ br.zs-br--always {
   line-height: 1.55;
 }
 
+/* Inline creator name — one step quieter than titles, one step clearer than body */
 .zs-creator {
   font-family: var(--zs-serif);
   font-weight: 500;
-  font-size: 1.045em;
-  letter-spacing: 0.14em;
+  font-size: 1.03em;
+  letter-spacing: 0.02em;
   line-height: inherit;
-  color: var(--zs-ink);
-  -webkit-text-fill-color: var(--zs-ink);
+  color: #4a5248;
+  -webkit-text-fill-color: #4a5248;
   font-feature-settings: "kern" 1, "liga" 1;
+  text-decoration: none;
+  background: none;
+  border: none;
+  box-shadow: none;
 }
 
 .zs-creator-en {
@@ -3750,7 +3755,9 @@ html[lang="en"] .zs-creator {
   font-family: var(--zs-latin);
   font-weight: 500;
   font-size: 1.02em;
-  letter-spacing: 0.045em;
+  letter-spacing: 0.02em;
+  color: #4a5248;
+  -webkit-text-fill-color: #4a5248;
 }
 
 html[lang="en"] .zs-hero__title {

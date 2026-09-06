@@ -320,10 +320,24 @@ html.zs-page {
 
 .zs-hero__materials {
   margin: 6px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 0;
   font-size: var(--zs-fs-caption);
   line-height: var(--zs-lh-caption);
   letter-spacing: 0.02em;
   color: var(--zs-muted);
+}
+
+.zs-hero__materials span {
+  white-space: nowrap;
+}
+
+.zs-hero__materials span:not(:last-child)::after {
+  content: "・";
+  margin: 0 0.55em;
+  color: var(--zs-warm);
+  font-weight: 400;
 }
 
 .zs-hero__quote {
@@ -333,10 +347,11 @@ html.zs-page {
   font-family: var(--zs-serif);
   font-weight: 400;
   font-size: var(--zs-fs-slogan);
-  line-height: 1.5;
+  line-height: 1.55;
   letter-spacing: 0.03em;
   color: var(--zs-ink);
-  text-wrap: pretty;
+  text-wrap: unset;
+  max-width: 18em;
 }
 
 .zs-hero__visual {
@@ -2240,6 +2255,10 @@ br.zs-br {
   display: none;
 }
 
+br.zs-br--always {
+  display: inline;
+}
+
 @media (min-width: 720px) {
   br.zs-br {
     display: inline;
@@ -3700,20 +3719,46 @@ a.zs-film__btn:visited {
 /* Layout polish: long titles / leads wrap cleanly */
 .zs-section__title,
 .zs-section__lead,
-.zs-hero__materials,
-.zs-hero__quote,
 .zs-related__name {
   overflow-wrap: break-word;
   word-break: normal;
 }
 
-.zs-section__lead {
+.zs-section__title {
+  text-wrap: balance;
+}
+
+.zs-section__lead,
+.zs-prose p {
   text-wrap: pretty;
+  line-break: auto;
+}
+
+.zs-hero__quote,
+.zs-material-quote p {
+  text-wrap: unset;
+  overflow-wrap: normal;
+  word-break: keep-all;
 }
 
 @media (max-width: 600px) {
   .zs-section__title {
-    max-width: 18em;
+    max-width: none;
+    text-wrap: pretty;
+  }
+
+  .zs-hero__quote {
+    max-width: none;
+    font-size: clamp(18px, 4.6vw, 24px);
+    line-height: 1.6;
+  }
+
+  .zs-hero__materials {
+    gap: 4px 0;
+  }
+
+  .zs-prose p {
+    text-wrap: pretty;
   }
 
   .zs-credits {
@@ -3725,16 +3770,8 @@ a.zs-film__btn:visited {
   }
 
   .zs-credits dd {
-    padding-bottom: 12px;
-    line-height: 1.7;
-  }
-
-  .zs-hero__quote {
-    max-width: 16em;
-  }
-
-  .zs-hero__quote-en {
-    max-width: 22em;
+    margin-top: 4px;
+    padding-bottom: 14px;
   }
 }
 

@@ -36,8 +36,8 @@
     }),
     images: Object.assign({}, base.images || {}, {
       hero: Object.assign({}, (base.images && base.images.hero) || {}, {
-        alt: "竹山開飯了 ZHUSHAN KAI FAN LE — work pre-assembly record",
-        caption: "Work pre-assembly record",
+        alt: "竹山開飯了 ZHUSHAN KAI FAN LE — complete work presentation",
+        caption: "Complete work presentation",
       }),
       process: ((base.images && base.images.process) || []).map(function (item, i) {
         var stages = [

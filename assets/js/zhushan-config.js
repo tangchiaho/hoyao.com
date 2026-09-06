@@ -155,12 +155,12 @@ window.ZHUSHAN_CONFIG = {
 
   images: {
     hero: {
-      src: "/assets/images/projects/zhushan/hero-preassembly.webp",
+      src: "/assets/images/projects/zhushan/hero-installation.webp",
       placeholder: false,
-      alt: "竹山開飯了－作品預組裝紀錄",
-      width: 1800,
-      height: 1350,
-      caption: "作品預組裝紀錄",
+      alt: "竹山開飯了－完整作品呈現",
+      width: 1448,
+      height: 1086,
+      caption: "完整作品呈現",
     },
     venue: {
       src: "",

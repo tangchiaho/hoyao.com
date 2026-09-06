@@ -2167,13 +2167,24 @@ html.zs-page {
   align-items: center;
 }
 
+/* Soft line breaks: desktop-only poetic breaks; mobile wraps naturally */
+br.zs-br {
+  display: none;
+}
+
+@media (min-width: 720px) {
+  br.zs-br {
+    display: inline;
+  }
+}
+
 /* —— Credits —— */
-#credits .zs-prose {
-  margin-bottom: 0;
+#credits .zs-section__title {
+  margin-bottom: 28px;
 }
 
 .zs-credits {
-  margin: 2.5em 0 0;
+  margin: 0;
   padding: 0;
   font-size: var(--zs-fs-body);
   line-height: var(--zs-lh-body);
@@ -2200,6 +2211,7 @@ html.zs-page {
   color: var(--zs-ink);
   font-size: var(--zs-fs-body);
   line-height: 1.65;
+  overflow-wrap: anywhere;
   border-bottom: 1px solid var(--zs-rule);
 }
 
@@ -3400,6 +3412,47 @@ html.zs-page {
 
 .zs-prose--credits {
   max-width: var(--zs-prose);
+}
+
+/* Layout polish: long titles / leads wrap cleanly */
+.zs-section__title,
+.zs-section__lead,
+.zs-hero__materials,
+.zs-hero__quote,
+.zs-related__name {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.zs-section__lead {
+  text-wrap: pretty;
+}
+
+@media (max-width: 600px) {
+  .zs-section__title {
+    max-width: 18em;
+  }
+
+  .zs-credits {
+    font-size: var(--zs-fs-body);
+  }
+
+  .zs-credits dt {
+    padding-top: 12px;
+  }
+
+  .zs-credits dd {
+    padding-bottom: 12px;
+    line-height: 1.7;
+  }
+
+  .zs-hero__quote {
+    max-width: 16em;
+  }
+
+  .zs-hero__quote-en {
+    max-width: 22em;
+  }
 }
 
 /* English page: display titles in clean sans */

@@ -3112,17 +3112,12 @@ html.zs-page {
   line-height: 1.6;
 }
 
-.zs-creator {
-  font-weight: 500;
-}
-
 .zs-creator-en {
   display: inline-block;
   margin-left: 0.45em;
   font-size: 0.82em;
   letter-spacing: 0.04em;
   color: var(--zs-warm);
-  font-weight: 400;
 }
 
 .zs-prose--intro {

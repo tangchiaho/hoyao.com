@@ -320,24 +320,10 @@ html.zs-page {
 
 .zs-hero__materials {
   margin: 6px 0 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 0;
   font-size: var(--zs-fs-caption);
   line-height: var(--zs-lh-caption);
   letter-spacing: 0.02em;
   color: var(--zs-muted);
-}
-
-.zs-hero__materials span {
-  white-space: nowrap;
-}
-
-.zs-hero__materials span:not(:last-child)::after {
-  content: "・";
-  margin: 0 0.55em;
-  color: var(--zs-warm);
-  font-weight: 400;
 }
 
 .zs-hero__quote {
@@ -350,8 +336,7 @@ html.zs-page {
   line-height: 1.55;
   letter-spacing: 0.03em;
   color: var(--zs-ink);
-  text-wrap: unset;
-  max-width: 18em;
+  max-width: 22em;
 }
 
 .zs-hero__visual {
@@ -507,7 +492,6 @@ html.zs-page {
   font-weight: 400;
   line-height: var(--zs-lh-body);
   color: var(--zs-muted);
-  text-wrap: pretty;
 }
 
 .zs-prose {
@@ -521,7 +505,6 @@ html.zs-page {
   margin: 0 0 1.35em;
   font-size: inherit;
   line-height: inherit;
-  text-wrap: pretty;
 }
 
 .zs-prose p:last-child {
@@ -3647,7 +3630,6 @@ a.zs-film__btn:visited {
   line-height: 1.55;
   letter-spacing: 0.02em;
   color: var(--zs-ink);
-  text-wrap: pretty;
 }
 
 .zs-material-quote__en {
@@ -3716,49 +3698,22 @@ a.zs-film__btn:visited {
   max-width: var(--zs-prose);
 }
 
-/* Layout polish: long titles / leads wrap cleanly */
+/* Titles may soft-balance; body copy wraps with the viewport */
 .zs-section__title,
 .zs-section__lead,
-.zs-related__name {
+.zs-related__name,
+.zs-prose p,
+.zs-hero__quote,
+.zs-hero__materials {
   overflow-wrap: break-word;
   word-break: normal;
 }
 
-.zs-section__title {
-  text-wrap: balance;
-}
-
-.zs-section__lead,
-.zs-prose p {
-  text-wrap: pretty;
-  line-break: auto;
-}
-
-.zs-hero__quote,
-.zs-material-quote p {
-  text-wrap: unset;
-  overflow-wrap: normal;
-  word-break: keep-all;
-}
-
 @media (max-width: 600px) {
-  .zs-section__title {
-    max-width: none;
-    text-wrap: pretty;
-  }
-
   .zs-hero__quote {
     max-width: none;
     font-size: clamp(18px, 4.6vw, 24px);
     line-height: 1.6;
-  }
-
-  .zs-hero__materials {
-    gap: 4px 0;
-  }
-
-  .zs-prose p {
-    text-wrap: pretty;
   }
 
   .zs-credits {

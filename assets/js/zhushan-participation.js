@@ -197,37 +197,25 @@
   }
 
 
-  /* —— 竹語 —— */
+  /* —— 竹語（只抽、不輸入） —— */
   function initBambooSpeak() {
     var drawBtn = document.getElementById("zs-draw-phrase");
     var redrawBtn = document.getElementById("zs-redraw-phrase");
     var cardBtn = document.getElementById("zs-phrase-card-btn");
-    var phraseInput = document.getElementById("zs-phrase-input");
-    var phraseCount = document.getElementById("zs-phrase-count");
-    var generateBtn = document.getElementById("zs-phrase-generate-btn");
     var editBtn = document.getElementById("zs-phrase-card-edit");
     var textEl = document.getElementById("zs-slip-text");
     var placeholder = document.getElementById("zs-slip-placeholder");
     var slip = document.getElementById("zs-slip");
+    var result = document.getElementById("zs-phrase-card-result");
+    var canvas = document.getElementById("zs-phrase-card-canvas");
+    var preview = document.getElementById("zs-phrase-card-preview");
+    var shareBtn = document.getElementById("zs-phrase-card-share");
+    var dlBtn = document.getElementById("zs-phrase-card-download");
+    var status = document.getElementById("zs-phrase-card-status");
     var url = cfg.bambooPhrasesUrl || "/assets/data/zhushan-bamboo-phrases.json";
-
-    function updatePhraseInputUi() {
-      if (!phraseInput) return;
-      if (phraseCount) {
-        phraseCount.textContent = String(phraseInput.value.length);
-      }
-    }
-
-    if (phraseInput) {
-      phraseInput.setAttribute("maxlength", String(WISH_MAX));
-      phraseInput.addEventListener("input", updatePhraseInputUi);
-      updatePhraseInputUi();
-    }
 
     function reveal(phrase) {
       currentPhrase = phrase;
-      if (phraseInput) phraseInput.value = phrase;
-      updatePhraseInputUi();
       if (placeholder) placeholder.hidden = true;
       if (textEl) {
         textEl.hidden = false;
@@ -237,6 +225,7 @@
         textEl.classList.add("is-in");
       }
       if (slip) {
+        slip.hidden = false;
         slip.classList.remove("is-drawn");
         void slip.offsetWidth;
         slip.classList.add("is-drawn");
@@ -256,6 +245,10 @@
       lastPhrase = phrase;
       var idx = phrases.indexOf(phrase);
       currentPhraseIndex = idx >= 0 ? idx + 1 : 1;
+      if (result) {
+        result.hidden = true;
+        result.classList.remove("is-ready");
+      }
       reveal(phrase);
       track("bamboo_phrase_draw", { page: "zhushan" });
     }
@@ -277,24 +270,11 @@
     if (drawBtn) drawBtn.addEventListener("click", draw);
     if (redrawBtn) redrawBtn.addEventListener("click", draw);
 
-    var result = document.getElementById("zs-phrase-card-result");
-    var generator = document.getElementById("zs-phrase-card-generator");
-    var canvas = document.getElementById("zs-phrase-card-canvas");
-    var preview = document.getElementById("zs-phrase-card-preview");
-    var shareBtn = document.getElementById("zs-phrase-card-share");
-    var dlBtn = document.getElementById("zs-phrase-card-download");
-    var status = document.getElementById("zs-phrase-card-status");
-
-    function phraseContent() {
-      if (phraseInput) return phraseInput.value.trim();
-      return currentPhrase || "";
-    }
-
     function generatePhraseCard() {
       if (!canvas) return;
-      var message = phraseContent();
+      var message = (currentPhrase || "").trim();
       if (!message) {
-        if (phraseInput) phraseInput.focus();
+        if (drawBtn) drawBtn.focus();
         return;
       }
       if (status) status.hidden = true;
@@ -308,8 +288,10 @@
           if (result) {
             result.hidden = false;
             result.classList.add("is-ready");
+            try {
+              result.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            } catch (e) {}
           }
-          if (generator) generator.hidden = true;
           track("bamboo_phrase_card", { page: "zhushan" });
         })
         .catch(function (err) {
@@ -321,23 +303,18 @@
         });
     }
 
-    if (cardBtn) {
-      cardBtn.addEventListener("click", function () {
-        if (currentPhrase && phraseInput && !phraseInput.value.trim()) {
-          phraseInput.value = currentPhrase;
-          updatePhraseInputUi();
-        }
-        generatePhraseCard();
-      });
-    }
-    if (generateBtn) {
-      generateBtn.addEventListener("click", generatePhraseCard);
-    }
+    if (cardBtn) cardBtn.addEventListener("click", generatePhraseCard);
     if (editBtn) {
       editBtn.addEventListener("click", function () {
-        if (result) result.hidden = true;
-        if (generator) generator.hidden = false;
-        if (phraseInput) phraseInput.focus();
+        if (result) {
+          result.hidden = true;
+          result.classList.remove("is-ready");
+        }
+        if (slip) {
+          try {
+            slip.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          } catch (e) {}
+        }
       });
     }
     if (shareBtn) {

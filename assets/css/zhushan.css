@@ -2752,10 +2752,6 @@ br.zs-br {
     transform 160ms var(--zs-ease);
 }
 
-.zs-quick button:last-child {
-  /* keep same chip border */
-}
-
 .zs-quick button:hover {
   color: var(--zs-ink);
   -webkit-text-fill-color: var(--zs-ink);

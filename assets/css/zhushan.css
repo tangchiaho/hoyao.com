@@ -3741,7 +3741,11 @@ a.zs-film__btn:visited {
 html[lang="en"] .zs-hero__title,
 html[lang="en"] .zs-section__title,
 html[lang="en"] .zs-mode__name,
-html[lang="en"] .zs-material-quote p,
+html[lang="en"] .zs-material-quote p {
+  font-family: var(--zs-latin);
+  letter-spacing: -0.01em;
+}
+
 html[lang="en"] .zs-creator {
   font-family: var(--zs-latin);
   font-weight: 500;

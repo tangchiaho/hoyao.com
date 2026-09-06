@@ -1,4 +1,4 @@
-/* 竹山開飯了 V4.6 — Bamboo Visual System
+/* 竹山開飯了 V4.7 — Bamboo Visual System + 4-layer typography
    Native scroll only. No scroll-snap / scroll-linked motion. */
 
 html.zs-page {
@@ -21,13 +21,27 @@ html.zs-page {
   --zs-bamboo: #4a5c46;
   --zs-bamboo-mute: #c8cfc4;
 
-  --zs-prose: 700px;
+  /* Type measure */
+  --zs-prose: 720px;
   --zs-content: 940px;
   --zs-data: 1080px;
   --zs-hero: 1240px;
 
+  /* 4-layer type scale
+     1 Hero · 2 Section · 3 Body · 4 Caption / EN secondary */
+  --zs-fs-hero: clamp(2.25rem, 1.1rem + 5vw, 4.5rem);         /* 36 → 72px */
+  --zs-fs-slogan: clamp(1.375rem, 1rem + 1.8vw, 2rem);         /* 22 → 32px */
+  --zs-fs-slogan-en: clamp(0.9375rem, 0.85rem + 0.55vw, 1.25rem); /* 15 → 20px */
+  --zs-fs-section: clamp(1.375rem, 1.15rem + 1.6vw, 2.25rem);  /* 22 → 36px */
+  --zs-fs-body: clamp(0.9375rem, 0.9rem + 0.4vw, 1.1875rem);   /* 15 → 19px */
+  --zs-fs-caption: clamp(0.8125rem, 0.78rem + 0.25vw, 0.9375rem); /* 13 → 15px */
+  --zs-lh-body: 1.8;
+  --zs-lh-tight: 1.18;
+  --zs-lh-title: 1.32;
+
   --zs-serif: "Noto Serif TC", "Source Han Serif TC", "PingFang TC", serif;
   --zs-sans: "Noto Sans TC", "PingFang TC", -apple-system, BlinkMacSystemFont, sans-serif;
+  --zs-latin: "Noto Sans TC", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --zs-ease: cubic-bezier(.22, 1, .36, 1);
 }
 
@@ -35,8 +49,9 @@ html.zs-page {
   margin: 0;
   padding: 0;
   font-family: var(--zs-sans);
-  font-size: 16px;
-  line-height: 1.85;
+  font-size: var(--zs-fs-body);
+  font-weight: 400;
+  line-height: var(--zs-lh-body);
   color: var(--zs-ink);
   background:
     radial-gradient(ellipse 90% 55% at 12% -8%, rgba(74, 92, 70, 0.045), transparent 55%),
@@ -253,41 +268,47 @@ html.zs-page {
 .zs-hero__title {
   margin: 0;
   font-family: var(--zs-serif);
-  font-weight: 600;
-  font-size: clamp(2.15rem, 5.8vw, 3.15rem);
-  line-height: 1.2;
-  letter-spacing: 0.02em;
+  font-weight: 500;
+  font-size: var(--zs-fs-hero);
+  line-height: var(--zs-lh-tight);
+  letter-spacing: 0.01em;
 }
 
 .zs-hero__subtitle {
-  margin: 14px 0 0;
-  font-family: var(--zs-serif);
-  font-weight: 500;
-  font-size: clamp(1.125rem, 2.8vw, 1.45rem);
+  margin: 16px 0 0;
+  font-family: var(--zs-latin);
+  font-weight: 400;
+  font-size: var(--zs-fs-slogan-en);
   line-height: 1.45;
-  color: var(--zs-muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--zs-warm);
 }
 
 .zs-hero__meta {
   margin: 28px 0 0;
-  font-size: 13px;
+  font-family: var(--zs-latin);
+  font-size: var(--zs-fs-caption);
   letter-spacing: 0.06em;
   color: var(--zs-warm);
 }
 
 .zs-hero__materials {
   margin: 8px 0 0;
-  font-size: 14px;
+  font-size: var(--zs-fs-caption);
+  line-height: 1.55;
   color: var(--zs-muted);
 }
 
 .zs-hero__quote {
-  margin: 32px 0 0;
+  margin: 36px 0 0;
   padding: 0;
   border: none;
   font-family: var(--zs-serif);
-  font-size: clamp(1.0625rem, 2.4vw, 1.25rem);
-  line-height: 1.65;
+  font-weight: 400;
+  font-size: var(--zs-fs-slogan);
+  line-height: 1.55;
+  letter-spacing: 0.02em;
   color: var(--zs-ink);
 }
 
@@ -388,7 +409,9 @@ html.zs-page {
 
 .zs-hero__caption {
   margin: 10px 0 0;
-  font-size: 12px;
+  font-family: var(--zs-latin);
+  font-size: var(--zs-fs-caption);
+  letter-spacing: 0.04em;
   color: var(--zs-warm);
 }
 
@@ -415,33 +438,43 @@ html.zs-page {
 }
 
 .zs-section__label {
-  margin: 0 0 18px;
-  font-size: 11px;
+  margin: 0 0 14px;
+  font-family: var(--zs-latin);
+  font-size: var(--zs-fs-caption);
+  font-weight: 400;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--zs-warm);
 }
 
 .zs-section__title {
-  margin: 0 0 22px;
+  margin: 0 0 20px;
   font-family: var(--zs-serif);
-  font-weight: 600;
-  font-size: 1.375rem;
-  line-height: 1.35;
+  font-weight: 500;
+  font-size: var(--zs-fs-section);
+  line-height: var(--zs-lh-title);
   letter-spacing: 0.01em;
 }
 
 .zs-section__lead {
   margin: 0 0 22px;
+  max-width: var(--zs-prose);
+  font-size: var(--zs-fs-body);
+  font-weight: 400;
+  line-height: var(--zs-lh-body);
   color: var(--zs-muted);
 }
 
 .zs-prose {
   max-width: var(--zs-prose);
+  font-size: var(--zs-fs-body);
+  line-height: var(--zs-lh-body);
 }
 
 .zs-prose p {
   margin: 0 0 1.25em;
+  font-size: inherit;
+  line-height: inherit;
 }
 
 .zs-prose p:last-child {
@@ -605,7 +638,8 @@ html.zs-page {
 
 .zs-hero__caption {
   margin: 10px 0 0;
-  font-size: 12px;
+  font-family: var(--zs-latin);
+  font-size: var(--zs-fs-caption);
   color: var(--zs-warm);
   letter-spacing: 0.04em;
 }
@@ -616,9 +650,18 @@ html.zs-page {
 }
 
 @media (max-width: 600px) {
+  .zs-page {
+    --zs-fs-hero: clamp(2.25rem, 8vw, 2.75rem);       /* 36–44px */
+    --zs-fs-slogan: clamp(1.25rem, 4vw, 1.5rem);       /* 20–24px */
+    --zs-fs-slogan-en: 0.9375rem;                     /* 15px */
+    --zs-fs-section: clamp(1.375rem, 4vw, 1.75rem);   /* 22–28px */
+    --zs-fs-body: clamp(0.9375rem, 2.5vw, 1.0625rem); /* 15–17px */
+    --zs-fs-caption: 0.8125rem;                       /* 13px */
+  }
+
   .zs-section__label {
-    font-size: 11px;
-    opacity: 0.75;
+    font-size: var(--zs-fs-caption);
+    opacity: 0.8;
   }
 }
 
@@ -1123,14 +1166,14 @@ html.zs-page {
 
 .zs-obs-kpi__l {
   margin: 8px 0 0;
-  font-size: 13px;
+  font-size: var(--zs-fs-caption);
   color: var(--zs-muted);
   line-height: 1.5;
 }
 
 .zs-obs-note {
   margin: 0 0 28px;
-  font-size: 13px;
+  font-size: var(--zs-fs-caption);
   color: var(--zs-warm);
 }
 
@@ -1825,8 +1868,8 @@ html.zs-page {
 .zs-video__title {
   margin: 0;
   font-family: var(--zs-serif);
-  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
-  font-weight: 600;
+  font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.625rem);
+  font-weight: 500;
   line-height: 1.35;
   letter-spacing: 0.02em;
   color: var(--zs-ink);
@@ -2241,7 +2284,7 @@ html.zs-page {
 
 /* —— Related (quiet) —— */
 .zs-section--quiet .zs-section__title {
-  font-size: 1rem;
+  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.375rem);
   font-weight: 500;
   margin-bottom: 12px;
 }
@@ -3009,7 +3052,6 @@ html.zs-page {
 
   .zs-wish-unit .zs-section__title {
     margin-bottom: 8px;
-    font-size: 1.25rem;
   }
 
   .zs-wish-unit .zs-section__lead {
@@ -3104,24 +3146,35 @@ html.zs-page {
 
 
 /* —— Page structure v2026-09：intro / film / modes / making —— */
+
+/* Layer 4 + EN secondary */
 .zs-hero__quote-en {
-  margin: 10px 0 0;
-  font-size: 13px;
-  letter-spacing: 0.04em;
+  margin: 12px 0 0;
+  font-family: var(--zs-latin);
+  font-size: var(--zs-fs-slogan-en);
+  font-weight: 400;
+  letter-spacing: 0.06em;
   color: var(--zs-warm);
-  line-height: 1.6;
+  line-height: 1.55;
+}
+
+.zs-creator {
+  font-family: var(--zs-serif);
+  font-weight: 400;
 }
 
 .zs-creator-en {
   display: inline-block;
   margin-left: 0.45em;
-  font-size: 0.82em;
+  font-family: var(--zs-latin);
+  font-size: 0.86em;
+  font-weight: 400;
   letter-spacing: 0.04em;
   color: var(--zs-warm);
 }
 
 .zs-prose--intro {
-  max-width: 38rem;
+  max-width: var(--zs-prose);
 }
 
 .zs-section--film {
@@ -3129,8 +3182,10 @@ html.zs-page {
 }
 
 .zs-section__lead--en {
-  margin-top: -6px;
-  font-size: 13px;
+  margin-top: -10px;
+  font-family: var(--zs-latin);
+  font-size: var(--zs-fs-caption);
+  font-weight: 400;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--zs-warm);
@@ -3163,10 +3218,12 @@ html.zs-page {
 
 .zs-film__caption {
   margin: 14px 0 0;
-  max-width: 42em;
-  font-size: 14px;
-  line-height: 1.7;
-  color: var(--zs-muted);
+  max-width: var(--zs-prose);
+  font-family: var(--zs-latin);
+  font-size: var(--zs-fs-caption);
+  line-height: 1.65;
+  letter-spacing: 0.02em;
+  color: var(--zs-warm);
 }
 
 .zs-modes {
@@ -3189,29 +3246,34 @@ html.zs-page {
 
 .zs-mode__en {
   margin: 14px 0 0;
-  font-size: 11px;
+  font-family: var(--zs-latin);
+  font-size: var(--zs-fs-caption);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--zs-accent-soft);
+  color: var(--zs-warm);
 }
 
 .zs-mode__name {
   margin: 10px 0 0;
   font-family: var(--zs-serif);
-  font-size: clamp(1.45rem, 2.4vw, 1.8rem);
-  font-weight: 600;
-  line-height: 1.25;
+  font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.625rem); /* below section title */
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
 }
 
 .zs-mode__hint {
   margin: 10px 0 0;
-  font-size: 15px;
+  font-size: var(--zs-fs-body);
+  line-height: 1.65;
   color: var(--zs-ink);
 }
 
 .zs-mode__en-sub {
   margin: 6px 0 0;
-  font-size: 13px;
+  font-family: var(--zs-latin);
+  font-size: var(--zs-fs-caption);
+  letter-spacing: 0.03em;
   color: var(--zs-warm);
 }
 
@@ -3225,16 +3287,19 @@ html.zs-page {
 .zs-material-quote p {
   margin: 0;
   font-family: var(--zs-serif);
-  font-size: clamp(1.2rem, 2.2vw, 1.55rem);
+  font-size: clamp(1.125rem, 1rem + 0.8vw, 1.5rem); /* between body and section */
+  font-weight: 400;
   line-height: 1.55;
   color: var(--zs-ink);
 }
 
 .zs-material-quote__en {
   margin-top: 12px !important;
-  font-family: var(--zs-sans) !important;
-  font-size: 14px !important;
-  line-height: 1.7 !important;
+  font-family: var(--zs-latin) !important;
+  font-size: var(--zs-fs-caption) !important;
+  font-weight: 400 !important;
+  line-height: 1.65 !important;
+  letter-spacing: 0.03em !important;
   color: var(--zs-warm) !important;
 }
 
@@ -3261,15 +3326,16 @@ html.zs-page {
 }
 
 .zs-making__num {
-  font-family: var(--zs-serif);
-  font-size: 13px;
+  font-family: var(--zs-latin);
+  font-size: var(--zs-fs-caption);
   letter-spacing: 0.08em;
   color: var(--zs-warm);
   min-width: 1.8em;
 }
 
 .zs-making__label {
-  font-size: 15px;
+  font-size: var(--zs-fs-body);
+  line-height: 1.55;
   color: var(--zs-ink);
 }
 
@@ -3283,13 +3349,35 @@ html.zs-page {
 }
 
 .zs-site-tags li {
-  font-size: 13px;
+  font-family: var(--zs-latin);
+  font-size: var(--zs-fs-caption);
   letter-spacing: 0.04em;
   color: var(--zs-muted);
 }
 
 .zs-prose--credits {
-  max-width: 40rem;
+  max-width: var(--zs-prose);
+}
+
+/* English page: display titles in clean sans */
+html[lang="en"] .zs-hero__title,
+html[lang="en"] .zs-section__title,
+html[lang="en"] .zs-mode__name,
+html[lang="en"] .zs-material-quote p,
+html[lang="en"] .zs-creator {
+  font-family: var(--zs-latin);
+  letter-spacing: -0.01em;
+}
+
+html[lang="en"] .zs-hero__title {
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+html[lang="en"] .zs-hero__quote {
+  font-family: var(--zs-latin);
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
 
 @media (max-width: 600px) {

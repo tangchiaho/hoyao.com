@@ -279,7 +279,7 @@ window.ZHUSHAN_CONFIG = {
     community: [],
   },
 
-  ogImage: "https://hoyao.com/assets/images/projects/zhushan/og-image.png",
+  ogImage: "https://hoyao.com/assets/images/projects/zhushan/og-image.jpg?v=20260906",
 
   externalLinks: {
     taixiMap: "https://share.google/7UQXuN2FdtoffdhMn",

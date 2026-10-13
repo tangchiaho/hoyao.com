@@ -24,9 +24,9 @@
       url: "https://hoyao.com/zhushan/en/",
     }),
     video: Object.assign({}, base.video || {}, {
-      title: "竹山開飯了 ZHUSHAN KAI FAN LE — From Bamboo to Table, From Table Back to Earth | Taixi Bus Zhushan Station",
+      title: "《Zhushan Kai Fan Le（竹山開飯了）》From Bamboo to Table, From Table Back to Earth｜Taisi Bus Zhushan Station",
       caption:
-        "Initiated by Tang Chia-Ho, 竹山開飯了 (ZHUSHAN KAI FAN LE) documents the material journey from bamboo to table, and from table back to earth.",
+        "Initiated by Tang Chia-Ho, Zhushan Kai Fan Le (竹山開飯了) documents the material journey from bamboo to table, and from table back to earth.",
     }),
     research: Object.assign({}, base.research || {}, {
       title: "Bamboo Applications & Local Participation Study",

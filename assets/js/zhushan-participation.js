@@ -48,7 +48,8 @@
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;");
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
 
   function isSafeHttpUrl(url) {
@@ -577,14 +578,6 @@
     });
   }
 
-  function showFormalConfirm(text) {
-    paintFormalBatch([text], { confirm: true });
-    /* resume rotation after a beat */
-    window.setTimeout(function () {
-      if (formalItems.length) showNextFormal();
-    }, 5000);
-  }
-
   function showNextFormal() {
     if (!formalItems.length) return;
     var size = formalItems.length >= 2 ? 2 : 1;
@@ -741,24 +734,42 @@
     }
 
     if (keepBtn) {
+      var formUrlConfigured = isSafeHttpUrl((cfg.googleFormUrl || "").trim());
+      var modeHint = document.querySelector(".zs-thought-hint--inline");
+      if (!formUrlConfigured) {
+        keepBtn.hidden = true;
+        keepBtn.setAttribute("aria-hidden", "true");
+        if (modeHint) {
+          modeHint.textContent = ui(
+            "wishModesNoKeep",
+            "飄過＝只在你的畫面短暫顯示｜做卡＝只在你的裝置"
+          );
+        }
+      }
       keepBtn.addEventListener("click", function () {
-        var formUrl = cfg.googleFormUrl;
+        var formUrl = (cfg.googleFormUrl || "").trim();
         var text = input ? input.value.trim() : "";
         if (!text) {
           if (input) input.focus();
           return;
         }
-        /* temporary local confirmation in the shared Wishes Field */
-        showFormalConfirm(text);
-        if (keepStatus) {
-          keepStatus.hidden = false;
-          keepStatus.textContent =
-            ui("wishKept", "你的竹願已留下；經整理後，可能出現在竹願中。");
-        }
-        announce(ui("wishKept", "你的竹願已留下；經整理後，可能出現在竹願中。"));
         if (!isSafeHttpUrl(formUrl)) {
+          if (keepStatus) {
+            keepStatus.hidden = false;
+            keepStatus.textContent = ui(
+              "wishKeepClosed",
+              "正式竹願收集尚未開放。你仍可生成竹願卡，或先讓這句話飄過。"
+            );
+          }
+          announce(
+            ui(
+              "wishKeepClosed",
+              "正式竹願收集尚未開放。你仍可生成竹願卡，或先讓這句話飄過。"
+            )
+          );
           return;
         }
+        /* Open Google Form only — do not paint formal-wall confirm (not submitted yet) */
         var url = formUrl;
         var entry = cfg.googleFormWishEntry;
         if (entry && /^entry\.\d+$/.test(entry) && text) {
@@ -770,6 +781,19 @@
         }
         track("wish_form_open", { page: "zhushan" });
         window.open(url, "_blank", "noopener,noreferrer");
+        if (keepStatus) {
+          keepStatus.hidden = false;
+          keepStatus.textContent = ui(
+            "wishFormOpened",
+            "已開啟竹願表單。請在表單中送出後，經整理才可能出現在竹願中。"
+          );
+        }
+        announce(
+          ui(
+            "wishFormOpened",
+            "已開啟竹願表單。請在表單中送出後，經整理才可能出現在竹願中。"
+          )
+        );
       });
     }
 
@@ -1054,7 +1078,7 @@
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    loadQr();
+    /* Card backgrounds already include QR; skip unused QR preload */
     initBambooSpeak();
     initWishUnit();
     initFormalWishLayer();

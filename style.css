@@ -382,6 +382,30 @@ img{max-width:100%;display:block}
 }
 .progress-item--media:hover{opacity:1}
 .progress-body{min-width:0}
+
+/* Projects page only: compact image + text rows (keep homepage-safe defaults above) */
+body.page-projects .progress-item{
+  padding:26px 0;
+}
+body.page-projects .progress-item--media{
+  grid-template-columns:minmax(240px, 28%) minmax(0, 1fr);
+  column-gap:28px;
+  row-gap:16px;
+  align-items:center;
+  padding:26px 0;
+}
+body.page-projects .progress-thumb{
+  width:100%;
+  max-width:280px;
+  aspect-ratio:4 / 3;
+  height:auto;
+}
+body.page-projects .progress-body h3{
+  margin:6px 0 8px;
+}
+body.page-projects .progress-body p{
+  margin:0;
+}
 .project-figure{
   margin:28px 0 0;
   padding:0;
@@ -840,6 +864,14 @@ img{max-width:100%;display:block}
     gap:14px;
     padding:28px 0;
   }
+  body.page-projects .progress-item--media{
+    grid-template-columns:minmax(220px, 30%) minmax(0, 1fr);
+    column-gap:22px;
+    padding:24px 0;
+  }
+  body.page-projects .progress-thumb{
+    max-width:260px;
+  }
   .update-row--media{
     grid-template-columns:104px minmax(140px, 180px) minmax(0, 1fr);
     gap:16px;
@@ -942,6 +974,18 @@ img{max-width:100%;display:block}
     gap:14px;
   }
   .progress-thumb{max-width:100%}
+  body.page-projects .progress-item--media{
+    grid-template-columns:1fr;
+    gap:12px;
+    padding:22px 0;
+    align-items:stretch;
+  }
+  body.page-projects .progress-thumb{
+    max-width:none;
+    width:100%;
+    height:200px;
+    aspect-ratio:auto;
+  }
   .home-bleed img{height:clamp(220px, 62vw, 420px)}
   .update-row{grid-template-columns:1fr;gap:6px}
   .update-row--media{

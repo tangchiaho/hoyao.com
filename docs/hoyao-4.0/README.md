@@ -1,10 +1,9 @@
 # Site documentation (public)
 
-This folder holds only **public-safe** notes for the hoyao.com static site.
+Public-safe notes only. Internal commercial strategy, grant-disclosure policy, and unpublished case planning are **not** kept in this public repository.
 
-Internal commercial, grant-disclosure, and unpublished case planning documents are **not** stored in this public repository. Manage those in a private workspace.
+Published award/update pages:
 
-Published site content (HTML) for Local SBIR approval facts remains in:
-
-- `/zh/updates/nantou-sbir-2026.html` / `/en/updates/nantou-sbir-2026.html`
-- `/zh/projects/nantou-sbir-2026.html` / `/en/projects/nantou-sbir-2026.html`
+- `/zh/updates/zhushan-playful-space-2026.html` / `/en/updates/zhushan-playful-space-2026.html`
+- Work credits on `/zhushan/` and `/zhushan/en/`
+- Local SBIR pages under `/zh|en/updates|projects/nantou-sbir-2026.html`

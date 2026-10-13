@@ -78,7 +78,11 @@
       wishCardMake: "Make wish card",
       wishCardView: "View my wish card",
       wishCardUpdate: "Update wish card",
-      wishKept: "Your wish is kept; after review, it may appear among the wishes.",
+      wishKept:
+        "The wish form has opened; only after you submit and it is reviewed may it appear among the wishes.",
+      wishKeepClosed:
+        "Formal wish collection is not open yet. You can still make a wish card, or let this line drift by.",
+      wishModesNoKeep: "Drift by = briefly on your screen · Card = on your device only",
       wishCardFail: "Could not make the wish card. Please try again.",
       defaultHashtag: "#ZHUSHANKAIFANLE",
       needLink: "Please paste your post link.",

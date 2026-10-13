@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<!-- PRE-MERGE: on first public deploy, set lastmod for new SBIR/Zhushan URLs (and touched list pages) to the same YYYY-MM-DD as article datePublished. -->
   <url><loc>https://hoyao.com/</loc><lastmod>2026-10-13</lastmod></url>
   <url><loc>https://hoyao.com/zhushan/</loc><lastmod>2026-10-13</lastmod></url>
   <url><loc>https://hoyao.com/zhushan/en/</loc><lastmod>2026-10-13</lastmod></url>

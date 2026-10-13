@@ -1,60 +1,44 @@
 # SBIR 實作驗證報告（Draft，未部署）
 
 **Branch:** `cursor/nantou-sbir-2026-pages-1db6`  
-**Date:** 2026-10-13  
-**PR #30:** 保留為審查／文案紀錄，不併入本實作
+**PR:** #31  
+**Last revised:** 2026-10-13（文案／品牌／日期閘門修正）  
+**PR #30:** 保留為審查／文案紀錄
 
-## 新增頁面（本地預覽路徑）
+## 新增頁面（本地預覽）
 
 | 語言 | 動態文章 | 專案履歷 |
 |------|----------|----------|
 | 中文 | `/zh/updates/nantou-sbir-2026.html` | `/zh/projects/nantou-sbir-2026.html` |
 | 英文 | `/en/updates/nantou-sbir-2026.html` | `/en/projects/nantou-sbir-2026.html` |
 
-本地預覽：於 repo 根目錄執行 `python3 -m http.server 8765` 後開啟：
+`python3 -m http.server 8765` 後開啟上列路徑；首頁 SBIR 為純文字 `progress-item`。
 
-- http://127.0.0.1:8765/zh/updates/nantou-sbir-2026.html
-- http://127.0.0.1:8765/en/updates/nantou-sbir-2026.html
-- http://127.0.0.1:8765/zh/projects/nantou-sbir-2026.html
-- http://127.0.0.1:8765/en/projects/nantou-sbir-2026.html
-- http://127.0.0.1:8765/ （首頁 SBIR 純文字卡）
+## 本輪修正摘要
 
-## 決議落實對照
+1. **對外文案：** 刪除反覆「不公開金額／題目／不宣稱驗收認證」句；保留核定、公告日、舊名對照、官方來源；補一句地方創新研發與材料應用意義（無個別計畫虛構）。  
+2. **英文新頁品牌：** header `brand-legal` → `HOYAO APPLIED TECHNOLOGIES`（僅兩篇 EN 新頁；全站其餘留給 4.0）。  
+3. **日期：** 正文不再寫「本站發布 2026/10/13」。`datePublished`／`article:published_time` 暫留 `2026-10-13` 並加 `PRE-MERGE` 註解——**若首次公開日不是當日，Merge／部署前必須改為實際上線日**（四頁 meta／JSON-LD、列表列、sitemap `lastmod`）。  
+4. **設計：** 首頁純文字卡；未改 `zhushan/`；無機關 Logo。
 
-| 決議 | 實作 |
-|------|------|
-| 公開入選＋官方來源 | 是 |
-| 不公開個別題目／金額／執行摘要 | 是；公開頁無「待確認」欄位 |
-| `datePublished` = 本站首次發布 2026-10-13 | 是（中英一致） |
-| 縣府公告日 2026-09-03 正文標示 | 是；與發布日分開 |
-| 首頁純文字卡、無縣府 logo／無關照片 | 是（`progress-item` 無 media） |
-| 作者／發布者為和曜，非縣府 | 是（NewsArticle／Article） |
-| 不改竹山專頁 | 是 |
-| 不 Merge／不部署 | 是 |
+## SEO（四新頁）
 
-## SEO 檢查
+| 檢查項 | 狀態 |
+|--------|------|
+| canonical | 各頁絕對 URL 正確 |
+| hreflang zh-Hant ↔ en + x-default | 成對 |
+| og:url / og:type=article / og:image | 站內 og-image |
+| NewsArticle（updates）／Article（projects） | author／publisher＝和曜；citation／isBasedOn＝縣府公告 |
+| 縣府公告日正文 | 2026/09/03 |
+| datePublished | 暫定 2026-10-13；**上線前依實際首次公開日覆核** |
+| sitemap 4 URL | 有；`lastmod` 同需上線前覆核 |
 
-- canonical／hreflang（zh-Hant ↔ en）已設
-- `article:published_time` / JSON-LD `datePublished` = `2026-10-13`
-- `citation` / `isBasedOn` = 縣府官方 URL
-- OG 使用站內 `og-image.png`
-- sitemap 已加入 4 個新 URL，`lastmod` 2026-10-13
+## 回歸測試（本輪）
 
-## 連結檢查
+見 PR 留言／本機腳本：連結、HTML、JSON-LD、首頁卡、zhushan 未變動。
 
-本地腳本核對結果：**ISSUES 0 / ALL CHECKS PASSED**（絕對路徑 `/…` 以站根解析；`zhushan/` 未改動）。
+## 上線前必做
 
-已核對：四新頁存在；首頁／projects／updates／company-name-change 互鏈；sitemap 含 4 新 URL；公開頁無「待確認／待補充」、無個別題目／金額／執行摘要、無縣府 Logo／無關照片；免責句僅否定「驗收或認證」宣稱。
-
-## Diff stat（相對 `main`）
-
-```
- docs/hoyao-4.0/sbir-2026-implementation-report.md | (new)
- en/index.html / en/projects.html / en/updates.html / en/updates/company-name-change.html
- en/projects/nantou-sbir-2026.html | (new)
- en/updates/nantou-sbir-2026.html  | (new)
- index.html / sitemap.xml
- zh/index.html / zh/projects.html / zh/updates.html / zh/updates/company-name-change.html
- zh/projects/nantou-sbir-2026.html | (new)
- zh/updates/nantou-sbir-2026.html  | (new)
-```
+- [ ] 將四頁 `datePublished`／`dateModified`／`article:*` 改為**實際首次公開日**（若非 2026-10-13）  
+- [ ] 同步 updates 列表／首頁動態列日期與 `sitemap.xml` `lastmod`  
+- [ ] 最終確認後再 Merge／部署  

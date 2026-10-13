@@ -375,7 +375,7 @@ Mirror the Chinese structure; keep claims limited to published pages.
 
 ### 成果（有佐證才寫）
 
-8. 南投地方型 SBIR：計畫名、年度、核定單位、可公開句子、可否提金額／成果數字  
+8. 南投地方型 SBIR：官方核定事實已核對（見 [`sbir-2026-content-drafts.md`](./sbir-2026-content-drafts.md)）。尚待確認：個別計畫題目、個別補助金額能否公開、執行期間／摘要、首頁呈現形式  
 9. 《竹山開飯了》獎項：名單與主辦單位、得獎名義  
 10. 其他可公開驗證／測試紀錄（無數據也可先列「階段」）  
 11. 國發會／工研院／育成村／文化園區等 **logo 使用授權**狀態  

@@ -578,14 +578,6 @@
     });
   }
 
-  function showFormalConfirm(text) {
-    paintFormalBatch([text], { confirm: true });
-    /* resume rotation after a beat */
-    window.setTimeout(function () {
-      if (formalItems.length) showNextFormal();
-    }, 5000);
-  }
-
   function showNextFormal() {
     if (!formalItems.length) return;
     var size = formalItems.length >= 2 ? 2 : 1;
@@ -777,21 +769,7 @@
           );
           return;
         }
-        /* Opens review form — not a permanent server save by itself */
-        showFormalConfirm(text);
-        if (keepStatus) {
-          keepStatus.hidden = false;
-          keepStatus.textContent = ui(
-            "wishKept",
-            "已開啟竹願表單；送出並經整理後，才可能出現在竹願中。"
-          );
-        }
-        announce(
-          ui(
-            "wishKept",
-            "已開啟竹願表單；送出並經整理後，才可能出現在竹願中。"
-          )
-        );
+        /* Open Google Form only — do not paint formal-wall confirm (not submitted yet) */
         var url = formUrl;
         var entry = cfg.googleFormWishEntry;
         if (entry && /^entry\.\d+$/.test(entry) && text) {
@@ -803,6 +781,19 @@
         }
         track("wish_form_open", { page: "zhushan" });
         window.open(url, "_blank", "noopener,noreferrer");
+        if (keepStatus) {
+          keepStatus.hidden = false;
+          keepStatus.textContent = ui(
+            "wishFormOpened",
+            "已開啟竹願表單。請在表單中送出後，經整理才可能出現在竹願中。"
+          );
+        }
+        announce(
+          ui(
+            "wishFormOpened",
+            "已開啟竹願表單。請在表單中送出後，經整理才可能出現在竹願中。"
+          )
+        );
       });
     }
 

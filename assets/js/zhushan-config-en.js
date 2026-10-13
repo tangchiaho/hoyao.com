@@ -78,8 +78,8 @@
       wishCardMake: "Make wish card",
       wishCardView: "View my wish card",
       wishCardUpdate: "Update wish card",
-      wishKept:
-        "The wish form has opened; only after you submit and it is reviewed may it appear among the wishes.",
+      wishFormOpened:
+        "The wish form has opened. Please submit in the form; only after review may it appear among the wishes.",
       wishKeepClosed:
         "Formal wish collection is not open yet. You can still make a wish card, or let this line drift by.",
       wishModesNoKeep: "Drift by = briefly on your screen · Card = on your device only",

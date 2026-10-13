@@ -245,6 +245,113 @@ async function testLocale(page, path, locale) {
   ok(`${locale}: no critical pageerrors`, critical.length === 0, critical.join(" | ") || "none");
 }
 
+async function testFormalFormConfigured(browser) {
+  const FORM = "https://forms.gle/TESTWISHFORM";
+  const page = await browser.newPage();
+  page.setDefaultTimeout(30000);
+  await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
+  const errors = await collectErrors(page);
+
+  await page.evaluateOnNewDocument((formUrl) => {
+    let cfg;
+    Object.defineProperty(window, "ZHUSHAN_CONFIG", {
+      configurable: true,
+      enumerable: true,
+      get: function () {
+        return cfg;
+      },
+      set: function (v) {
+        cfg = Object.assign({}, v, {
+          googleFormUrl: formUrl,
+          googleFormWishEntry: "entry.123456",
+        });
+      },
+    });
+  }, FORM);
+
+  await page.goto(BASE + "/zhushan/", { waitUntil: "networkidle0", timeout: 60000 });
+  await waitCfg(page);
+
+  const cfgForm = await page.evaluate(
+    () => (window.ZHUSHAN_CONFIG && window.ZHUSHAN_CONFIG.googleFormUrl) || ""
+  );
+  ok("FORM: config googleFormUrl injected", cfgForm === FORM, cfgForm);
+
+  const keepVisible = await page.evaluate(() => {
+    const btn = document.getElementById("zs-keep-wish-btn");
+    return !!(btn && !btn.hidden && btn.getAttribute("aria-hidden") !== "true");
+  });
+  ok("FORM: keep wish button visible when form set", keepVisible);
+
+  await page.evaluate(() => {
+    const el = document.getElementById("zs-thought-input");
+    if (el) {
+      el.scrollIntoView({ block: "center" });
+      el.value = "測試正式表單開啟流程";
+    }
+  });
+
+  await page.evaluate(() => {
+    window.__ZS_OPENED__ = [];
+    window.open = function (url, target, features) {
+      window.__ZS_OPENED__.push({ url: String(url || ""), target: target, features: features });
+      return null;
+    };
+  });
+
+  const beforeConfirm = await page.evaluate(() => {
+    return document.querySelectorAll(".zs-formal__group.is-confirm").length;
+  });
+
+  await page.evaluate(() => document.getElementById("zs-keep-wish-btn").click());
+  await sleep(400);
+
+  const after = await page.evaluate(() => {
+    const st = document.getElementById("zs-keep-status");
+    const live = document.getElementById("zs-ephemeral-live");
+    const confirms = [...document.querySelectorAll(".zs-formal__group.is-confirm")].map((g) =>
+      (g.textContent || "").trim()
+    );
+    return {
+      opened: window.__ZS_OPENED__ || [],
+      status: st && !st.hidden ? st.textContent.trim() : "",
+      live: live ? live.textContent.trim() : "",
+      confirms,
+    };
+  });
+
+  ok(
+    "FORM: window.open called with form URL",
+    after.opened.length === 1 &&
+      after.opened[0].url.indexOf(FORM) === 0 &&
+      after.opened[0].url.indexOf("entry.123456=") >= 0 &&
+      decodeURIComponent(after.opened[0].url).indexOf("測試正式表單開啟流程") >= 0,
+    JSON.stringify(after.opened)
+  );
+  ok(
+    "FORM: no formal-wall confirm painted",
+    after.confirms.length === beforeConfirm &&
+      !after.confirms.some((t) => t.indexOf("測試正式表單開啟流程") >= 0),
+    JSON.stringify(after.confirms)
+  );
+  ok(
+    "FORM: status says form opened / submit in form",
+    /表單/.test(after.status + after.live) &&
+      /送出/.test(after.status + after.live) &&
+      !/已留下/.test(after.status + after.live),
+    JSON.stringify({ status: after.status, live: after.live })
+  );
+
+  const critical = errors.filter(
+    (e) =>
+      !/Failed to load resource/i.test(e) &&
+      !/net::ERR_/i.test(e) &&
+      !/favicon/i.test(e)
+  );
+  ok("FORM: no critical pageerrors", critical.length === 0, critical.join(" | ") || "none");
+  await page.close();
+}
+
 async function main() {
   const browser = await puppeteer.launch({
     executablePath: CHROME,
@@ -264,6 +371,8 @@ async function main() {
     await pageEn.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
     await testLocale(pageEn, "/zhushan/en/", "EN");
     await pageEn.close();
+
+    await testFormalFormConfigured(browser);
   } finally {
     await browser.close();
   }

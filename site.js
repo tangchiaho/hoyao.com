@@ -47,6 +47,6 @@
   });
 
   window.addEventListener("resize", function () {
-    if (window.innerWidth > 760) setOpen(false);
+    if (window.innerWidth > 1080) setOpen(false);
   });
 })();

@@ -2,15 +2,15 @@
 
 /* Phase 1 tokens. Shared by the corporate site; zhushan keeps its own stylesheet. */
 :root{
-  --bg:#f6f3ee;
-  --bg-raised:#fffcf8;
-  --surface:#efeae3;
+  --bg:#f2f1ef;
+  --bg-raised:#f7f7f5;
+  --surface:#e7e6e3;
   --ink:#231815;
-  --ink-soft:#3c342f;
-  --muted:#5c534c;
-  --line:#ddd6cc;
-  --line-strong:#c9c0b4;
-  --timber:#5a3c28;
+  --ink-soft:#3a3835;
+  --muted:#5c5854;
+  --line:#d7d4cf;
+  --line-strong:#c0bdb6;
+  --timber:#2c2b29;
   --max:1180px;
   --gutter:24px;
   --font-ui:"IBM Plex Sans","Noto Sans TC","PingFang TC","Hiragino Sans","Microsoft JhengHei",sans-serif;
@@ -36,7 +36,7 @@ body{
   -webkit-font-smoothing:antialiased;
   overflow-x:hidden;
 }
-::selection{background:#e6d5c6;color:var(--ink)}
+::selection{background:#e3e1dc;color:var(--ink)}
 a{color:inherit;text-decoration:none}
 a:hover{opacity:1}
 img{max-width:100%;display:block}
@@ -113,6 +113,13 @@ img{max-width:100%;display:block}
   color:var(--ink);
   font-weight:500;
 }
+.nav-desktop a:focus-visible,
+.footer a:focus-visible,
+.milestone-item:focus-visible,
+.update-row:focus-visible{
+  outline:2px solid var(--ink);
+  outline-offset:3px;
+}
 
 .menu-toggle{
   display:none;
@@ -148,12 +155,12 @@ img{max-width:100%;display:block}
 }
 .claim{
   margin:0 0 20px;
-  font-family:var(--font-serif);
-  font-size:clamp(34px,4.8vw,60px);
-  line-height:1.22;
-  font-weight:500;
-  letter-spacing:-.02em;
-  max-width:12em;
+  font-family:var(--font-ui);
+  font-size:clamp(32px,4vw,48px);
+  line-height:1.28;
+  font-weight:600;
+  letter-spacing:-.03em;
+  max-width:16em;
   text-wrap:pretty;
 }
 .company-names{
@@ -626,11 +633,11 @@ body.page-projects .progress-body p{
 .page-hero{padding:56px 0 32px}
 .page-hero h1{
   margin:0 0 14px;
-  font-family:var(--font-serif);
-  font-size:clamp(32px,4.2vw,48px);
-  font-weight:500;
-  line-height:1.25;
-  letter-spacing:-.02em;
+  font-family:var(--font-ui);
+  font-size:clamp(30px,3.6vw,44px);
+  font-weight:600;
+  line-height:1.28;
+  letter-spacing:-.03em;
   text-wrap:pretty;
 }
 .page-hero .lead{font-size:17px}
@@ -660,16 +667,29 @@ body.page-projects .progress-body p{
 .work-meta{
   display:flex;
   flex-wrap:wrap;
-  gap:8px;
-  margin:24px 0 8px;
+  margin:22px 0 0;
+  max-width:40rem;
+  color:var(--ink-soft);
+  font-size:14px;
+  line-height:1.6;
 }
 .work-meta span{
-  font-size:11px;
-  letter-spacing:.1em;
-  text-transform:uppercase;
+  font-size:14px;
+  letter-spacing:0;
+  text-transform:none;
+  color:var(--ink-soft);
+  border:0;
+  padding:0;
+}
+.work-meta span:not(.work-meta-en) + span:not(.work-meta-en)::before{
+  content:" · ";
   color:var(--muted);
-  border:1px solid var(--line);
-  padding:6px 10px;
+}
+.work-meta-en{
+  flex-basis:100%;
+  margin-top:2px;
+  font-size:12px;
+  color:var(--muted);
 }
 
 .work-pager{
@@ -908,6 +928,47 @@ body.page-projects .progress-body p{
   .home-bleed-caption{padding-left:16px;padding-right:16px}
 }
 
+@media (max-width:1080px){
+  .nav-desktop{display:none}
+  .brand-legal{display:none}
+  .menu-toggle{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .nav-mobile{
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    width:100%;
+    margin-top:8px;
+    border-top:1px solid var(--line);
+    padding-top:8px;
+  }
+  .nav-mobile a{
+    display:flex;
+    align-items:center;
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+    font-size:16px;
+    color:var(--ink);
+    min-height:48px;
+  }
+  .nav-mobile a:focus-visible{
+    outline:2px solid var(--ink);
+    outline-offset:2px;
+  }
+  .nav-mobile a.is-active,
+  .nav-mobile a[aria-current="page"]{
+    font-weight:600;
+    box-shadow:inset 3px 0 0 var(--ink);
+    padding-left:12px;
+  }
+  .nav-mobile .lang{font-weight:500}
+  body.nav-open{overflow:hidden}
+}
+
 @media (max-width:760px){
   .site{--gutter:16px;padding:0 var(--gutter) 72px}
   .header{
@@ -1036,14 +1097,33 @@ body.page-projects .progress-body p{
 
 /* ---------- Phase 1: homepage, work entries, motion ---------- */
 .hero--editorial{
-  display:grid;
-  grid-template-columns:minmax(0,1.08fr) minmax(280px,.92fr);
-  gap:36px 56px;
-  align-items:end;
-  padding:52px 0 12px;
+  display:block;
+  padding:64px 0 8px;
 }
-.hero--editorial .claim{max-width:9.2em}
-:lang(en) .hero--editorial .claim{max-width:11.5em;font-size:clamp(34px,4.2vw,54px)}
+.hero--editorial .claim{max-width:11em}
+:lang(en) .hero--editorial .claim{max-width:15em;font-size:clamp(32px,3.2vw,46px)}
+/* Reading measure stays 1180, widening only to 1280 from 1440 up. Do not stretch to fill 1920. */
+@media (min-width:1440px){
+  :root{--max:1280px}
+}
+/* Optional image slots: figure.hero-media, figure.spec-figure. */
+.hero--editorial:has(.hero-media){
+  display:grid;
+  grid-template-columns:minmax(0,1.2fr) minmax(220px,.7fr);
+  gap:36px 48px;
+  align-items:end;
+}
+.hero-media,
+.spec-figure{margin:0}
+.hero-media img,
+.spec-figure img{
+  width:100%;
+  height:auto;
+  display:block;
+  object-fit:cover;
+}
+.hero-media img{aspect-ratio:4/3}
+.spec-figure img{aspect-ratio:5/4}
 .hero--editorial .lead{max-width:38rem}
 .hero--editorial .company-names{margin-top:28px}
 .hero-index{
@@ -1110,10 +1190,78 @@ body.page-projects .progress-body p{
 .page-home .section{padding:var(--space-6) 0}
 .section-head{max-width:40rem;margin-bottom:28px}
 .page-home .section h2{
-  font-size:clamp(28px,3vw,36px);
-  font-weight:500;
-  letter-spacing:-.02em;
+  font-size:clamp(26px,2.6vw,32px);
+  font-weight:600;
+  letter-spacing:-.03em;
 }
+.spec-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:28px 36px;
+  align-items:start;
+}
+.spec-card{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-width:0;
+  padding:20px 0 4px;
+  border:0;
+  border-top:1px solid var(--ink);
+  background:transparent;
+  color:inherit;
+}
+.spec-card:hover{opacity:1}
+.spec-card:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.spec-index{
+  font-size:12px;
+  letter-spacing:.08em;
+  color:var(--muted);
+  font-variant-numeric:tabular-nums;
+}
+.spec-card h3{
+  margin:0;
+  font-size:22px;
+  font-weight:600;
+  letter-spacing:-.02em;
+  line-height:1.35;
+}
+.spec-card p{
+  margin:0;
+  color:var(--muted);
+  font-size:15px;
+  line-height:1.7;
+}
+.spec-card .spec-scope{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0;
+  margin:8px 0 0;
+  color:var(--ink);
+  font-size:14px;
+  line-height:1.6;
+}
+.spec-scope span + span::before{
+  content:" · ";
+  color:var(--muted);
+}
+.spec-card .spec-en{
+  margin:0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
+}
+.spec-more{
+  margin-top:12px;
+  font-size:14px;
+  letter-spacing:0;
+}
+.spec-more::after{
+  content:" →";
+  display:inline-block;
+  transition:transform var(--dur) var(--ease);
+}
+.spec-card:hover .spec-more::after{transform:translateX(4px)}
 
 .stream-board{
   display:grid;
@@ -1267,9 +1415,10 @@ body.page-projects .progress-body p{
   color:#f6f3ee;
 }
 .cta-band--ink h2{
-  font-family:var(--font-serif);
-  font-weight:500;
-  font-size:clamp(28px,3vw,36px);
+  font-family:var(--font-ui);
+  font-weight:600;
+  font-size:clamp(26px,3vw,34px);
+  letter-spacing:-.03em;
   color:inherit;
 }
 .cta-band--ink p{color:#d8cfc4}
@@ -1287,11 +1436,15 @@ body.page-projects .progress-body p{
   .hero-plate-media img,
   .stream-card-media img,
   .stream-card .stream-more::after,
+  .spec-more::after,
   .btn{transition:none}
+  .spec-card:hover .spec-more::after{transform:none}
 }
 
 @media (max-width:900px){
-  .hero--editorial{grid-template-columns:1fr;gap:28px;align-items:start}
+  .hero--editorial,
+  .hero--editorial:has(.hero-media){grid-template-columns:1fr;gap:28px;align-items:start}
+  .spec-grid,
   .page-home .stream-board,
   .stream-board{grid-template-columns:1fr}
   .page-home .stream-card--lead{display:flex;grid-template-columns:none}
@@ -1301,7 +1454,11 @@ body.page-projects .progress-body p{
   .hero--editorial .claim,:lang(en) .hero--editorial .claim{max-width:none}
 }
 @media (max-width:760px){
-  .hero--editorial{padding:32px 0 8px}
+  .hero--editorial{padding:28px 0 8px}
+  .page-home .section{padding:48px 0}
+  .company-names{letter-spacing:.01em}
+  .spec-card{padding:18px 0 4px}
+  .spec-card h3,
   .stream-card h3{font-size:20px}
   .cta-band--ink{padding:40px var(--gutter)}
   .media-hold--wide{aspect-ratio:4/3}

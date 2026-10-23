@@ -3,11 +3,16 @@
   var panel = document.querySelector(".nav-mobile");
   if (!toggle || !panel) return;
 
-  if (!toggle.getAttribute("aria-label")) {
-    toggle.setAttribute("aria-label", "Menu");
+  var zh = (document.documentElement.lang || "").toLowerCase().indexOf("zh") === 0;
+  var menuLabel = zh ? "選單" : "Menu";
+  if (!toggle.getAttribute("aria-label") || toggle.getAttribute("aria-label") === "Menu") {
+    toggle.setAttribute("aria-label", menuLabel);
   }
-  if (!panel.getAttribute("aria-label")) {
-    panel.setAttribute("aria-label", "Menu");
+  if (zh && toggle.textContent.trim() === "Menu") {
+    toggle.textContent = menuLabel;
+  }
+  if (!panel.getAttribute("aria-label") || panel.getAttribute("aria-label") === "Menu") {
+    panel.setAttribute("aria-label", menuLabel);
   }
 
   function setOpen(open) {

@@ -28,8 +28,9 @@
       "supplyStatus": "試作中",
       "statusNote": "已有確認試單規格；尚未交付。",
       "summary": "植物纖維粉料，可依試作需求洽詢研磨、篩分及包裝條件。樣品照片供辨識外觀；粒徑與含水率依批次確認。",
-      "image": "assets/img/powder-sample.webp",
+      "image": "assets/img/powder-still.webp",
       "gallery": [
+        "assets/img/powder-still.webp",
         "assets/img/powder-sample.webp"
       ],
       "processes": [
@@ -74,8 +75,9 @@
       "supplyStatus": "可索樣",
       "statusNote": "現場有實物，可先取少量樣品確認型態。",
       "summary": "竹山加工過程產生的屑片與絲狀纖維，可作為纖維補強、填充或再研磨原料。適合研發端先確認長度、乾淨度與處理方向。",
-      "image": "assets/img/shavings-sample.webp",
+      "image": "assets/img/shavings-still.webp",
       "gallery": [
+        "assets/img/shavings-still.webp",
         "assets/img/shavings-sample.webp"
       ],
       "processes": [

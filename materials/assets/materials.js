@@ -36,6 +36,7 @@
     if (parts[0] === "catalog") return { name: "catalog", params };
     if (parts[0] === "material" && parts[1]) return { name: "material", params: { ...params, id: parts[1] } };
     if (parts[0] === "request") return { name: "request", params: { ...params, material: parts[1] || params.material || "" } };
+    if (parts[0] === "supply") return { name: "supply", params };
     if (parts[0] === "cases") return { name: "request", params };
     if (parts[0] === "passport") {
       if (parts[1]) return { name: "passport", params: { ...params, id: parts[1] } };
@@ -51,6 +52,7 @@
       catalog: "catalog",
       material: "catalog",
       request: "request",
+      supply: "supply",
       passport: "passport",
       "passport-lookup": "passport",
       about: "about",
@@ -123,43 +125,20 @@
         </div>
         <div class="hero-scrim" aria-hidden="true"></div>
         <div class="hero-copy">
-          <h1 id="hero-brand" class="hero-brand">和曜材料櫃台</h1>
-          <p class="hero-lead">從南投竹木餘料與農業副產物中選料、確認規格、協調加工與備樣。</p>
+          <h1 id="hero-brand" class="hero-brand">地方材料補給站</h1>
+          <p class="hero-lead">從南投出發，記錄竹木餘料與農業副產物的樣貌、加工方式與用途。</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="#/catalog">探索材料</a>
+            <a class="btn btn-primary" href="#/catalog">逛材料圖鑑</a>
+            <a class="station-link" href="#/request">找加工</a>
+            <a class="station-link" href="#/supply">提供材料</a>
           </div>
-        </div>
-      </section>
-
-      <section class="section section-tight fade-in" aria-labelledby="journey-title">
-        <div class="section-head">
-          <p class="section-label">開始</p>
-          <h2 id="journey-title">兩種進入方式</h2>
-        </div>
-        <div class="journey-list">
-          <a class="journey" href="#/catalog">
-            <em>01</em>
-            <div>
-              <h3>探索材料形態</h3>
-              <p>依型態與供應狀態瀏覽，確認是否可索樣或洽詢。</p>
-            </div>
-            <span>進入圖鑑</span>
-          </a>
-          <a class="journey" href="#/request">
-            <em>02</em>
-            <div>
-              <h3>已有規格直接提出</h3>
-              <p>填入材料、數量與交期，開啟郵件草稿寄至和曜。</p>
-            </div>
-            <span>提出需求</span>
-          </a>
         </div>
       </section>
 
       <section class="section fade-in" aria-labelledby="feature-title">
         <div class="section-head">
           <p class="section-label">Materials</p>
-          <h2 id="feature-title">材料選覽</h2>
+          <h2 id="feature-title">圖鑑選材</h2>
         </div>
         <div class="catalog-grid catalog-grid-plates">${featured.map((m) => cardHtml(m, { compact: true })).join("")}</div>
         <p class="section-more"><a class="text-link" href="#/catalog">查看全部材料</a></p>
@@ -210,7 +189,7 @@
         <nav class="breadcrumb"><a href="#/">首頁</a> / 材料圖鑑</nav>
         <div class="page-hero-row">
           <div>
-            <h1>材料圖鑑</h1>
+            <h1>地方材料圖鑑</h1>
           </div>
           <p class="result-count" id="result-count" aria-live="polite">${items.length} 項</p>
         </div>
@@ -329,21 +308,23 @@
   }
 
   function renderRequest() {
+    const supply = state.route.name === "supply";
+    const title = supply ? "提供材料" : "找加工";
     const material = materialById(state.route.params.material);
     return `
       <div class="panel panel-form fade-in">
-        <nav class="breadcrumb"><a href="#/">首頁</a> / 提出需求</nav>
-        <h1>材料與加工洽詢</h1>
-        <p class="lead">請提供材料名稱、用途、目標規格、數量及交期。送出後會開啟郵件草稿寄至和曜。</p>
+        <nav class="breadcrumb"><a href="#/">首頁</a> / ${title}</nav>
+        <h1>${title}</h1>
+        <p class="lead">${supply ? "農友、加工廠、社區或公部門都可以提供材料線索。請告訴我們哪裡有剩料、目前的樣貌，以及大約的數量。" : "可洽詢破碎、烘乾、研磨、篩分、造粒或燃料棒成型。請描述原料和預期用途，由團隊確認適用製程與試作條件。"}</p>
         <form id="request-form" class="form-stack">
-          <label>材料或加工項目
+          <label>${supply ? "材料名稱" : "材料或加工項目"}
             <input required name="material" value="${escapeHtml(material?.name || "")}" placeholder="例如：竹粉">
           </label>
-          <label>用途與需求規格
-            <textarea required name="spec" placeholder="例如：2000 目；用於複材填料試作；需確認含水率"></textarea>
+          <label>${supply ? "來源地與材料現況" : "預期用途與加工規格"}
+            <textarea required name="spec" placeholder="${supply ? "例如：竹山竹器加工剩下的竹屑，已裝袋" : "例如：想將竹屑研磨成粉，用於複材填料試作"}"></textarea>
           </label>
-          <label>需求數量與交期
-            <input required name="qty" placeholder="例如：50 公斤；希望 12 月中">
+          <label>${supply ? "可提供的數量與頻率" : "需求數量與交期"}
+            <input required name="qty" placeholder="${supply ? "例如：每月約 5 袋，重量待確認" : "例如：50 公斤，希望 12 月中試作"}">
           </label>
           <div class="form-actions">
             <button class="btn btn-ink" type="submit">開啟郵件草稿</button>
@@ -374,7 +355,7 @@
     return `
       <div class="panel fade-in">
         <nav class="breadcrumb"><a href="#/">首頁</a> / 關於</nav>
-        <h1>關於和曜材料櫃台</h1>
+        <h1>關於地方材料補給站</h1>
         <p class="lead">和曜應用科技股份有限公司從南投的農業副產物與竹木加工剩料出發，協助研發與採購團隊選料、找樣，並依粒徑、含水率與包裝需求協調加工。</p>
         <section class="spec-block">
           <h2>服務內容</h2><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px"><figure style="margin:0"><img src="assets/img/sample-room.webp" alt="樣品整理空間情境" loading="lazy" style="width:100%;display:block"><figcaption>樣品整理｜空間情境示意</figcaption></figure><figure style="margin:0"><img src="assets/img/sieve-workbench.webp" alt="篩分設備情境" loading="lazy" style="width:100%;display:block"><figcaption>粒徑分級｜設備情境示意</figcaption></figure></div>
@@ -388,10 +369,10 @@
         <section class="spec-block">
           <h2>據點與聯絡</h2>
           <p>營運與展示據點｜南投中興新村</p>
-          <p class="form-hint">正式線上收件尚未開放；目前可瀏覽材料並以來信洽詢。</p>
+          <p class="form-hint">企業加工需求、地方材料盤點與社區合作，均可來信聯絡。</p>
           <div class="form-actions">
             <a class="btn btn-ink" href="mailto:contact@hoyao.com">contact@hoyao.com</a>
-            <a class="btn btn-line" href="#/request">提出需求</a>
+            <a class="btn btn-line" href="#/request">找加工</a>
             <a class="btn btn-line" href="https://hoyao.com/">公司官網</a>
           </div>
         </section>
@@ -400,13 +381,14 @@
   }
 
   function pageTitle(name, params) {
-    const base = "和曜地方循環材料供應平台";
-    if (name === "catalog") return `材料圖鑑｜${base}`;
+    const base = "地方材料補給站";
+    if (name === "catalog") return `地方材料圖鑑｜${base}`;
     if (name === "material") {
       const m = materialById(params.id);
       return m ? `${m.name}｜${base}` : `材料｜${base}`;
     }
-    if (name === "request") return `提出需求｜${base}`;
+    if (name === "supply") return `提供材料｜${base}`;
+    if (name === "request") return `找加工｜${base}`;
     if (name === "passport" || name === "passport-lookup") return `批次護照｜${base}`;
     if (name === "about") return `關於｜${base}`;
     return base;
@@ -471,12 +453,13 @@
       form.onsubmit = (e) => {
         e.preventDefault();
         const f = new FormData(form);
-        const body = ["材料：" + f.get("material"), "用途與規格：" + f.get("spec"), "數量與交期：" + f.get("qty")].join(
+        const supply = state.route.name === "supply";
+        const body = ["材料：" + f.get("material"), (supply ? "來源與現況：" : "用途與規格：") + f.get("spec"), (supply ? "數量與頻率：" : "數量與交期：") + f.get("qty")].join(
           "\n"
         );
         location.href =
           "mailto:contact@hoyao.com?subject=" +
-          encodeURIComponent("材料洽詢｜" + f.get("material")) +
+          encodeURIComponent((supply ? "提供材料｜" : "材料與加工洽詢｜") + f.get("material")) +
           "&body=" +
           encodeURIComponent(body);
       };
@@ -495,7 +478,7 @@
     if (name === "home") html = renderHome();
     else if (name === "catalog") html = renderCatalog();
     else if (name === "material") html = renderMaterial(params.id);
-    else if (name === "request") html = renderRequest();
+    else if (name === "request" || name === "supply") html = renderRequest();
     else if (name === "passport-lookup" || name === "passport") html = renderPassportLookup();
     else if (name === "about") html = renderAbout();
     else html = renderHome();

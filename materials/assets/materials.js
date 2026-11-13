@@ -5,7 +5,7 @@
     catalog: null,
     batches: null,
     route: { name: "home", params: {} },
-    filters: { q: "", form: "全部", status: "全部" },
+    filters: { q: "", kind: "全部", form: "全部", status: "全部" },
     filtersOpen: false,
   };
 
@@ -28,7 +28,7 @@
   const statusClass = (status) => `badge badge-status-${status}`;
 
 
-  const sectionTitles = { factory: "加工廠", map: "134 鄉鎮材料地圖", school: "材料學堂" };
+  const sectionTitles = { factory: "加工廠", map: "材料地圖", school: "材料學堂" };
 
   function renderFactory() {
     const steps = [
@@ -48,8 +48,8 @@
 
   function renderMap() {
     const localMaterials = state.catalog.materials.filter(m => m.origin === "竹山");
-    return `<section class="panel field-page"><h1>134 鄉鎮材料地圖</h1>
-      <p class="lead">從南投竹山開始，邀請各地記錄家鄉的剩料。134 鄉鎮是推廣目標，目前收錄南投縣竹山鎮。</p>
+    return `<section class="panel field-page"><h1>材料地圖</h1>
+      <p class="lead">目前收錄南投縣竹山鎮的竹屑與竹絲。點選產地可以查看材料紀錄，也歡迎提供其他鄉鎮的材料線索。</p>
       <div class="town-layout"><svg class="town-map" viewBox="0 0 300 420" role="group" aria-label="台灣本島材料地圖，目前收錄竹山鎮">
         <title>材料收錄地點</title><polygon points="135.9,316.8 124.7,343.3 122.8,369.4 119.0,393.2 104.0,381.4 95.8,350.6 83.0,336.4 66.6,324.8 62.3,316.0 50.0,277.8 43.3,264.7 43.6,251.7 49.3,231.1 48.2,203.2 98.0,112.4 118.6,85.5 131.4,62.9 144.5,47.8 180.0,27.6 194.4,24.7 203.7,35.0 220.3,43.5 227.9,57.9 217.0,74.3 217.6,94.5 208.7,133.6 196.3,159.2 187.6,201.5 174.7,256.0 164.6,278.7 135.9,316.8" fill="#d1ddc9" stroke="#899e84" stroke-width="1.5"/>
         <a href="#/map/zhushan" aria-label="查看竹山鎮材料"><circle cx="102" cy="192" r="17" fill="#ad5527" opacity=".18"/><circle cx="102" cy="192" r="7" fill="#9a431b"/><rect x="116" y="175" width="86" height="33" rx="4" fill="#244431"/><text x="159" y="197" text-anchor="middle" fill="white" font-size="16">竹山鎮</text></a>
@@ -123,10 +123,11 @@
   function filteredMaterials() {
     const q = state.filters.q.trim().toLowerCase();
     return state.catalog.materials.filter((m) => {
-      if (state.filters.form !== "全部" && m.form !== state.filters.form) return false;
+      if (state.filters.kind !== "全部" && m.kind !== state.filters.kind) return false;
+      if (state.filters.form !== "全部" && !(m.forms || [m.form]).includes(state.filters.form)) return false;
       if (state.filters.status !== "全部" && m.supplyStatus !== state.filters.status) return false;
       if (!q) return true;
-      const hay = [m.name, m.subtitle, m.summary, m.feedstock, m.origin, m.form, ...(m.applications || [])]
+      const hay = [m.name, m.subtitle, m.summary, m.feedstock, m.kind, m.origin, ...(m.forms || [m.form]), ...(m.applications || [])]
         .join(" ")
         .toLowerCase();
       return hay.includes(q);
@@ -134,7 +135,7 @@
   }
 
   function activeFilterCount() {
-    let n = 0;
+    let n = state.filters.kind === "全部" ? 0 : 1;
     if (state.filters.form !== "全部") n += 1;
     if (state.filters.status !== "全部") n += 1;
     return n;
@@ -150,7 +151,7 @@
           <p class="card-meta-line">
             <span class="${statusClass(m.supplyStatus)}"><i></i>${escapeHtml(m.supplyStatus)}</span>
             <span class="sep" aria-hidden="true">·</span>
-            <span>${escapeHtml(m.form)}</span>
+            <span>${escapeHtml([m.kind, ...(m.forms || [m.form])].filter(Boolean).join(" · "))}</span>
           </p>
           <h3>${escapeHtml(m.name)}</h3>
           ${compact ? "" : `<p>${escapeHtml(m.subtitle)}</p>`}
@@ -181,18 +182,17 @@
       </section>
 
       <section class="section station-story" aria-labelledby="value-title">
-        <p class="section-label">南投竹山・材料故事</p>
-        <h2 id="value-title">一根竹子做成了竹器，剩下的竹絲呢？</h2>
-        <p>在竹山，竹材加工會留下薄薄的屑片，也會留下細長的竹絲。裝進袋裡，都可以叫作「竹屑」。但對想試做一塊板材的人來說，袋裡裝的是屑片還是長纖維，會影響他想先試哪一種。</p>
-        <p>做竹器的人最清楚這袋料怎麼來；找料的人，往往連該向誰問起都不知道。我們從竹山的這一袋開始，把工序記下來，把材料攤開給人看，也留一份可以索取的樣品。下一個用得上它的人，就有地方開始。</p>
+        <h2 id="value-title">這袋料，下一個用得上它的人找得到嗎？</h2>
+        <p>木工留下的刨花、泡茶後的茶渣、碾米留下的稻殼，都有一個熟悉它的人。但有一天，另一個地方的人想拿它試做一件東西，光知道原料名字，還找不到合適的樣品。</p>
+        <p>所以我們替每份材料記下兩件事：它從什麼原料來，現在是什麼樣子。以竹材為例，竹料、竹片、竹粉、竹粒同出一源，拿在手裡卻是四種不同的選擇。</p>
         <h3>從一袋剩料，到一次試作</h3>
         <ol class="value-path">
           <li><strong>記下來源</strong><span>工坊說明竹屑來自哪道工序，每次約有幾袋。</span></li>
-          <li><strong>看見材料</strong><span>把屑片與竹絲整理成材料卡，讓訪客看外觀、查來源、索樣。</span></li>
+          <li><strong>看見材料</strong><span>把材料外觀與型態整理成材料卡，讓訪客看外觀、查來源、索樣。</span></li>
           <li><strong>討論加工</strong><span>依用途評估保留纖維或研磨成粉，再確認粒徑與乾濕條件。</span></li>
           <li><strong>驗證用途</strong><span>由需求方拿樣試作，判斷是否適合板材填充等應用。</span></li>
         </ol>
-        <a class="text-link" href="#/material/bamboo-shavings">看竹山的竹屑與竹絲 →</a>
+        <a class="text-link" href="#/material/bamboo-shavings">第一個地方故事：竹山的竹屑與竹絲 →</a>
       </section>
       <section class="section station-story" aria-labelledby="resource-title">
         <h2 id="resource-title">你可以在這裡找到哪些資源？</h2>
@@ -203,7 +203,7 @@
           <div><dt>學校、初次送樣者</dt><dd>學會觀察、拍照與記錄一份樣品</dd><dd><a href="#/school">讀送樣指南 →</a></dd></div>
         </dl>
       </section>
-      <section class="station-feature"><div><p class="section-label">材料地圖</p><h2>134 鄉鎮材料地圖</h2><p>第一站，南投竹山。從一把竹屑，認識家鄉的材料。</p></div><a class="btn btn-line" href="#/map">探索材料地圖 →</a></section>
+      <section class="station-feature"><div><p class="section-label">南投・竹山</p><h2>材料地圖</h2><p>第一站，南投竹山。從一把竹屑，認識家鄉的材料。</p></div><a class="btn btn-line" href="#/map">探索材料地圖 →</a></section>
       <section class="section fade-in" aria-labelledby="feature-title">
         <div class="section-head">
           <p class="section-label">Materials</p>
@@ -219,7 +219,10 @@
     return `
       <div class="filter-panel ${state.filtersOpen ? "is-open" : ""}" id="filter-panel">
         <div class="filter-group">
-          <p class="filter-label">型態</p>
+          <p class="filter-label">原料種類</p>
+          <div class="chips" role="group" aria-label="原料種類">${["全部", ...new Set(state.catalog.materials.map(m => m.kind).filter(Boolean))].map(k => `<button type="button" class="chip" data-filter-kind="${escapeHtml(k)}" aria-pressed="${state.filters.kind === k}">${escapeHtml(k)}</button>`).join("")}</div>
+        </div><div class="filter-group">
+          <p class="filter-label">材料型態</p>
           <div class="chips" role="group" aria-label="型態">
             ${forms
               .map(
@@ -250,7 +253,7 @@
 
   function renderCatalog() {
     const items = filteredMaterials();
-    const forms = ["全部", ...state.catalog.filters.forms];
+    const forms = ["全部", ...new Set(state.catalog.materials.flatMap(m => m.forms || [m.form]))];
     const statuses = ["全部", ...state.catalog.filters.statuses];
     const filterN = activeFilterCount();
     return `
@@ -258,7 +261,7 @@
         <nav class="breadcrumb"><a href="#/">首頁</a> / 材料圖鑑</nav>
         <div class="page-hero-row">
           <div>
-            <h1>地方材料圖鑑</h1>
+            <h1>地方材料圖鑑</h1><p>按原料與型態交叉查找，例如「竹材 × 粉末」。各分類依實際收錄逐步上架。</p>
           </div>
           <p class="result-count" id="result-count" aria-live="polite">${items.length} 項</p>
         </div>
@@ -279,7 +282,7 @@
         ${
           items.length
             ? items.map((m) => cardHtml(m, { compact: true })).join("")
-            : '<div class="empty">沒有符合條件的材料。<button type="button" class="text-btn" id="clear-filters">清除篩選</button></div>'
+            : '<div class="empty">目前沒有符合條件的公開品項。<a href="#/request">洽詢找料</a> · <button type="button" class="text-btn" id="clear-filters">清除篩選</button></div>'
         }
       </div>
     `;
@@ -472,9 +475,9 @@
     if (count) count.textContent = `${items.length} 項`;
     grid.innerHTML = items.length
       ? items.map((m) => cardHtml(m, { compact: true })).join("")
-      : '<div class="empty">沒有符合條件的材料。<button type="button" class="text-btn" id="clear-filters">清除篩選</button></div>';
+      : '<div class="empty">目前沒有符合條件的公開品項。<a href="#/request">洽詢找料</a> · <button type="button" class="text-btn" id="clear-filters">清除篩選</button></div>';
     document.querySelector("#clear-filters")?.addEventListener("click", () => {
-      state.filters = { q: "", form: "全部", status: "全部" };
+      state.filters = { q: "", kind: "全部", form: "全部", status: "全部" };
       render();
     });
   }
@@ -498,6 +501,11 @@
       if (btn) btn.textContent = `篩選${n ? ` · ${n}` : ""}`;
     });
 
+    document.querySelectorAll("[data-filter-kind]").forEach(btn => btn.addEventListener("click", () => {
+      state.filters.kind = btn.dataset.filterKind;
+      state.filtersOpen = true;
+      render();
+    }));
     document.querySelectorAll("[data-filter-form]").forEach((btn) => {
       btn.addEventListener("click", () => {
         state.filters.form = btn.dataset.filterForm;
@@ -514,7 +522,7 @@
     });
 
     document.querySelector("#clear-filters")?.addEventListener("click", () => {
-      state.filters = { q: "", form: "全部", status: "全部" };
+      state.filters = { q: "", kind: "全部", form: "全部", status: "全部" };
       render();
     });
 

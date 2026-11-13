@@ -27,12 +27,56 @@
 
   const statusClass = (status) => `badge badge-status-${status}`;
 
+
+  const sectionTitles = { factory: "加工廠", map: "134 鄉鎮材料地圖", school: "材料學堂" };
+
+  function renderFactory() {
+    const steps = [
+      ["破碎", "原料尺寸、最長邊與預期碎片大小"],
+      ["烘乾", "來料的乾濕狀況、目標含水率與包裝方式"],
+      ["研磨", "預期用途、目標細度與試作量"],
+      ["篩分", "想保留的粒徑範圍，以及是否需要分級留樣"],
+      ["造粒", "成品用途、顆粒尺寸與原料組成"],
+      ["燃料棒成型", "原料來源、成型尺寸與後續使用條件"]
+    ];
+    return `<section class="panel field-page">
+      <h1>加工廠</h1><p class="lead">手上的剩料，下一步可以怎麼處理？先選製程，帶著你的原料與規格來討論。各項服務依來料條件與合作產能評估。</p>
+      <figure class="field-photo"><img src="assets/img/sieve-workbench.webp" alt="篩分設備情境示意"><figcaption>篩分設備情境示意</figcaption></figure>
+      <div class="field-grid">${steps.map(([name, prompt]) => `<article><h2>${name}</h2><p>洽詢前可準備：${prompt}。</p><a href="#/request?process=${encodeURIComponent(name)}">洽詢${name} →</a></article>`).join("")}</div>
+    </section>`;
+  }
+
+  function renderMap() {
+    const localMaterials = state.catalog.materials.filter(m => m.origin === "竹山");
+    return `<section class="panel field-page"><h1>134 鄉鎮材料地圖</h1>
+      <p class="lead">從南投竹山開始，邀請各地記錄家鄉的剩料。134 鄉鎮是推廣目標，目前收錄南投縣竹山鎮。</p>
+      <div class="town-layout"><svg class="town-map" viewBox="0 0 300 420" role="group" aria-label="台灣本島材料地圖，目前收錄竹山鎮">
+        <title>材料收錄地點</title><polygon points="135.9,316.8 124.7,343.3 122.8,369.4 119.0,393.2 104.0,381.4 95.8,350.6 83.0,336.4 66.6,324.8 62.3,316.0 50.0,277.8 43.3,264.7 43.6,251.7 49.3,231.1 48.2,203.2 98.0,112.4 118.6,85.5 131.4,62.9 144.5,47.8 180.0,27.6 194.4,24.7 203.7,35.0 220.3,43.5 227.9,57.9 217.0,74.3 217.6,94.5 208.7,133.6 196.3,159.2 187.6,201.5 174.7,256.0 164.6,278.7 135.9,316.8" fill="#d1ddc9" stroke="#899e84" stroke-width="1.5"/>
+        <a href="#/map/zhushan" aria-label="查看竹山鎮材料"><circle cx="102" cy="192" r="17" fill="#ad5527" opacity=".18"/><circle cx="102" cy="192" r="7" fill="#9a431b"/><rect x="116" y="175" width="86" height="33" rx="4" fill="#244431"/><text x="159" y="197" text-anchor="middle" fill="white" font-size="16">竹山鎮</text></a>
+      </svg><div><p class="section-label">南投縣</p><h2>竹山鎮</h2><p>竹材加工留下的屑片與絲狀纖維，可以保留原貌供研究，也可以評估進一步研磨。</p>
+      <a class="btn btn-ink" href="#/map/zhushan">查看竹山材料</a>
+      ${state.route.params.town === "zhushan" ? `<section class="town-record"><h3>竹山材料紀錄</h3>${localMaterials.map(m => `<p><a href="#/material/${encodeURIComponent(m.id)}">${escapeHtml(m.name)} →</a></p>`).join("")}<a href="#/supply?origin=竹山">補充竹山的材料 →</a></section>` : ""}
+      </div></div><a class="text-link" href="#/supply">提供其他鄉鎮的材料 →</a></section>`;
+  }
+
+  function renderSchool() {
+    return `<article class="panel field-page"><p class="section-label">材料學堂・送樣指南</p><h1>手上有一袋竹屑，送樣前要記錄什麼？</h1>
+      <p class="lead">讓收樣的人看得懂這袋材料從哪裡來、長什麼樣，以及你想拿它做什麼。</p>
+      <div class="field-grid">
+        <section><h2>記下來源</h2><p>寫下鄉鎮、日期與產生剩料的工序。若混有不同來源，請分袋標示。</p></section>
+        <section><h2>拍下樣貌</h2><p>拍一張整袋照，再取少量平鋪，旁邊放尺拍近照。把可見的碎片、纖維或雜物一起記下。</p></section>
+        <section><h2>標示乾濕與數量</h2><p>記錄是否曾淋雨、烘乾或露天存放。寫明實秤重量或估計袋數；若有含水率量測，再附數值和日期。</p></section>
+        <section><h2>說明送樣目的</h2><p>例如「希望保留長纖維」或「想研磨成板材填料」。如果還在找用途，先提供材料現況即可。</p></section>
+      </div><div class="form-actions"><a class="btn btn-ink" href="#/supply">提供材料</a><a class="btn btn-line" href="#/factory">查看加工方式</a></div></article>`;
+  }
+
   function parseHash() {
     const raw = location.hash.replace(/^#\/?/, "");
     const [path, query = ""] = raw.split("?");
     const parts = path.split("/").filter(Boolean);
     const params = Object.fromEntries(new URLSearchParams(query));
     if (!parts.length) return { name: "home", params };
+    if (Object.hasOwn(sectionTitles, parts[0])) return { name: parts[0], params: { ...params, town: parts[1] } };
     if (parts[0] === "catalog") return { name: "catalog", params };
     if (parts[0] === "material" && parts[1]) return { name: "material", params: { ...params, id: parts[1] } };
     if (parts[0] === "request") return { name: "request", params: { ...params, material: parts[1] || params.material || "" } };
@@ -57,7 +101,7 @@
       "passport-lookup": "passport",
       about: "about",
     };
-    const key = map[name] || "home";
+    const key = map[name] || name;
     document.querySelectorAll("[data-nav]").forEach((a) => {
       a.classList.toggle("is-active", a.dataset.nav === key);
     });
@@ -126,7 +170,8 @@
         <div class="hero-scrim" aria-hidden="true"></div>
         <div class="hero-copy">
           <h1 id="hero-brand" class="hero-brand">地方材料補給站</h1>
-          <p class="hero-lead">從南投出發，記錄竹木餘料與農業副產物的樣貌、加工方式與用途。</p>
+          <p class="hero-lead">從南投出發，記錄地方剩料，串連加工與再利用。</p>
+          <p class="station-credit">和曜應用科技發起</p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="#/catalog">逛材料圖鑑</a>
             <a class="station-link" href="#/request">找加工</a>
@@ -135,6 +180,7 @@
         </div>
       </section>
 
+      <section class="station-feature"><div><p class="section-label">材料地圖</p><h2>134 鄉鎮材料地圖</h2><p>第一站，南投竹山。從一把竹屑，認識家鄉的材料。</p></div><a class="btn btn-line" href="#/map">探索材料地圖 →</a></section>
       <section class="section fade-in" aria-labelledby="feature-title">
         <div class="section-head">
           <p class="section-label">Materials</p>
@@ -318,10 +364,10 @@
         <p class="lead">${supply ? "農友、加工廠、社區或公部門都可以提供材料線索。請告訴我們哪裡有剩料、目前的樣貌，以及大約的數量。" : "可洽詢破碎、烘乾、研磨、篩分、造粒或燃料棒成型。請描述原料和預期用途，由團隊確認適用製程與試作條件。"}</p>
         <form id="request-form" class="form-stack">
           <label>${supply ? "材料名稱" : "材料或加工項目"}
-            <input required name="material" value="${escapeHtml(material?.name || "")}" placeholder="例如：竹粉">
+            <input required name="material" value="${escapeHtml(material?.name || state.route.params.process || "")}" placeholder="例如：竹粉">
           </label>
           <label>${supply ? "來源地與材料現況" : "預期用途與加工規格"}
-            <textarea required name="spec" placeholder="${supply ? "例如：竹山竹器加工剩下的竹屑，已裝袋" : "例如：想將竹屑研磨成粉，用於複材填料試作"}"></textarea>
+            <textarea required name="spec" placeholder="${supply ? "例如：竹山竹器加工剩下的竹屑，已裝袋" : "例如：想將竹屑研磨成粉，用於複材填料試作"}">${supply && state.route.params.origin ? escapeHtml(state.route.params.origin) + "・" : ""}</textarea>
           </label>
           <label>${supply ? "可提供的數量與頻率" : "需求數量與交期"}
             <input required name="qty" placeholder="${supply ? "例如：每月約 5 袋，重量待確認" : "例如：50 公斤，希望 12 月中試作"}">
@@ -382,6 +428,7 @@
 
   function pageTitle(name, params) {
     const base = "地方材料補給站";
+    if (sectionTitles[name]) return `${sectionTitles[name]}｜${base}`;
     if (name === "catalog") return `地方材料圖鑑｜${base}`;
     if (name === "material") {
       const m = materialById(params.id);
@@ -476,6 +523,9 @@
     syncShellMode(name);
     let html = "";
     if (name === "home") html = renderHome();
+    else if (name === "factory") html = renderFactory();
+    else if (name === "map") html = renderMap();
+    else if (name === "school") html = renderSchool();
     else if (name === "catalog") html = renderCatalog();
     else if (name === "material") html = renderMaterial(params.id);
     else if (name === "request" || name === "supply") html = renderRequest();

@@ -264,9 +264,9 @@
       <article class="detail-layout fade-in">
         <div class="detail-media">
           <figure class="media-frame">
-            <img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.name)}形態" width="1200" height="1500">
+            <img src="${escapeHtml(({"bamboo-powder":"assets/img/powder-macro.webp","bamboo-shavings":"assets/img/shavings-macro.webp"})[m.id] || m.image)}" alt="${escapeHtml(m.name)}形態示意" width="1200" height="1500">
           </figure>
-          <figcaption>${escapeHtml(m.origin)} · ${escapeHtml(m.feedstock)}</figcaption>
+          <figcaption>${escapeHtml(m.feedstock)} · 材料形態示意</figcaption>
         </div>
         <div class="detail-body">
           <p class="card-meta-line">
@@ -377,7 +377,7 @@
         <h1>關於和曜材料櫃台</h1>
         <p class="lead">和曜應用科技股份有限公司從南投的農業副產物與竹木加工剩料出發，協助研發與採購團隊選料、找樣，並依粒徑、含水率與包裝需求協調加工。</p>
         <section class="spec-block">
-          <h2>服務內容</h2>
+          <h2>服務內容</h2><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px"><figure style="margin:0"><img src="assets/img/sample-room.webp" alt="樣品整理空間情境" loading="lazy" style="width:100%;display:block"><figcaption>樣品整理｜空間情境示意</figcaption></figure><figure style="margin:0"><img src="assets/img/sieve-workbench.webp" alt="篩分設備情境" loading="lazy" style="width:100%;display:block"><figcaption>粒徑分級｜設備情境示意</figcaption></figure></div>
           <ul class="plain-list">
             <li>依用途探索地方循環材料形態與供應狀態</li>
             <li>確認規格，並區分客戶指定、實測與待確認項目</li>

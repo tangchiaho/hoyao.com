@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "note": "示範批次護照。掃描標籤後可查詢；非正式交付文件。"
+  },
+  "batches": [
+    {
+      "id": "HY-DEMO-BP-2026-001",
+      "materialId": "bamboo-powder",
+      "label": "竹粉樣品袋（示範）",
+      "kind": "樣品",
+      "demo": true,
+      "producedOn": "2026-10-18",
+      "origin": "竹山",
+      "quantity": "約 200 g（示範包裝）",
+      "processVersion": "BP-grind-v0（示範）",
+      "customerSpec": [
+        { "label": "目標目數", "value": "2000 目", "note": "客戶指定；本袋為型態示意樣品，非正式驗收批次" }
+      ],
+      "measured": [
+        { "label": "外觀", "value": "淺色細粉", "method": "目視", "date": "2026-10-18" }
+      ],
+      "pending": [
+        "粒徑分布儀器量測",
+        "含水率",
+        "正式 50 kg 交付批次編號"
+      ],
+      "chain": [
+        { "step": "收料", "detail": "竹山加工剩料（示範紀錄）", "date": "2026-10-12" },
+        { "step": "乾燥／研磨", "detail": "示範工序紀錄", "date": "2026-10-16" },
+        { "step": "分裝", "detail": "樣品袋標示 HY-DEMO-BP-2026-001", "date": "2026-10-18" }
+      ],
+      "relatedTrialOrder": {
+        "spec": "2000 目、50 公斤",
+        "status": "試單需求已確認，尚未交付"
+      }
+    },
+    {
+      "id": "HY-DEMO-BS-2026-001",
+      "materialId": "bamboo-shavings",
+      "label": "竹屑／竹絲樣品（示範）",
+      "kind": "樣品",
+      "demo": true,
+      "producedOn": "2026-09-28",
+      "origin": "竹山",
+      "quantity": "約 500 g（示範包裝）",
+      "processVersion": "BS-raw-v0（示範）",
+      "customerSpec": [],
+      "measured": [
+        { "label": "型態", "value": "屑片與絲狀混合", "method": "目視", "date": "2026-09-28" }
+      ],
+      "pending": ["長度分布", "含水率"],
+      "chain": [
+        { "step": "收料", "detail": "竹山加工剩料", "date": "2026-09-25" },
+        { "step": "去雜／乾燥", "detail": "示範處理", "date": "2026-09-27" },
+        { "step": "分裝", "detail": "樣品袋標示 HY-DEMO-BS-2026-001", "date": "2026-09-28" }
+      ],
+      "relatedTrialOrder": null
+    }
+  ]
+}

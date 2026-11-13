@@ -122,7 +122,7 @@
   }
 
   function demoBanner(extra = "") {
-    return `<aside class="demo-banner" role="note"><strong>展示預覽</strong><div>本平台為可操作設計預覽。示範材料、工單與批次護照皆可辨識；正式收件與帳號權限尚未啟用。${extra}</div></aside>`;
+    return `<aside class="demo-banner" role="note"><strong>展示預覽</strong><div>需求僅儲存在目前的瀏覽器。正式洽詢請透過頁尾信箱聯絡和曜。${extra}</div></aside>`;
   }
 
   function renderHome() {
@@ -133,7 +133,7 @@
         <div class="hero-copy">
           <p class="hero-kicker">HOYAO Materials Desk</p>
           <h1 id="hero-title">地方循環材料供應平台</h1>
-          <p class="hero-lead">從南投竹木剩料與農業副產物出發：找材料、確認規格、協調加工、取得樣品，並逐步建立批次追溯。</p>
+          <p class="hero-lead">從南投的竹木餘料與農業副產物中選擇試作原料。已有規格的企業，也能委託和曜找料、協調加工與備樣。</p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="#/catalog">探索材料</a>
             <a class="btn btn-ghost" href="#/request">提出規格需求</a>
@@ -148,9 +148,7 @@
 
       <section class="section fade-in" aria-labelledby="journey-title">
         <div class="section-head">
-          <p class="section-label">三條動線</p>
-          <h2 id="journey-title">依你手上的問題開始</h2>
-          <p>研發找料、採購下規格、掃描樣品標籤——同一套材料與批次資料，三種進入方式。</p>
+          <h2 id="journey-title">選料、詢價與樣品查詢</h2>
         </div>
         <div class="journey-grid">
           <a class="journey" href="#/catalog">
@@ -159,10 +157,10 @@
             <p>依型態與供應狀態瀏覽，看懂客戶指定與實測的差異，再提出索樣。</p>
             <span>進入材料圖鑑 →</span>
           </a>
-          <a class="journey" href="#/request?preset=bamboo-powder">
+          <a class="journey" href="#/request">
             <em>採購／規格</em>
             <h3>已有規格就直接提出需求</h3>
-            <p>例如「2000 目竹粉、50 公斤」：寫清交期、加工與驗收條件，之後到「我的案件」追蹤。</p>
+            <p>填入所需材料、數量、交期及驗收條件；打樣與批量供應都可提出需求。</p>
             <span>提出需求 →</span>
           </a>
           <a class="journey" href="#/passport/HY-DEMO-BP-2026-001">
@@ -177,8 +175,8 @@
       <section class="section fade-in" aria-labelledby="feature-title">
         <div class="section-head">
           <p class="section-label">展示材料</p>
-          <h2 id="feature-title">目前可走通流程的品項</h2>
-          <p>少量清楚標示的展示資料。之後新增材料只需編輯 JSON。</p>
+          <h2 id="feature-title">材料選覽</h2>
+          <p>查看材料型態、來源地區及目前的取樣狀態。</p>
         </div>
         <div class="catalog-grid">${featured.map(cardHtml).join("")}</div>
         <p style="margin-top:18px"><a class="btn btn-line" href="#/catalog">查看全部材料</a></p>

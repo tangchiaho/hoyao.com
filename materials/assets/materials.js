@@ -389,6 +389,14 @@
         <h1>${title}</h1>
         <p class="lead">${supply ? "農友、加工廠、社區或公部門都可以提供材料線索。請告訴我們哪裡有剩料、目前的樣貌，以及大約的數量。" : "可洽詢破碎、烘乾、研磨、篩分、造粒或燃料棒成型。請描述原料和預期用途，由團隊確認適用製程與試作條件。"}</p>
         <form id="request-form" class="form-stack">
+          ${supply ? "" : `<label>這次希望和曜協助什麼？
+            <select name="intent" required>
+              <option value="">請選擇</option>
+              <option>一般詢價</option><option>樣品洽詢</option><option>申請付費找料或試作評估</option>
+            </select></label>
+            <p class="form-hint">一般詢價可詢問現有材料與價格。專案找料或試作由和曜先回覆工作範圍、交付內容與費用，雙方確認後才啟動。生產工單依確認的報價及約定付款或採購單另行建立。</p>
+            <label>目前進度<select name="stage" required><option value="">請選擇</option><option>蒐集資料</option><option>準備試樣</option><option>已有採購計畫</option></select></label>
+            <label>已有案件或樣品？可填和曜工單編號或材料批號（選填）<input name="reference" maxlength="100"></label>`}
           <label>${supply ? "材料名稱" : "材料或加工項目"}
             <input required name="material" value="${escapeHtml(material?.name || state.route.params.process || "")}" placeholder="例如：竹粉">
           </label>
@@ -532,12 +540,14 @@
         e.preventDefault();
         const f = new FormData(form);
         const supply = state.route.name === "supply";
-        const body = ["材料：" + f.get("material"), (supply ? "來源與現況：" : "用途與規格：") + f.get("spec"), (supply ? "數量與頻率：" : "數量與交期：") + f.get("qty")].join(
+        const details = supply ? [] : ["洽詢類型：" + f.get("intent"), "採購進度：" + f.get("stage")];
+        if (f.get("reference")) details.push("既有工單或批號：" + f.get("reference"));
+        const body = [...details, "材料：" + f.get("material"), (supply ? "來源與現況：" : "用途與規格：") + f.get("spec"), (supply ? "數量與頻率：" : "數量與交期：") + f.get("qty")].join(
           "\n"
         );
         location.href =
           "mailto:contact@hoyao.com?subject=" +
-          encodeURIComponent((supply ? "提供材料｜" : "材料與加工洽詢｜") + f.get("material")) +
+          encodeURIComponent((supply ? "提供材料｜" : f.get("intent") + "｜") + f.get("material")) +
           "&body=" +
           encodeURIComponent(body);
       };

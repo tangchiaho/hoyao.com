@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&display=swap");
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@500;600&display=swap");
 
 :root {
   --bg: #e6e7e2;
@@ -19,8 +20,9 @@
   --pending: #5a5f68;
   --max: 1120px;
   --gutter: clamp(16px, 4vw, 28px);
-  --font: "IBM Plex Sans", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
-  --display: "Source Serif 4", "Noto Serif TC", "Songti TC", serif;
+  /* CJK fonts first so titles never fall back to Latin-only faces (□ / mojibake look). */
+  --font: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", "IBM Plex Sans", sans-serif;
+  --display: "Noto Serif TC", "Source Han Serif TC", "Songti TC", serif;
   --ease: cubic-bezier(.22, .7, .2, 1);
   --radius: 2px;
 }

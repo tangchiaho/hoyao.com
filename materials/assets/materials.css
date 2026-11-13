@@ -1307,3 +1307,18 @@ label textarea:focus {
 .hero-actions { align-items: center; }
 .hero-actions .station-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; color: white; background: rgba(22,32,27,.78); border-radius: 4px; text-decoration: underline; text-underline-offset: 4px; }
 @media (max-width: 580px) { .hero-actions .btn { min-width: auto; } .hero-actions { gap: 6px; } .hero-brand { text-wrap: balance; } }
+
+.station-credit { margin: 0 0 .7rem; color: white; font-size: .85rem; }
+.station-feature { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-block: 2rem; padding: clamp(1.25rem,4vw,3rem); background: #e3e9dc; border-top: 2px solid var(--moss); }
+.station-feature h2,.field-page h2 { font-family: var(--display); }
+.field-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,250px),1fr)); gap: 1.2rem; margin: 2rem 0; }
+.field-grid > *,.town-record { padding: 1rem 0; border-top: 1px solid var(--line-strong); }
+.field-grid h2,.town-layout h2 { margin: 0; }
+.field-photo { margin: 1.5rem 0; }
+.field-photo img { width: 100%; height: clamp(170px,28vw,320px); object-fit: cover; }
+.field-photo figcaption { color: var(--muted); font-size: .85rem; }
+.town-layout { display: grid; grid-template-columns: minmax(180px,1fr) 1fr; align-items: center; gap: 2rem; margin: 2rem 0; }
+.town-map { width:100%; height: clamp(260px,35vw,370px); background: #eaf0ed; border: 1px solid var(--line); }
+.town-map a:focus rect,.town-map a:hover rect { fill:#975027; }
+.town-record { margin-top: 1.25rem; }
+@media(max-width:640px) { .town-layout { grid-template-columns: 1fr; gap: 1rem; } }

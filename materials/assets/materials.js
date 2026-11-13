@@ -97,14 +97,15 @@
   function cardHtml(m) {
     return `
       <a class="card" href="#/material/${encodeURIComponent(m.id)}">
-        <figure>
-          <img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.name)}形態" loading="lazy" width="1200" height="960">
+        <figure class="media-frame">
+          <img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.name)}形態" loading="lazy" width="1200" height="1500">
         </figure>
         <div class="card-body">
-          <div class="card-meta">
+          <p class="card-meta-line">
             <span class="${statusClass(m.supplyStatus)}"><i></i>${escapeHtml(m.supplyStatus)}</span>
-            <span class="badge">${escapeHtml(m.form)}</span>
-          </div>
+            <span class="sep" aria-hidden="true">·</span>
+            <span>${escapeHtml(m.form)}</span>
+          </p>
           <h3>${escapeHtml(m.name)}</h3>
           <p>${escapeHtml(m.subtitle)}</p>
           <span class="card-origin">${escapeHtml(m.origin)}</span>
@@ -214,7 +215,7 @@
         <div class="page-hero-row">
           <div>
             <h1>材料圖鑑</h1>
-            <p class="lead">依型態與供應狀態探索。狀態代表目前能否索樣或洽詢，不是庫存保證。</p>
+            <p class="lead">依型態與供應狀態探索。狀態僅表示能否索樣或洽詢。</p>
           </div>
           <p class="result-count" id="result-count" aria-live="polite">${items.length} 項</p>
         </div>
@@ -267,16 +268,17 @@
       </header>
       <article class="detail-layout fade-in">
         <div class="detail-media">
-          <figure>
-            <img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.name)}形態" width="1000" height="750">
-            <figcaption>${escapeHtml(m.origin)} · ${escapeHtml(m.feedstock)}</figcaption>
+          <figure class="media-frame">
+            <img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.name)}形態" width="1200" height="1500">
           </figure>
+          <figcaption>${escapeHtml(m.origin)} · ${escapeHtml(m.feedstock)}</figcaption>
         </div>
         <div class="detail-body">
-          <div class="card-meta">
+          <p class="card-meta-line">
             <span class="${statusClass(m.supplyStatus)}"><i></i>${escapeHtml(m.supplyStatus)}</span>
-            <span class="badge">${escapeHtml(m.form)}</span>
-          </div>
+            <span class="sep" aria-hidden="true">·</span>
+            <span>${escapeHtml(m.form)}</span>
+          </p>
           <h1>${escapeHtml(m.name)}</h1>
           <p class="detail-kicker">${escapeHtml(m.subtitle)}</p>
           <p class="detail-lead">${escapeHtml(m.summary)}</p>

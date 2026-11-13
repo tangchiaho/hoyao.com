@@ -1,5 +1,5 @@
 (() => {
-  const NOTE_KEY = "hoyaoMaterialsNoteDismissed_v1";
+  const NOTE_KEY = "hoyaoMaterialsNoteDismissed_v2";
 
   const state = {
     catalog: null,
@@ -98,7 +98,7 @@
     return `
       <a class="card" href="#/material/${encodeURIComponent(m.id)}">
         <figure>
-          <img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.name)}形態" loading="lazy" width="800" height="640">
+          <img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.name)}形態" loading="lazy" width="1200" height="960">
         </figure>
         <div class="card-body">
           <div class="card-meta">
@@ -116,38 +116,43 @@
   function renderHome() {
     const featured = state.catalog.materials;
     return `
-      <section class="hero fade-in" aria-labelledby="hero-title">
+      <section class="hero fade-in" aria-labelledby="hero-brand">
+        <div class="hero-media" aria-hidden="true">
+          <img src="assets/img/hero-atmosphere.webp" width="1280" height="720" alt="" fetchpriority="high">
+        </div>
+        <div class="hero-scrim" aria-hidden="true"></div>
         <div class="hero-copy">
-          <p class="hero-kicker">HOYAO Materials Desk</p>
-          <h1 id="hero-title">地方循環材料供應平台</h1>
-          <p class="hero-lead">從南投的竹木餘料與農業副產物中選擇試作原料。已有規格的企業，也能委託和曜找料、協調加工與備樣。</p>
+          <p class="hero-kicker">Local Circular Materials</p>
+          <h1 id="hero-brand" class="hero-brand">和曜材料櫃台</h1>
+          <p class="hero-title">地方循環材料供應平台</p>
+          <p class="hero-lead">從南投竹木餘料與農業副產物中選料、確認規格、協調加工與備樣。</p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="#/catalog">探索材料</a>
             <a class="btn btn-ghost" href="#/request">提出規格需求</a>
           </div>
         </div>
-        <figure class="hero-visual">
-          <img src="assets/img/processing-yard.webp" width="1400" height="1050" alt="竹山竹材加工現場">
-          <figcaption class="hero-caption">竹山｜竹材加工現場</figcaption>
-        </figure>
       </section>
 
-      <section class="section fade-in" aria-labelledby="journey-title">
+      <section class="section section-tight fade-in" aria-labelledby="journey-title">
         <div class="section-head">
           <p class="section-label">開始</p>
-          <h2 id="journey-title">選料、詢價與樣品查詢</h2>
+          <h2 id="journey-title">兩種進入方式</h2>
         </div>
-        <div class="journey-grid journey-grid-2">
+        <div class="journey-list">
           <a class="journey" href="#/catalog">
             <em>01</em>
-            <h3>探索材料形態</h3>
-            <p>依型態與供應狀態瀏覽，確認是否可索樣或洽詢。</p>
-            <span>進入材料圖鑑</span>
+            <div>
+              <h3>探索材料形態</h3>
+              <p>依型態與供應狀態瀏覽，確認是否可索樣或洽詢。</p>
+            </div>
+            <span>進入圖鑑</span>
           </a>
           <a class="journey" href="#/request">
             <em>02</em>
-            <h3>已有規格就直接提出</h3>
-            <p>填入材料、數量、交期與驗收條件，開啟郵件草稿寄至和曜。</p>
+            <div>
+              <h3>已有規格直接提出</h3>
+              <p>填入材料、數量與交期，開啟郵件草稿寄至和曜。</p>
+            </div>
             <span>提出需求</span>
           </a>
         </div>
@@ -157,7 +162,7 @@
         <div class="section-head">
           <p class="section-label">Materials</p>
           <h2 id="feature-title">材料選覽</h2>
-          <p>查看材料型態、來源與目前取樣狀態。</p>
+          <p>樣品外觀、來源與目前取樣狀態。</p>
         </div>
         <div class="catalog-grid">${featured.map(cardHtml).join("")}</div>
         <p class="section-more"><a class="btn btn-line" href="#/catalog">查看全部材料</a></p>

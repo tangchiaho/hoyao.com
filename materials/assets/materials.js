@@ -180,6 +180,26 @@
         </div>
       </section>
 
+      <section class="section station-story" aria-labelledby="value-title">
+        <h2 id="value-title">一袋竹屑，怎麼找到下一個用途？</h2>
+        <p>工坊知道剩料從哪裡來，研發團隊關心它能不能用。補給站把產地、樣品與加工條件整理在一起，讓雙方可以從同一份材料紀錄開始討論。</p>
+        <ol class="value-path">
+          <li><strong>記下來源</strong><span>工坊說明竹屑來自哪道工序，每次約有幾袋。</span></li>
+          <li><strong>看見材料</strong><span>把屑片與竹絲整理成材料卡，讓訪客看外觀、查來源、索樣。</span></li>
+          <li><strong>討論加工</strong><span>依用途評估保留纖維或研磨成粉，再確認粒徑與乾濕條件。</span></li>
+          <li><strong>驗證用途</strong><span>由需求方拿樣試作，判斷是否適合板材填充等應用。</span></li>
+        </ol>
+        <a class="text-link" href="#/material/bamboo-shavings">看竹山的竹屑與竹絲 →</a>
+      </section>
+      <section class="section station-story" aria-labelledby="resource-title">
+        <h2 id="resource-title">你可以在這裡找到哪些資源？</h2>
+        <dl class="resource-rows">
+          <div><dt>工坊、農友</dt><dd>有剩料，想找用途</dd><dd><a href="#/supply">提供材料 →</a></dd></div>
+          <div><dt>企業、研發團隊</dt><dd>找樣品，或討論客製規格</dd><dd><a href="#/catalog">查材料圖鑑</a> · <a href="#/factory">找加工</a></dd></div>
+          <div><dt>公所、社區與公益組織</dt><dd>盤點在地資源，補充鄉鎮材料線索</dd><dd><a href="#/map">看材料地圖 →</a></dd></div>
+          <div><dt>學校、初次送樣者</dt><dd>學會觀察、拍照與記錄一份樣品</dd><dd><a href="#/school">讀送樣指南 →</a></dd></div>
+        </dl>
+      </section>
       <section class="station-feature"><div><p class="section-label">材料地圖</p><h2>134 鄉鎮材料地圖</h2><p>第一站，南投竹山。從一把竹屑，認識家鄉的材料。</p></div><a class="btn btn-line" href="#/map">探索材料地圖 →</a></section>
       <section class="section fade-in" aria-labelledby="feature-title">
         <div class="section-head">

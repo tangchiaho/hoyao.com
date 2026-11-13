@@ -1322,3 +1322,19 @@ label textarea:focus {
 .town-map a:focus rect,.town-map a:hover rect { fill:#975027; }
 .town-record { margin-top: 1.25rem; }
 @media(max-width:640px) { .town-layout { grid-template-columns: 1fr; gap: 1rem; } }
+
+.station-story > p { max-width: 48em; color: var(--ink-soft); }
+.value-path { list-style:none; padding:0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); margin:1.5rem 0; gap:1.35rem; }
+.value-path li { position:relative; background:#e7ece2; border-top:3px solid var(--moss-mid); padding:1.1rem; }
+.value-path li + li::before { content:"→"; position:absolute; left:-1.25rem; top:1.1rem; color:var(--moss-mid); }
+.value-path strong,.value-path span { display:block; }
+.value-path strong { font-family:var(--display); font-size:1.15rem; margin-bottom:.5rem; }
+.resource-rows { margin-block:1.2rem; border-top:2px solid var(--moss-mid); }
+.resource-rows div { display:grid; grid-template-columns:1fr 1.5fr 1fr; gap:.8rem; align-items:center; border-bottom:1px solid var(--line); padding:1rem .5rem; }
+.resource-rows dt { font-weight:700; }
+.resource-rows dd { margin:0; }
+@media(max-width:740px) {
+.value-path { grid-template-columns:1fr; gap:1.4rem; }
+.value-path li + li::before { content:"↓"; left:1.1rem; top:-1.68rem; }
+.resource-rows div { grid-template-columns:1fr; gap:.25rem; }
+}

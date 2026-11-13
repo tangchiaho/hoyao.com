@@ -1338,3 +1338,11 @@ label textarea:focus {
 .value-path li + li::before { content:"↓"; left:1.1rem; top:-1.68rem; }
 .resource-rows div { grid-template-columns:1fr; gap:.25rem; }
 }
+
+.atlas-figure {margin: 2rem 0; background:var(--paper); border-bottom:1px solid var(--line);}
+.atlas-figure img {width:100%;height:auto;}
+.atlas-key {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));}
+.atlas-key span {padding:clamp(.45rem,2vw,1.2rem); font-size:clamp(.76rem,1.6vw,.96rem);}
+.atlas-key strong {display:block;font-family:var(--display);font-size:clamp(1rem,2vw,1.45rem);}
+.atlas-key span + span {border-left:1px solid var(--line);}
+.atlas-figure small {display:block;color:var(--ink-soft);padding:0 .5rem .7rem;}

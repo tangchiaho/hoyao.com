@@ -199,6 +199,10 @@
         <h2 id="value-title">這袋料，下一個用得上它的人找得到嗎？</h2>
         <p>木工留下的刨花、泡茶後的茶渣、碾米留下的稻殼，都有一個熟悉它的人。但有一天，另一個地方的人想拿它試做一件東西，光知道原料名字，還找不到合適的樣品。</p>
         <p>所以我們替每份材料記下兩件事：它從什麼原料來，現在是什麼樣子。以竹材為例，竹料、竹片、竹粉、竹粒同出一源，拿在手裡卻是四種不同的選擇。</p>
+        <figure class="atlas-figure"><img src="assets/img/local-material-triptych.webp" width="1440" height="480" loading="lazy" alt="由左至右：竹段與竹絲、捲曲的木刨花與木屑、稻穗與稻殼"><figcaption>
+          <div class="atlas-key"><span><strong>竹材</strong>竹段・竹絲</span><span><strong>木材</strong>刨花・木屑</span><span><strong>稻作</strong>稻穗・稻殼</span></div>
+          <small>材料型態示意｜AI 製圖，供應品項以圖鑑為準。</small>
+        </figcaption></figure>
         <h3>從一袋剩料，到一次試作</h3>
         <ol class="value-path">
           <li><strong>記下來源</strong><span>工坊說明竹屑來自哪道工序，每次約有幾袋。</span></li>

@@ -1303,3 +1303,7 @@ label textarea:focus {
     margin-bottom: 32px;
   }
 }
+
+.hero-actions { align-items: center; }
+.hero-actions .station-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; color: white; background: rgba(22,32,27,.78); border-radius: 4px; text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 580px) { .hero-actions .btn { min-width: auto; } .hero-actions { gap: 6px; } .hero-brand { text-wrap: balance; } }

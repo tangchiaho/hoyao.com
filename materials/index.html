@@ -17,22 +17,24 @@
 <link rel="icon" href="/assets/logo/favicon-v2.svg" type="image/svg+xml">
 <link rel="icon" href="/assets/logo/favicon-32x32-v2.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/assets/logo/apple-touch-icon-v2.png" sizes="180x180">
-<link rel="stylesheet" href="assets/materials.css?v=20261113-2">
+<link rel="stylesheet" href="assets/materials.css?v=20261113-ui1">
 </head>
 <body>
 <a class="skip" href="#app">跳到內容</a>
 <div class="shell">
   <header class="topbar">
     <a class="brand" href="#/">
-      <strong>和曜材料櫃台</strong>
-      <span>Local Circular Materials</span>
+      <img class="brand-mark" src="assets/img/mark.svg" width="36" height="36" alt="">
+      <span class="brand-text">
+        <strong>和曜材料櫃台</strong>
+        <span>Local Circular Materials</span>
+      </span>
     </a>
     <nav class="nav-desktop" id="nav-desktop" aria-label="主選單">
-      <a data-nav="home" href="#/">首頁</a>
       <a data-nav="catalog" href="#/catalog">材料圖鑑</a>
       <a data-nav="request" href="#/request">提出需求</a>
       <a data-nav="passport" href="#/passport">批次護照</a>
-      <a data-nav="about" href="#/about">關於</a>
+      <a data-nav="about" class="nav-secondary" href="#/about">關於</a>
     </nav>
     <button class="menu-toggle" id="menu-toggle" type="button" aria-controls="nav-mobile" aria-expanded="false">選單</button>
   </header>
@@ -44,16 +46,34 @@
     <a data-nav="about" href="#/about">關於</a>
   </nav>
 
+  <aside class="soft-note" id="soft-note" hidden>
+    <p>正式線上收件尚未開放。目前可瀏覽材料並以來信洽詢。</p>
+    <button type="button" class="soft-note-close" id="soft-note-close" aria-label="關閉提示">關閉</button>
+  </aside>
+
   <main id="app" tabindex="-1">
-    <p style="padding:40px 0;color:#5f6761">載入材料資料中…</p>
+    <p class="loading-msg">載入材料資料中…</p>
   </main>
 
   <footer class="footer">
-    <div>© 2026 和曜應用科技股份有限公司 · HOYAO Materials Desk</div>
-    <div>業務聯絡 · <a href="https://hoyao.com/">hoyao.com</a> · <a href="mailto:contact@hoyao.com">contact@hoyao.com</a></div>
+    <div class="footer-brand">
+      <img src="assets/img/mark.svg" width="28" height="28" alt="">
+      <div>
+        <strong>和曜材料櫃台</strong>
+        <span>HOYAO Applied Technologies</span>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="#/catalog">材料圖鑑</a>
+      <a href="#/request">提出需求</a>
+      <a href="#/about">關於</a>
+      <a href="https://hoyao.com/">公司官網</a>
+      <a href="mailto:contact@hoyao.com">contact@hoyao.com</a>
+    </div>
+    <div class="footer-copy">© 2026 和曜應用科技股份有限公司</div>
   </footer>
 </div>
-<script src="assets/data/embedded.js?v=20261113-live1"></script>
-<script src="assets/materials.js?v=20261113-live1" defer></script>
+<script src="assets/data/embedded.js?v=20261113-ui1"></script>
+<script src="assets/materials.js?v=20261113-ui1" defer></script>
 </body>
 </html>

@@ -1,19 +1,20 @@
 (() => {
-  const STORAGE_KEY = "hoyaoMaterialsCases_v1";
-  const CASE_STEPS = ["需求記錄", "規格確認", "加工／備樣", "寄樣／交付"];
+  const NOTE_KEY = "hoyaoMaterialsNoteDismissed_v1";
 
   const state = {
     catalog: null,
     batches: null,
     route: { name: "home", params: {} },
     filters: { q: "", form: "全部", status: "全部" },
+    filtersOpen: false,
   };
 
   const el = {
     app: document.querySelector("#app"),
-    navDesktop: document.querySelector("#nav-desktop"),
     navMobile: document.querySelector("#nav-mobile"),
     menuToggle: document.querySelector("#menu-toggle"),
+    softNote: document.querySelector("#soft-note"),
+    softNoteClose: document.querySelector("#soft-note-close"),
   };
 
   const escapeHtml = (value) =>
@@ -26,7 +27,6 @@
 
   const statusClass = (status) => `badge badge-status-${status}`;
 
-  
   function parseHash() {
     const raw = location.hash.replace(/^#\/?/, "");
     const [path, query = ""] = raw.split("?");
@@ -36,7 +36,7 @@
     if (parts[0] === "catalog") return { name: "catalog", params };
     if (parts[0] === "material" && parts[1]) return { name: "material", params: { ...params, id: parts[1] } };
     if (parts[0] === "request") return { name: "request", params: { ...params, material: parts[1] || params.material || "" } };
-    if (parts[0] === "cases") return { name: "cases", params };
+    if (parts[0] === "cases") return { name: "request", params };
     if (parts[0] === "passport") {
       if (parts[1]) return { name: "passport", params: { ...params, id: parts[1] } };
       return { name: "passport-lookup", params };
@@ -51,7 +51,6 @@
       catalog: "catalog",
       material: "catalog",
       request: "request",
-      cases: "cases",
       passport: "passport",
       "passport-lookup": "passport",
       about: "about",
@@ -72,7 +71,7 @@
   }
 
   function batchById(id) {
-    return state.batches.batches.find((b) => b.id === id);
+    return state.batches?.batches?.find((b) => b.id === id);
   }
 
   function filteredMaterials() {
@@ -88,23 +87,114 @@
     });
   }
 
-  function renderHome(){
- return `<section class="hero fade-in"><div class="hero-copy"><p class="hero-kicker">HOYAO Materials Desk</p><h1>地方循環材料供應平台</h1><p class="hero-lead">探索南投竹材加工餘料，依用途洽詢樣品、加工與供應規格。</p><div class="hero-actions"><a class="btn btn-primary" href="#/catalog">瀏覽材料</a><a class="btn btn-ghost" href="#/request">客製找料與加工</a></div></div><figure class="hero-visual"><img src="assets/img/processing-yard.webp" alt="竹山竹材加工現場"><figcaption class="hero-caption">竹山｜竹材加工現場</figcaption></figure></section><section class="section"><h2>材料選覽</h2><div class="catalog-grid">${state.catalog.materials.map(cardHtml).join("")}</div></section>`;
-}
+  function activeFilterCount() {
+    let n = 0;
+    if (state.filters.form !== "全部") n += 1;
+    if (state.filters.status !== "全部") n += 1;
+    return n;
+  }
+
   function cardHtml(m) {
     return `
       <a class="card" href="#/material/${encodeURIComponent(m.id)}">
-        <figure><img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.name)}形態" loading="lazy" width="800" height="600"></figure>
+        <figure>
+          <img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.name)}形態" loading="lazy" width="800" height="640">
+        </figure>
         <div class="card-body">
           <div class="card-meta">
-            <span class="${statusClass(m.supplyStatus)}">${escapeHtml(m.supplyStatus)}</span>
+            <span class="${statusClass(m.supplyStatus)}"><i></i>${escapeHtml(m.supplyStatus)}</span>
             <span class="badge">${escapeHtml(m.form)}</span>
-            ${m.demo ? '<span class="badge badge-demo">展示</span>' : ""}
           </div>
           <h3>${escapeHtml(m.name)}</h3>
-          <p>${escapeHtml(m.subtitle)} · ${escapeHtml(m.origin)}</p>
+          <p>${escapeHtml(m.subtitle)}</p>
+          <span class="card-origin">${escapeHtml(m.origin)}</span>
         </div>
       </a>
+    `;
+  }
+
+  function renderHome() {
+    const featured = state.catalog.materials;
+    return `
+      <section class="hero fade-in" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="hero-kicker">HOYAO Materials Desk</p>
+          <h1 id="hero-title">地方循環材料供應平台</h1>
+          <p class="hero-lead">從南投的竹木餘料與農業副產物中選擇試作原料。已有規格的企業，也能委託和曜找料、協調加工與備樣。</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#/catalog">探索材料</a>
+            <a class="btn btn-ghost" href="#/request">提出規格需求</a>
+          </div>
+        </div>
+        <figure class="hero-visual">
+          <img src="assets/img/processing-yard.webp" width="1400" height="1050" alt="竹山竹材加工現場">
+          <figcaption class="hero-caption">竹山｜竹材加工現場</figcaption>
+        </figure>
+      </section>
+
+      <section class="section fade-in" aria-labelledby="journey-title">
+        <div class="section-head">
+          <p class="section-label">開始</p>
+          <h2 id="journey-title">選料、詢價與樣品查詢</h2>
+        </div>
+        <div class="journey-grid journey-grid-2">
+          <a class="journey" href="#/catalog">
+            <em>01</em>
+            <h3>探索材料形態</h3>
+            <p>依型態與供應狀態瀏覽，確認是否可索樣或洽詢。</p>
+            <span>進入材料圖鑑</span>
+          </a>
+          <a class="journey" href="#/request">
+            <em>02</em>
+            <h3>已有規格就直接提出</h3>
+            <p>填入材料、數量、交期與驗收條件，開啟郵件草稿寄至和曜。</p>
+            <span>提出需求</span>
+          </a>
+        </div>
+      </section>
+
+      <section class="section fade-in" aria-labelledby="feature-title">
+        <div class="section-head">
+          <p class="section-label">Materials</p>
+          <h2 id="feature-title">材料選覽</h2>
+          <p>查看材料型態、來源與目前取樣狀態。</p>
+        </div>
+        <div class="catalog-grid">${featured.map(cardHtml).join("")}</div>
+        <p class="section-more"><a class="btn btn-line" href="#/catalog">查看全部材料</a></p>
+      </section>
+    `;
+  }
+
+  function filterPanelHtml(forms, statuses) {
+    return `
+      <div class="filter-panel ${state.filtersOpen ? "is-open" : ""}" id="filter-panel">
+        <div class="filter-group">
+          <p class="filter-label">型態</p>
+          <div class="chips" role="group" aria-label="型態">
+            ${forms
+              .map(
+                (f) =>
+                  `<button type="button" class="chip" data-filter-form="${escapeHtml(f)}" aria-pressed="${
+                    state.filters.form === f
+                  }">${escapeHtml(f)}</button>`
+              )
+              .join("")}
+          </div>
+        </div>
+        <div class="filter-group">
+          <p class="filter-label">供應狀態</p>
+          <div class="chips" role="group" aria-label="供應狀態">
+            ${statuses
+              .map(
+                (s) =>
+                  `<button type="button" class="chip" data-filter-status="${escapeHtml(s)}" aria-pressed="${
+                    state.filters.status === s
+                  }">${escapeHtml(s)}</button>`
+              )
+              .join("")}
+          </div>
+        </div>
+      </div>
     `;
   }
 
@@ -112,41 +202,36 @@
     const items = filteredMaterials();
     const forms = ["全部", ...state.catalog.filters.forms];
     const statuses = ["全部", ...state.catalog.filters.statuses];
+    const filterN = activeFilterCount();
     return `
-      
       <header class="page-hero fade-in">
         <nav class="breadcrumb"><a href="#/">首頁</a> / 材料圖鑑</nav>
-        <h1>材料圖鑑</h1>
-        <p class="lead" style="margin:0;color:var(--muted);max-width:60ch">依型態與供應狀態探索。狀態說明的是目前能否索樣或洽詢，不是認證或庫存保證。</p>
+        <div class="page-hero-row">
+          <div>
+            <h1>材料圖鑑</h1>
+            <p class="lead">依型態與供應狀態探索。狀態代表目前能否索樣或洽詢，不是庫存保證。</p>
+          </div>
+          <p class="result-count" id="result-count" aria-live="polite">${items.length} 項</p>
+        </div>
       </header>
       <div class="toolbar fade-in">
         <div class="search">
-          <label class="visually-hidden" for="q" style="position:absolute;left:-9999px">搜尋材料</label>
+          <label class="visually-hidden" for="q">搜尋材料</label>
           <input id="q" type="search" placeholder="搜尋名稱、用途、料源…" value="${escapeHtml(state.filters.q)}" />
         </div>
+        <button type="button" class="btn btn-line filter-toggle" id="filter-toggle" aria-expanded="${
+          state.filtersOpen ? "true" : "false"
+        }" aria-controls="filter-panel">
+          篩選${filterN ? ` · ${filterN}` : ""}
+        </button>
       </div>
-      <div class="chips fade-in" role="group" aria-label="型態">
-        ${forms
-          .map(
-            (f) =>
-              `<button type="button" class="chip" data-filter-form="${escapeHtml(f)}" aria-pressed="${
-                state.filters.form === f
-              }">${escapeHtml(f)}</button>`
-          )
-          .join("")}
-      </div>
-      <div class="chips fade-in" role="group" aria-label="供應狀態" style="margin:10px 0 18px">
-        ${statuses
-          .map(
-            (s) =>
-              `<button type="button" class="chip" data-filter-status="${escapeHtml(s)}" aria-pressed="${
-                state.filters.status === s
-              }">${escapeHtml(s)}</button>`
-          )
-          .join("")}
-      </div>
-      <div class="catalog-grid fade-in">
-        ${items.length ? items.map(cardHtml).join("") : '<div class="empty">沒有符合條件的材料。試試清除篩選。</div>'}
+      ${filterPanelHtml(forms, statuses)}
+      <div class="catalog-grid fade-in" id="catalog-grid">
+        ${
+          items.length
+            ? items.map(cardHtml).join("")
+            : '<div class="empty">沒有符合條件的材料。<button type="button" class="text-btn" id="clear-filters">清除篩選</button></div>'
+        }
       </div>
     `;
   }
@@ -172,41 +257,40 @@
     }
     const batches = (m.relatedBatches || []).map(batchById).filter(Boolean);
     return `
-      
-      <header class="page-hero fade-in">
+      <header class="page-hero page-hero-compact fade-in">
         <nav class="breadcrumb"><a href="#/">首頁</a> / <a href="#/catalog">材料圖鑑</a> / ${escapeHtml(m.name)}</nav>
       </header>
       <article class="detail-layout fade-in">
         <div class="detail-media">
           <figure>
             <img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.name)}形態" width="1000" height="750">
-            <figcaption>${escapeHtml(m.origin)} · ${escapeHtml(m.feedstock)}${m.demo ? " · 展示資料" : ""}</figcaption>
+            <figcaption>${escapeHtml(m.origin)} · ${escapeHtml(m.feedstock)}</figcaption>
           </figure>
         </div>
         <div class="detail-body">
           <div class="card-meta">
-            <span class="${statusClass(m.supplyStatus)}">${escapeHtml(m.supplyStatus)}</span>
+            <span class="${statusClass(m.supplyStatus)}"><i></i>${escapeHtml(m.supplyStatus)}</span>
             <span class="badge">${escapeHtml(m.form)}</span>
-            ${m.demo ? '<span class="badge badge-demo">展示</span>' : ""}
           </div>
           <h1>${escapeHtml(m.name)}</h1>
+          <p class="detail-kicker">${escapeHtml(m.subtitle)}</p>
           <p class="detail-lead">${escapeHtml(m.summary)}</p>
-          <p class="form-hint">${escapeHtml(m.statusNote)}</p>
+          <p class="status-note">${escapeHtml(m.statusNote)}</p>
 
           <section class="spec-block">
-            <h2>試單需求規格</h2>
+            <h2>客戶指定／試單規格</h2>
             ${rowsHtml(m.customerSpec)}
           </section>
           <section class="spec-block">
-            <h2>批次量測資料</h2>
+            <h2>實際量測</h2>
             ${
               m.measured?.length
                 ? rowsHtml(m.measured)
-                : '<p class="form-hint">尚無儀器量測值。交付批次建立後會寫入護照。</p>'
+                : '<p class="form-hint">尚無儀器量測值。交付批次建立後寫入護照；此前維持待確認。</p>'
             }
           </section>
           <section class="spec-block">
-            <h2>待確認項目</h2>
+            <h2>待確認</h2>
             <ul class="pill-list">${(m.pendingMeasures || []).map((x) => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
           </section>
           <section class="spec-block">
@@ -220,10 +304,7 @@
           ${
             batches.length
               ? `<section class="spec-block"><h2>相關批次護照</h2><ul class="pill-list">${batches
-                  .map(
-                    (b) =>
-                      `<li><a href="#/passport/${encodeURIComponent(b.id)}">${escapeHtml(b.id)}</a></li>`
-                  )
+                  .map((b) => `<li><a href="#/passport/${encodeURIComponent(b.id)}">${escapeHtml(b.id)}</a></li>`)
                   .join("")}</ul></section>`
               : ""
           }
@@ -236,32 +317,74 @@
     `;
   }
 
-  function renderRequest(){
- const material=materialById(state.route.params.material);
- return `<section class="panel"><h1>材料與加工洽詢</h1><p>請提供材料名稱、用途、目標規格、數量及交期。可在郵件內附上規格書或樣品照片。</p><form id="request-form"><label>材料或加工項目<input required name="material" value="${escapeHtml(material?.name||"")}"></label><label>用途與需求規格<textarea required name="spec"></textarea></label><label>需求數量與交期<input required name="qty"></label><button class="btn btn-ink">開啟郵件草稿</button><p>請在郵件程式中確認並寄出。也可直接寄至 <a href="mailto:contact@hoyao.com">contact@hoyao.com</a>。</p></form></section>`;
-}
-function renderPassportLookup(){return '<section class="panel"><h1>批次護照</h1><p>目前尚無公開批次。若您已取得樣品，請提供標籤上的編號或照片，由和曜協助核對來源、加工與量測紀錄。</p><a class="btn btn-ink" href="mailto:contact@hoyao.com?subject=批次資料洽詢">洽詢批次資料</a></section>'}
-function renderAbout(){return '<section class="panel"><h1>關於和曜材料櫃台</h1><p>和曜應用科技股份有限公司從南投的農業副產物與竹木加工剩料出發，協助研發與採購團隊選料、找樣，並依粒徑、含水率與包裝需求協調加工。</p><p>營運與展示據點｜南投中興新村</p><a class="btn btn-ink" href="#/request">聯絡材料櫃台</a></section>'}
-  function render() {
-    state.route = parseHash();
-    setActiveNav(state.route.name);
-    closeMenu();
-    const { name, params } = state.route;
-    let html = "";
-    if (name === "home") html = renderHome();
-    else if (name === "catalog") html = renderCatalog();
-    else if (name === "material") html = renderMaterial(params.id);
-    else if (name === "request") html = renderRequest();
-    else if (name === "cases") html = renderRequest();
-    else if (name === "passport-lookup") html = renderPassportLookup();
-    else if (name === "passport") html = renderPassportLookup();
-    else if (name === "about") html = renderAbout();
-    else html = renderHome();
+  function renderRequest() {
+    const material = materialById(state.route.params.material);
+    return `
+      <div class="panel panel-form fade-in">
+        <nav class="breadcrumb"><a href="#/">首頁</a> / 提出需求</nav>
+        <h1>材料與加工洽詢</h1>
+        <p class="lead">請提供材料名稱、用途、目標規格、數量及交期。送出後會開啟郵件草稿寄至和曜。</p>
+        <form id="request-form" class="form-stack">
+          <label>材料或加工項目
+            <input required name="material" value="${escapeHtml(material?.name || "")}" placeholder="例如：竹粉">
+          </label>
+          <label>用途與需求規格
+            <textarea required name="spec" placeholder="例如：2000 目；用於複材填料試作；需確認含水率"></textarea>
+          </label>
+          <label>需求數量與交期
+            <input required name="qty" placeholder="例如：50 公斤；希望 12 月中">
+          </label>
+          <div class="form-actions">
+            <button class="btn btn-ink" type="submit">開啟郵件草稿</button>
+            <a class="btn btn-line" href="mailto:contact@hoyao.com">直接寄信</a>
+          </div>
+          <p class="form-hint">請在郵件程式中確認後寄出。收件：contact@hoyao.com</p>
+        </form>
+      </div>
+    `;
+  }
 
-    el.app.innerHTML = html;
-    document.title = pageTitle(name, params);
-    window.scrollTo(0, 0);
-    bindViewEvents();
+  function renderPassportLookup() {
+    return `
+      <div class="panel panel-passport fade-in">
+        <nav class="breadcrumb"><a href="#/">首頁</a> / 批次護照</nav>
+        <p class="section-label">Batch passport</p>
+        <h1>批次護照</h1>
+        <p class="lead">目前尚無公開批次頁。若您已取得樣品，請提供標籤編號或照片，由和曜協助核對來源、加工與量測紀錄。</p>
+        <div class="passport-cta">
+          <a class="btn btn-ink" href="mailto:contact@hoyao.com?subject=%E6%89%B9%E6%AC%A1%E8%B3%87%E6%96%99%E6%B4%BD%E8%A9%A2">洽詢批次資料</a>
+          <a class="btn btn-line" href="#/catalog">先瀏覽材料</a>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderAbout() {
+    return `
+      <div class="panel fade-in">
+        <nav class="breadcrumb"><a href="#/">首頁</a> / 關於</nav>
+        <h1>關於和曜材料櫃台</h1>
+        <p class="lead">和曜應用科技股份有限公司從南投的農業副產物與竹木加工剩料出發，協助研發與採購團隊選料、找樣，並依粒徑、含水率與包裝需求協調加工。</p>
+        <section class="spec-block">
+          <h2>服務內容</h2>
+          <ul class="plain-list">
+            <li>依用途探索地方循環材料形態與供應狀態</li>
+            <li>確認規格，並區分客戶指定、實測與待確認項目</li>
+            <li>協調去雜、乾燥、研磨、篩分與分裝</li>
+            <li>樣品備製與後續供應洽詢</li>
+          </ul>
+        </section>
+        <section class="spec-block">
+          <h2>據點與聯絡</h2>
+          <p>營運與展示據點｜南投中興新村</p>
+          <div class="form-actions">
+            <a class="btn btn-ink" href="mailto:contact@hoyao.com">contact@hoyao.com</a>
+            <a class="btn btn-line" href="#/request">提出需求</a>
+            <a class="btn btn-line" href="https://hoyao.com/">公司官網</a>
+          </div>
+        </section>
+      </div>
+    `;
   }
 
   function pageTitle(name, params) {
@@ -272,10 +395,24 @@ function renderAbout(){return '<section class="panel"><h1>關於和曜材料櫃�
       return m ? `${m.name}｜${base}` : `材料｜${base}`;
     }
     if (name === "request") return `提出需求｜${base}`;
-    if (name === "cases") return `我的案件｜${base}`;
     if (name === "passport" || name === "passport-lookup") return `批次護照｜${base}`;
-    if (name === "about") return `關於平台｜${base}`;
+    if (name === "about") return `關於｜${base}`;
     return base;
+  }
+
+  function refreshCatalogGrid() {
+    const grid = document.querySelector("#catalog-grid");
+    const count = document.querySelector("#result-count");
+    if (!grid) return;
+    const items = filteredMaterials();
+    if (count) count.textContent = `${items.length} 項`;
+    grid.innerHTML = items.length
+      ? items.map(cardHtml).join("")
+      : '<div class="empty">沒有符合條件的材料。<button type="button" class="text-btn" id="clear-filters">清除篩選</button></div>';
+    document.querySelector("#clear-filters")?.addEventListener("click", () => {
+      state.filters = { q: "", form: "全部", status: "全部" };
+      render();
+    });
   }
 
   function bindViewEvents() {
@@ -283,31 +420,79 @@ function renderAbout(){return '<section class="panel"><h1>關於和曜材料櫃�
     if (q) {
       q.addEventListener("input", () => {
         state.filters.q = q.value;
-        const grid = document.querySelector(".catalog-grid");
-        if (!grid) return;
-        const items = filteredMaterials();
-        grid.innerHTML = items.length
-          ? items.map(cardHtml).join("")
-          : '<div class="empty">沒有符合條件的材料。試試清除篩選。</div>';
+        refreshCatalogGrid();
       });
     }
+
+    document.querySelector("#filter-toggle")?.addEventListener("click", () => {
+      state.filtersOpen = !state.filtersOpen;
+      const panel = document.querySelector("#filter-panel");
+      const btn = document.querySelector("#filter-toggle");
+      panel?.classList.toggle("is-open", state.filtersOpen);
+      btn?.setAttribute("aria-expanded", state.filtersOpen ? "true" : "false");
+      const n = activeFilterCount();
+      if (btn) btn.textContent = `篩選${n ? ` · ${n}` : ""}`;
+    });
 
     document.querySelectorAll("[data-filter-form]").forEach((btn) => {
       btn.addEventListener("click", () => {
         state.filters.form = btn.dataset.filterForm;
+        state.filtersOpen = true;
         render();
       });
     });
     document.querySelectorAll("[data-filter-status]").forEach((btn) => {
       btn.addEventListener("click", () => {
         state.filters.status = btn.dataset.filterStatus;
+        state.filtersOpen = true;
         render();
       });
     });
 
-    const form=document.querySelector("#request-form");
-    if(form)form.onsubmit=e=>{e.preventDefault();const f=new FormData(form);const body=["材料："+f.get("material"),"用途與規格："+f.get("spec"),"數量與交期："+f.get("qty")].join("\n");location.href="mailto:contact@hoyao.com?subject="+encodeURIComponent("材料洽詢｜"+f.get("material"))+"&body="+encodeURIComponent(body)};
+    document.querySelector("#clear-filters")?.addEventListener("click", () => {
+      state.filters = { q: "", form: "全部", status: "全部" };
+      render();
+    });
+
+    const form = document.querySelector("#request-form");
+    if (form) {
+      form.onsubmit = (e) => {
+        e.preventDefault();
+        const f = new FormData(form);
+        const body = ["材料：" + f.get("material"), "用途與規格：" + f.get("spec"), "數量與交期：" + f.get("qty")].join(
+          "\n"
+        );
+        location.href =
+          "mailto:contact@hoyao.com?subject=" +
+          encodeURIComponent("材料洽詢｜" + f.get("material")) +
+          "&body=" +
+          encodeURIComponent(body);
+      };
+    }
   }
+
+  function render() {
+    state.route = parseHash();
+    // Desktop: keep filters open; mobile default closed unless user opened
+    if (window.matchMedia("(min-width: 821px)").matches) state.filtersOpen = true;
+    setActiveNav(state.route.name);
+    closeMenu();
+    const { name, params } = state.route;
+    let html = "";
+    if (name === "home") html = renderHome();
+    else if (name === "catalog") html = renderCatalog();
+    else if (name === "material") html = renderMaterial(params.id);
+    else if (name === "request") html = renderRequest();
+    else if (name === "passport-lookup" || name === "passport") html = renderPassportLookup();
+    else if (name === "about") html = renderAbout();
+    else html = renderHome();
+
+    el.app.innerHTML = html;
+    document.title = pageTitle(name, params);
+    window.scrollTo(0, 0);
+    bindViewEvents();
+  }
+
   async function loadData() {
     if (window.__HOYAO_MATERIALS_DATA__?.catalog && window.__HOYAO_MATERIALS_DATA__?.batches) {
       return window.__HOYAO_MATERIALS_DATA__;
@@ -319,10 +504,29 @@ function renderAbout(){return '<section class="panel"><h1>關於和曜材料櫃�
     return { catalog, batches };
   }
 
+  function initNote() {
+    try {
+      if (localStorage.getItem(NOTE_KEY)) return;
+    } catch {
+      /* ignore */
+    }
+    if (!el.softNote) return;
+    el.softNote.hidden = false;
+    el.softNoteClose?.addEventListener("click", () => {
+      el.softNote.hidden = true;
+      try {
+        localStorage.setItem(NOTE_KEY, "1");
+      } catch {
+        /* ignore */
+      }
+    });
+  }
+
   async function init() {
     const data = await loadData();
     state.catalog = data.catalog;
-    state.batches = data.batches;
+    state.batches = data.batches || { batches: [] };
+    initNote();
 
     el.menuToggle?.addEventListener("click", () => {
       const open = document.body.classList.toggle("nav-open");
@@ -338,8 +542,6 @@ function renderAbout(){return '<section class="panel"><h1>關於和曜材料櫃�
   }
 
   init().catch((err) => {
-    el.app.innerHTML = `<div class="panel"><h1>無法載入資料</h1><p class="lead">${escapeHtml(
-      err.message
-    )}</p></div>`;
+    el.app.innerHTML = `<div class="panel"><h1>無法載入資料</h1><p class="lead">${escapeHtml(err.message)}</p></div>`;
   });
 })();

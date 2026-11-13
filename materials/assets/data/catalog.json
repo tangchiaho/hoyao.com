@@ -32,7 +32,7 @@
       ],
       "measured": [],
       "pendingMeasures": ["粒徑分布（D50／D90）", "含水率", "包裝袋重與密封方式"],
-      "relatedBatches": ["HY-DEMO-BP-2026-001"],
+      "relatedBatches": ["HY-DEMO-BP-2026-001", "HY-DEMO-BP-2026-002"],
       "demo": true
     },
     {

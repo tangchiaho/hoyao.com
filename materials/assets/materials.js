@@ -168,7 +168,7 @@
           <a class="journey" href="#/passport/HY-DEMO-BP-2026-001">
             <em>樣品標籤</em>
             <h3>掃描後辨識手上這一批</h3>
-            <p>示範護照顯示已知資料、待補量測，並可沿用規格再次洽詢。</p>
+            <p>示範護照顯示已知資料與待確認項目；沿用規格時會帶入來源批次。可用同材料兩批次對照。</p>
             <span>開啟示範護照 →</span>
           </a>
         </div>
@@ -331,26 +331,83 @@
     `;
   }
 
-  function requestDefaults(materialId) {
+  function buildSpecFromBatch(batch) {
+    const lines = [];
+    (batch.customerSpec || []).forEach((row) => {
+      lines.push(`${row.label}：${row.value}`);
+    });
+    if (batch.measured?.length) {
+      lines.push("—— 參考批次已知量測 ——");
+      batch.measured.forEach((row) => {
+        lines.push(`${row.label}：${row.value}${row.method ? `（${row.method}）` : ""}`);
+      });
+    } else {
+      lines.push("—— 參考批次尚無儀器量測值；相關項目維持待確認 ——");
+    }
+    if (batch.pending?.length) {
+      lines.push("待確認：" + batch.pending.join("、"));
+    }
+    return lines.join("\n");
+  }
+
+  function qtyHintFromBatch(batch) {
+    const qtyRow = (batch.customerSpec || []).find((r) => /數量/.test(r.label));
+    if (qtyRow) return qtyRow.value;
+    if (batch.relatedTrialOrder?.spec) {
+      const m = batch.relatedTrialOrder.spec.match(/([\d.]+\s*公斤)/);
+      if (m) return m[1];
+    }
+    return "";
+  }
+
+  function requestDefaults() {
+    const fromId = state.route.params.from || "";
+    const batch = fromId ? batchById(fromId) : null;
+    const materialId =
+      batch?.materialId || state.route.params.material || state.route.params.preset || "";
     const m = materialById(materialId);
     const preset = state.route.params.preset || materialId;
-    const powder = preset === "bamboo-powder" || materialId === "bamboo-powder";
+    const powderPreset = !batch && (preset === "bamboo-powder" || materialId === "bamboo-powder");
+
+    if (batch) {
+      return {
+        sourceBatchId: batch.id,
+        sourceBatchLabel: batch.label,
+        materialId: batch.materialId,
+        materialName: m?.name || batch.materialId,
+        purpose: "依樣品批次規格再次洽詢／試作",
+        spec: buildSpecFromBatch(batch),
+        qty: qtyHintFromBatch(batch) || "",
+        process: "研磨、篩分",
+        due: "",
+        contact: "",
+        note: `參考批次 ${batch.id}（${batch.label}）。可修改本次需求後送出。`,
+        measuredSummary: batch.measured?.length
+          ? batch.measured.map((r) => `${r.label}：${r.value}`).join("；")
+          : "尚無儀器量測值，維持待確認。",
+        pendingSummary: (batch.pending || []).join("、") || "—",
+      };
+    }
+
     return {
-      materialId: m?.id || (powder ? "bamboo-powder" : ""),
-      materialName: m?.name || (powder ? "竹粉" : ""),
-      purpose: powder ? "複材試作填料" : "",
-      spec: powder ? "目標粒徑：2000 目；驗收方式待確認" : "",
-      qty: powder ? "50 公斤" : "",
-      process: powder ? "研磨、篩分" : "找料與規格評估",
-      due: powder ? "2026-12-15" : "",
+      sourceBatchId: "",
+      sourceBatchLabel: "",
+      materialId: m?.id || (powderPreset ? "bamboo-powder" : ""),
+      materialName: m?.name || (powderPreset ? "竹粉" : ""),
+      purpose: powderPreset ? "複材試作填料" : "",
+      spec: powderPreset ? "目標粒徑：2000 目；驗收方式待確認" : "",
+      qty: powderPreset ? "50 公斤" : "",
+      process: powderPreset ? "研磨、篩分" : "找料與規格評估",
+      due: powderPreset ? "2026-12-15" : "",
       contact: "",
-      note: powder ? "試單需求已確認情境之示範預填；送出後僅存於此瀏覽器。" : "",
+      note: powderPreset ? "試單需求已確認情境之示範預填；送出後僅存於此瀏覽器。" : "",
+      measuredSummary: "",
+      pendingSummary: "",
     };
   }
 
   function renderRequest() {
-    const materialId = state.route.params.material || state.route.params.preset || "";
-    const d = requestDefaults(materialId);
+    const d = requestDefaults();
     const options = state.catalog.materials
       .map(
         (m) =>
@@ -359,19 +416,44 @@
           )}（${escapeHtml(m.supplyStatus)}）</option>`
       )
       .join("");
+    const refPanel = d.sourceBatchId
+      ? `<aside class="notice" id="batch-ref">
+          <strong>參考來源批次</strong>
+          <div style="margin-top:6px">
+            <span class="case-id">${escapeHtml(d.sourceBatchId)}</span>
+            · ${escapeHtml(d.sourceBatchLabel)}
+            · <a href="#/passport/${encodeURIComponent(d.sourceBatchId)}">查看護照</a>
+          </div>
+          <div class="form-hint" style="margin-top:8px">已知量測：${escapeHtml(d.measuredSummary)}</div>
+          <div class="form-hint">待確認：${escapeHtml(d.pendingSummary)}</div>
+          <p class="form-hint" style="margin-top:8px">以下欄位已帶入可沿用規格，請依本次需求修改後送出。</p>
+        </aside>`
+      : "";
     return `
       ${demoBanner("送出的案件只保存在此瀏覽器，不會寄到伺服器。")}
       <div class="panel fade-in">
         <nav class="breadcrumb"><a href="#/">首頁</a> / 提出需求</nav>
-        <h1>提出找料／索樣需求</h1>
-        <p class="lead">已知規格可直接填寫。客戶指定與實際量測會在材料頁與批次護照分開呈現。</p>
+        <h1>${d.sourceBatchId ? "沿用批次規格洽詢" : "提出找料／索樣需求"}</h1>
+        <p class="lead">${
+          d.sourceBatchId
+            ? "已帶入來源批次與可沿用規格。請確認材料無誤，再修改本次用途、數量或驗收條件。"
+            : "已知規格可直接填寫。客戶指定與實際量測會在材料頁與批次護照分開呈現。"
+        }</p>
+        ${refPanel}
         <form id="request-form" novalidate>
+          <input type="hidden" name="sourceBatchId" value="${escapeHtml(d.sourceBatchId)}">
           <div class="form-grid">
             <label class="full">材料
-              <select name="materialId" required>
+              ${
+                d.sourceBatchId
+                  ? `<input type="hidden" name="materialId" value="${escapeHtml(d.materialId)}">
+              <input type="text" value="${escapeHtml(d.materialName)}" readonly>
+              <p class="form-hint">沿用護照時材料鎖定為來源批次對應品項；若要換材料請改從圖鑑進入。</p>`
+                  : `<select name="materialId" required>
                 <option value="">選擇材料…</option>
                 ${options}
-              </select>
+              </select>`
+              }
             </label>
             <label class="full">用途
               <input name="purpose" required placeholder="例如：複材試作、板材填充" value="${escapeHtml(d.purpose)}">
@@ -442,7 +524,14 @@
                           <h3>${escapeHtml(c.materialName)} · ${escapeHtml(c.qty)}</h3>
                           <span class="case-id">${escapeHtml(c.id)}${c.demo || c.seed ? " · 展示" : ""}</span>
                         </header>
-                        <div>${escapeHtml(c.spec)}</div>
+                        <div style="white-space:pre-wrap">${escapeHtml(c.spec)}</div>
+                        ${
+                          c.sourceBatchId
+                            ? `<div class="form-hint">參考批次 <a href="#/passport/${encodeURIComponent(
+                                c.sourceBatchId
+                              )}"><span class="case-id">${escapeHtml(c.sourceBatchId)}</span></a></div>`
+                            : ""
+                        }
                         <div class="form-hint">${escapeHtml(c.process)}${c.due ? ` · 希望交期 ${escapeHtml(c.due)}` : ""}${
                       c.note ? ` · ${escapeHtml(c.note)}` : ""
                     }</div>
@@ -452,8 +541,8 @@
                             ? `<p style="margin:0"><a href="#/material/${encodeURIComponent(
                                 c.materialId
                               )}">查看材料</a>${
-                                c.materialId === "bamboo-powder"
-                                  ? ' · <a href="#/passport/HY-DEMO-BP-2026-001">相關示範護照</a>'
+                                c.sourceBatchId
+                                  ? ` · <a href="#/passport/${encodeURIComponent(c.sourceBatchId)}">來源護照</a>`
                                   : ""
                               }</p>`
                             : ""
@@ -480,9 +569,10 @@
           <input name="id" required placeholder="例如 HY-DEMO-BP-2026-001" value="" autocomplete="off">
           <button class="btn btn-ink" type="submit">查詢</button>
         </form>
-        <p class="form-hint">示範編號：
-          <a href="#/passport/HY-DEMO-BP-2026-001">HY-DEMO-BP-2026-001</a>、
-          <a href="#/passport/HY-DEMO-BS-2026-001">HY-DEMO-BS-2026-001</a>
+        <p class="form-hint">示範編號（同材料兩批次可對照）：
+          <a href="#/passport/HY-DEMO-BP-2026-001">HY-DEMO-BP-2026-001</a>（竹粉 · 2000 目）、
+          <a href="#/passport/HY-DEMO-BP-2026-002">HY-DEMO-BP-2026-002</a>（竹粉 · 80 目）、
+          <a href="#/passport/HY-DEMO-BS-2026-001">HY-DEMO-BS-2026-001</a>（竹屑）
         </p>
       </div>
     `;
@@ -534,7 +624,11 @@
         </section>
         <section class="spec-block">
           <h2>本批次已知量測</h2>
-          ${rowsHtml(b.measured)}
+          ${
+            b.measured?.length
+              ? rowsHtml(b.measured)
+              : '<p class="form-hint">尚無儀器量測值。相關項目維持<strong>待確認</strong>，不會以示意樣品外觀代替實測。</p>'
+          }
         </section>
         <section class="spec-block">
           <h2>待補資料</h2>
@@ -561,7 +655,9 @@
             : ""
         }
         <div class="form-actions">
-          <a class="btn btn-ink" href="#/request/${encodeURIComponent(b.materialId)}">沿用規格再次洽詢</a>
+          <a class="btn btn-ink" href="#/request/${encodeURIComponent(b.materialId)}?from=${encodeURIComponent(
+            b.id
+          )}">沿用規格再次洽詢</a>
           ${m ? `<a class="btn btn-line" href="#/material/${encodeURIComponent(m.id)}">查看材料頁</a>` : ""}
         </div>
       </div>
@@ -570,28 +666,42 @@
 
   function renderAbout() {
     return `
-      ${demoBanner()}
+      ${demoBanner("本站為可操作預覽；正式線上收件尚未開放。")}
       <div class="panel fade-in">
-        <nav class="breadcrumb"><a href="#/">首頁</a> / 關於平台</nav>
-        <h1>關於地方循環材料供應平台</h1>
-        <p class="lead">和曜從南投的竹木加工剩料與農業副產物出發，協助企業、製造商與研發團隊找材料、確認規格、協調加工並取得樣品。</p>
+        <nav class="breadcrumb"><a href="#/">首頁</a> / 關於</nav>
+        <h1>關於和曜材料櫃台</h1>
+        <p class="lead">和曜應用科技以南投的竹木加工剩料與農業副產物為起點，協助企業、製造商與研發團隊找到可用的地方循環材料，並把規格、樣品與後續供應談清楚。</p>
+
         <section class="spec-block">
-          <h2>這一版在驗證什麼</h2>
-          <p>資訊架構、三條訪客動線、材料／規格／批次的資料分離，以及之後由團隊以 JSON 上架品項的方式。正式收件、權限與量測儀器串接尚未啟用。</p>
-        </section>
-        <section class="spec-block">
-          <h2>設計取捨摘要</h2>
+          <h2>我們協助什麼</h2>
           <ul>
-            <li>不做大型材質圖書館目錄牆，改成「材料櫃台」：少而清楚的品項 + 可追蹤案件。</li>
-            <li>材料頁強制分開「客戶指定／實際量測／待確認」。</li>
-            <li>批次護照對齊樣品標籤掃描情境，但不宣稱區塊鏈或認證。</li>
+            <li>依用途探索植物纖維、竹木剩料等材料形態與供應狀態</li>
+            <li>確認客戶指定規格，並與實際量測、待確認項目分開標示</li>
+            <li>協調去雜、乾燥、研磨、篩分、分裝等加工方向</li>
+            <li>提供樣品，並以批次護照對應你手上的那一袋</li>
+            <li>承接已知規格的試單洽詢（例如目數、數量、交期與驗收條件）</li>
           </ul>
         </section>
+
         <section class="spec-block">
-          <h2>如何新增一筆材料</h2>
-          <p>編輯 <code>materials/assets/data/catalog.json</code>，依現有物件新增一筆；若有樣品袋，再於 <code>batches.json</code> 加護照並把 id 寫入 <code>relatedBatches</code>。詳見同目錄 README。</p>
+          <h2>適合誰來</h2>
+          <p>材料與配方研發、產品開發，以及已有明確規格的採購或專案窗口。若你已拿到實體樣品，可先查批次護照，再決定是否沿用規格洽詢下一輪。</p>
         </section>
-        <p><a class="btn btn-line" href="https://hoyao.com/">返回和曜官網</a></p>
+
+        <section class="spec-block">
+          <h2>目前開放範圍</h2>
+          <p>此網站用於展示服務架構與操作流程。示範材料、示範護照與示範工單皆有標示。正式線上收件、帳號權限與量測報告串接將於下一階段啟用；現階段歡迎先瀏覽圖鑑，或以來信說明需求。</p>
+        </section>
+
+        <section class="spec-block">
+          <h2>洽詢入口</h2>
+          <p>請來信說明材料用途、希望規格、數量、交期與聯絡人。若已掃描樣品標籤，請一併附上批次編號。</p>
+          <div class="form-actions" style="margin-top:12px">
+            <a class="btn btn-ink" href="mailto:contact@hoyao.com?subject=%E6%9D%90%E6%96%99%E6%B4%BD%E8%A9%A2%EF%BD%9C%E5%92%8C%E6%9B%9C%E6%9D%90%E6%96%99%E6%AB%83%E5%8F%B0">contact@hoyao.com</a>
+            <a class="btn btn-line" href="#/request">在網站提出需求（預覽）</a>
+            <a class="btn btn-line" href="https://hoyao.com/">和曜公司官網</a>
+          </div>
+        </section>
       </div>
     `;
   }
@@ -678,6 +788,7 @@
           createdAt: new Date().toISOString(),
           materialId: data.materialId,
           materialName: material?.name || data.materialId,
+          sourceBatchId: data.sourceBatchId || "",
           purpose: data.purpose,
           spec: data.spec,
           qty: data.qty,
@@ -713,14 +824,22 @@
     });
   }
 
-  async function init() {
-    ensureSeedCase();
+  async function loadData() {
+    if (window.__HOYAO_MATERIALS_DATA__?.catalog && window.__HOYAO_MATERIALS_DATA__?.batches) {
+      return window.__HOYAO_MATERIALS_DATA__;
+    }
     const [catalog, batches] = await Promise.all([
       fetch("assets/data/catalog.json").then((r) => r.json()),
       fetch("assets/data/batches.json").then((r) => r.json()),
     ]);
-    state.catalog = catalog;
-    state.batches = batches;
+    return { catalog, batches };
+  }
+
+  async function init() {
+    ensureSeedCase();
+    const data = await loadData();
+    state.catalog = data.catalog;
+    state.batches = data.batches;
 
     el.menuToggle?.addEventListener("click", () => {
       const open = document.body.classList.toggle("nav-open");

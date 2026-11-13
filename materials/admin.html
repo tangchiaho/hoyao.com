@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>內部工單管理｜和曜地方循環材料圖鑑</title>
+<link rel="stylesheet" href="atlas.css">
+<style>
+  .panel{max-width:760px}
+  .warn{background:#f3e6d8;padding:12px;border:1px solid #d4b896;margin:12px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <b class="brand">和曜 HOYAO</b>
+  <nav>
+    <a href="./">材料圖鑑</a>
+    <a href="inquire.html">正式洽詢</a>
+  </nav>
+</header>
+
+<main>
+  <section class="panel">
+    <small>INTERNAL</small>
+    <h2>內部工單管理</h2>
+    <div class="warn">此頁需 Apps Script 指令碼屬性 <code>ADMIN_TOKEN</code>。來源窗口、成本、製程參數與損耗僅內部可見；請勿將 token 寫入公開設定檔。</div>
+
+    <form id="load-form">
+      <label>工單編號<input name="orderId" required></label>
+      <label>管理 Token<input name="adminToken" type="password" required autocomplete="off"></label>
+      <button class="cta" type="submit">讀取工單</button>
+    </form>
+
+    <div id="status" class="note" hidden></div>
+    <div id="customer-view" hidden></div>
+
+    <form id="update-form" hidden>
+      <h2 style="font-size:22px">更新狀態與內部欄位</h2>
+      <label>狀態
+        <select name="status">
+          <option value="received">已收件</option>
+          <option value="spec_review">規格確認中</option>
+          <option value="sampling">備樣／取樣</option>
+          <option value="processing">加工中</option>
+          <option value="ready">可交付</option>
+          <option value="shipped">已寄出</option>
+          <option value="closed">結案</option>
+        </select>
+      </label>
+      <label>進度備註<input name="note"></label>
+      <label>適用批次（客戶可見）<input name="batchId"></label>
+      <label>報告摘要（客戶可見）<textarea name="reportSummary"></textarea></label>
+      <div class="grid2">
+        <label>來源窗口<input name="sourceWindow"></label>
+        <label>成本備註<input name="costNote"></label>
+        <label>製程參數<textarea name="processParams"></textarea></label>
+        <label>損耗<input name="lossRate" placeholder="例如：12%"></label>
+      </div>
+      <h2 style="font-size:20px">量測（分開記錄）</h2>
+      <div class="grid2">
+        <label>倉儲溫濕度<input name="warehouseTempHumidity" placeholder="例如：24°C／55%RH"></label>
+        <label>倉儲資料來源<input name="warehouseEnvSource"></label>
+        <label>倉儲量測方法<input name="warehouseEnvMethod"></label>
+        <label>材料含水率<input name="materialMoisture" placeholder="例如：9.2%"></label>
+        <label>含水率來源<input name="moistureSource"></label>
+        <label>含水率量測方法<input name="moistureMethod"></label>
+      </div>
+      <button class="cta" type="submit">儲存更新</button>
+    </form>
+
+    <pre id="internal-json" class="note" style="white-space:pre-wrap;overflow:auto"></pre>
+  </section>
+</main>
+
+<footer>和曜應用科技股份有限公司　／　內部管理（勿公開）</footer>
+
+<script src="config.js"></script>
+<script src="intake.js"></script>
+<script>
+(function () {
+  var loadForm = document.querySelector("#load-form");
+  var updateForm = document.querySelector("#update-form");
+  var statusEl = document.querySelector("#status");
+  var customerView = document.querySelector("#customer-view");
+  var internalJson = document.querySelector("#internal-json");
+  var current = null;
+
+  function setStatus(msg, isError) {
+    statusEl.hidden = false;
+    statusEl.textContent = msg;
+    statusEl.style.color = isError ? "#8a3b2b" : "";
+  }
+
+  loadForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var orderId = loadForm.orderId.value.trim();
+    var adminToken = loadForm.adminToken.value;
+    setStatus("讀取中…");
+    HoyaoMaterialsIntake.getOrder(orderId, "", adminToken)
+      .then(function (data) {
+        if (!data.ok) throw new Error(data.error || "failed");
+        current = { orderId: orderId, adminToken: adminToken, data: data };
+        setStatus("已讀取（層級：" + (data.layer || "") + "）");
+        customerView.hidden = false;
+        customerView.innerHTML =
+          "<div class='rows'>" +
+          Object.keys(data.order || {})
+            .map(function (k) {
+              return (
+                "<div class='row'><strong>" +
+                HoyaoMaterialsIntake.escapeHtml(k) +
+                "</strong><div>" +
+                HoyaoMaterialsIntake.escapeHtml(JSON.stringify(data.order[k])) +
+                "</div></div>"
+              );
+            })
+            .join("") +
+          "</div>";
+        internalJson.textContent = JSON.stringify(data.orderInternal || {}, null, 2);
+        updateForm.hidden = false;
+        updateForm.status.value = data.order.status || "received";
+        updateForm.batchId.value = data.order.batchId || "";
+        updateForm.reportSummary.value = data.order.reportSummary || "";
+        if (data.orderInternal) {
+          updateForm.sourceWindow.value = data.orderInternal.sourceWindow || "";
+          updateForm.costNote.value = data.orderInternal.costNote || "";
+          updateForm.processParams.value = data.orderInternal.processParams || "";
+          updateForm.lossRate.value = data.orderInternal.lossRate || "";
+        }
+      })
+      .catch(function (err) {
+        setStatus("讀取失敗：" + (err.message || "error"), true);
+        updateForm.hidden = true;
+      });
+  });
+
+  updateForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!current) return;
+    var fd = new FormData(updateForm);
+    var body = { orderId: current.orderId, adminToken: current.adminToken };
+    fd.forEach(function (v, k) {
+      body[k] = v;
+    });
+    setStatus("儲存中…");
+    HoyaoMaterialsIntake.updateStatus(body)
+      .then(function (data) {
+        if (!data.ok) throw new Error(data.error || "failed");
+        setStatus("已更新狀態為 " + HoyaoMaterialsIntake.statusLabel(data.status));
+        loadForm.requestSubmit();
+      })
+      .catch(function (err) {
+        setStatus("更新失敗：" + (err.message || "error"), true);
+      });
+  });
+})();
+</script>
+</body>
+</html>

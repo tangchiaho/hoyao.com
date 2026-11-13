@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>正式洽詢收件｜和曜地方循環材料圖鑑</title>
+<link rel="stylesheet" href="atlas.css">
+<style>
+  .consent{display:flex;gap:10px;align-items:flex-start;margin:16px 0;padding:12px;background:#eef2e8;border:1px solid #c5d0c2}
+  .consent input{width:auto;margin-top:4px}
+  .panel{max-width:640px}
+  .status-box{margin:12px 0;font-size:14px}
+  .result-box{padding:14px;background:#e8eedf;margin-top:14px}
+</style>
+</head>
+<body>
+<header>
+  <b class="brand">和曜 HOYAO</b>
+  <nav>
+    <a href="./">材料圖鑑</a>
+    <a href="track.html">查詢工單</a>
+  </nav>
+</header>
+
+<main>
+  <section class="panel">
+    <small>FORMAL INTAKE</small>
+    <h2>正式洽詢收件</h2>
+    <p class="note">送出前需同意留下聯絡資料。後端保存需求後回傳工單編號與專屬進度連結。示範 QR／護照頁不收集客戶資料。</p>
+
+    <form id="formal-form">
+      <input type="hidden" name="clientRequestId" id="clientRequestId">
+      <label>聯絡人姓名<input name="contactName" required autocomplete="name"></label>
+      <label>Email<input name="contactEmail" type="email" autocomplete="email" placeholder="與電話擇一必填"></label>
+      <label>電話<input name="contactPhone" type="tel" autocomplete="tel" placeholder="與 Email 擇一必填"></label>
+      <label>材料名稱<input name="material" required></label>
+      <label>用途<textarea name="useCase" placeholder="例如：複材試作、填料評估"></textarea></label>
+      <label>規格需求<textarea name="spec" required placeholder="粒徑、含水、包裝等"></textarea></label>
+      <label>加工需求
+        <select name="process">
+          <option>找料與規格評估</option>
+          <option>去雜、乾燥</option>
+          <option>研磨、篩分</option>
+          <option>纖維分離、混料</option>
+          <option>炭材轉化評估</option>
+          <option>造粒、成型</option>
+          <option>分裝、密封</option>
+        </select>
+      </label>
+      <label>數量<input name="qty" required></label>
+      <label>希望交期（選填）<input name="due" type="date"></label>
+
+      <label class="consent">
+        <input type="checkbox" name="consentContact" value="true" required>
+        <span>我同意留下聯絡資料，供和曜回覆規格確認與工單進度。客戶資料與公開示範護照分開授權。</span>
+      </label>
+
+      <button class="cta" type="submit">提交規格並建立工單</button>
+    </form>
+
+    <div class="status-box" id="status" hidden></div>
+    <div class="result-box" id="result" hidden></div>
+  </section>
+</main>
+
+<footer>和曜應用科技股份有限公司　／　正式收件（客戶授權資料）</footer>
+
+<script src="config.js"></script>
+<script src="intake.js"></script>
+<script>
+(function () {
+  var form = document.querySelector("#formal-form");
+  form.clientRequestId.value = HoyaoMaterialsIntake.newClientRequestId();
+
+  var params = new URLSearchParams(location.search);
+  if (params.get("material")) form.material.value = params.get("material");
+  if (params.get("spec")) form.spec.value = params.get("spec");
+  if (params.get("qty")) form.qty.value = params.get("qty");
+  if (params.get("process")) form.process.value = params.get("process");
+  if (params.get("useCase")) form.useCase.value = params.get("useCase");
+
+  HoyaoMaterialsIntake.bindFormalForm(form, {
+    statusEl: document.querySelector("#status"),
+    resultEl: document.querySelector("#result"),
+  });
+})();
+</script>
+</body>
+</html>

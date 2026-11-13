@@ -28,7 +28,7 @@
   const statusClass = (status) => `badge badge-status-${status}`;
 
 
-  const sectionTitles = { factory: "加工廠", map: "材料地圖", school: "材料學堂" };
+  const sectionTitles = { factory: "加工廠", map: "材料地圖", school: "材料學堂", wish: "材料許願池", partners: "成為站友" };
 
   function renderFactory() {
     const steps = [
@@ -57,6 +57,20 @@
       <a class="btn btn-ink" href="#/map/zhushan">查看竹山材料</a>
       ${state.route.params.town === "zhushan" ? `<section class="town-record"><h3>竹山材料紀錄</h3>${localMaterials.map(m => `<p><a href="#/material/${encodeURIComponent(m.id)}">${escapeHtml(m.name)} →</a></p>`).join("")}<a href="#/supply?origin=竹山">補充竹山的材料 →</a></section>` : ""}
       </div></div><a class="text-link" href="#/supply">提供其他鄉鎮的材料 →</a></section>`;
+  }
+
+  function renderParticipation(name) {
+    const wish = name === "wish";
+    const options = wish ? ["我想找一種材料", "我想試一個用途"] : ["產地站友", "加工站友", "材料志工"];
+    return `<section class="panel panel-form"><nav class="breadcrumb"><a href="#/">首頁</a> / ${sectionTitles[name]}</nav>
+      <h1>${sectionTitles[name]}</h1><p class="lead">${wish ? "如果有一份家鄉的材料，你想用它做什麼？可以先說想法，等方向更清楚再談試作。" : "有料可供、擅長加工，或願意幫忙記錄家鄉材料，都可以從一次自我介紹開始。"}</p>
+      <form class="form-stack" id="participation-form">
+        <label>${wish ? "你的願望" : "想用什麼身分參與？"}<select required name="role"><option value="">請選擇</option>${options.map(o => `<option>${o}</option>`).join("")}</select></label>
+        <label>${wish ? "想用在哪裡？" : "你能提供什麼協助？"}<textarea required maxlength="1200" name="message" placeholder="${wish ? "例如：想讓學生摸到茶渣烘乾前後的差異。" : "例如：可協助小量烘乾，或願意替在地工坊拍攝樣品。"}"></textarea></label>
+        <label>所在地或服務地區（選填）<input name="area" maxlength="80" placeholder="縣市、鄉鎮即可"></label>
+        <p class="form-hint">${wish ? "許願免費。若有合適的試作方向，和曜會先與你討論；公開分享前會另行徵求同意。" : "和曜以來信登記合作意願，有合適案件或志工任務時聯繫。聯絡資料由和曜內部使用。"}</p>
+        <button class="btn btn-ink" type="submit">開啟郵件草稿</button><p class="form-hint">請在郵件程式中確認並寄至 contact@hoyao.com。</p>
+      </form>${wish ? '<p>已有採購數量與規格？<a href="#/request">前往材料與加工洽詢</a></p>' : ""}</section>`;
   }
 
   function renderSchool() {
@@ -204,6 +218,7 @@
         </dl>
       </section>
       <section class="station-feature"><div><p class="section-label">南投・竹山</p><h2>材料地圖</h2><p>第一站，南投竹山。從一把竹屑，認識家鄉的材料。</p></div><a class="btn btn-line" href="#/map">探索材料地圖 →</a></section>
+      <section class="station-feature"><div><h2>一起記錄家鄉的材料</h2><p>有想試的用途，可以許願；有材料、設備或時間，可以加入站友。</p></div><div class="form-actions"><a class="btn btn-ink" href="#/wish">材料許願池</a><a class="btn btn-line" href="#/partners">成為站友</a></div></section>
       <section class="section fade-in" aria-labelledby="feature-title">
         <div class="section-head">
           <p class="section-label">Materials</p>
@@ -491,6 +506,13 @@
   }
 
   function bindViewEvents() {
+    document.querySelector("#participation-form")?.addEventListener("submit", event => {
+      event.preventDefault();
+      const values = new FormData(event.currentTarget);
+      const subject = sectionTitles[state.route.name] + "｜" + values.get("role");
+      const body = [subject, values.get("message"), "地區：" + (values.get("area") || "未填")].join("\n");
+      location.href = "mailto:contact@hoyao.com?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    });
     const q = document.querySelector("#q");
     if (q) {
       q.addEventListener("input", () => {
@@ -566,6 +588,7 @@
     if (name === "home") html = renderHome();
     else if (name === "factory") html = renderFactory();
     else if (name === "map") html = renderMap();
+    else if (name === "wish" || name === "partners") html = renderParticipation(name);
     else if (name === "school") html = renderSchool();
     else if (name === "catalog") html = renderCatalog();
     else if (name === "material") html = renderMaterial(params.id);

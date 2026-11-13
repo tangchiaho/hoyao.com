@@ -94,9 +94,9 @@
     return n;
   }
 
-  function cardHtml(m) {
+  function cardHtml(m, { compact = false } = {}) {
     return `
-      <a class="card" href="#/material/${encodeURIComponent(m.id)}">
+      <a class="card${compact ? " card-plate" : ""}" href="#/material/${encodeURIComponent(m.id)}">
         <figure class="media-frame">
           <img src="${escapeHtml(m.image)}" alt="${escapeHtml(m.name)}形態" loading="lazy" width="1200" height="1500">
         </figure>
@@ -107,8 +107,8 @@
             <span>${escapeHtml(m.form)}</span>
           </p>
           <h3>${escapeHtml(m.name)}</h3>
-          <p>${escapeHtml(m.subtitle)}</p>
-          <span class="card-origin">${escapeHtml(m.origin)}</span>
+          ${compact ? "" : `<p>${escapeHtml(m.subtitle)}</p>`}
+          ${compact ? "" : `<span class="card-origin">${escapeHtml(m.origin)}</span>`}
         </div>
       </a>
     `;
@@ -123,13 +123,10 @@
         </div>
         <div class="hero-scrim" aria-hidden="true"></div>
         <div class="hero-copy">
-          <p class="hero-kicker">Local Circular Materials</p>
           <h1 id="hero-brand" class="hero-brand">和曜材料櫃台</h1>
-          <p class="hero-title">地方循環材料供應平台</p>
           <p class="hero-lead">從南投竹木餘料與農業副產物中選料、確認規格、協調加工與備樣。</p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="#/catalog">探索材料</a>
-            <a class="btn btn-ghost" href="#/request">提出規格需求</a>
           </div>
         </div>
       </section>
@@ -163,10 +160,9 @@
         <div class="section-head">
           <p class="section-label">Materials</p>
           <h2 id="feature-title">材料選覽</h2>
-          <p>樣品外觀、來源與目前取樣狀態。</p>
         </div>
-        <div class="catalog-grid">${featured.map(cardHtml).join("")}</div>
-        <p class="section-more"><a class="btn btn-line" href="#/catalog">查看全部材料</a></p>
+        <div class="catalog-grid catalog-grid-plates">${featured.map((m) => cardHtml(m, { compact: true })).join("")}</div>
+        <p class="section-more"><a class="text-link" href="#/catalog">查看全部材料</a></p>
       </section>
     `;
   }
@@ -210,12 +206,11 @@
     const statuses = ["全部", ...state.catalog.filters.statuses];
     const filterN = activeFilterCount();
     return `
-      <header class="page-hero fade-in">
+      <header class="page-hero page-hero-catalog fade-in">
         <nav class="breadcrumb"><a href="#/">首頁</a> / 材料圖鑑</nav>
         <div class="page-hero-row">
           <div>
             <h1>材料圖鑑</h1>
-            <p class="lead">依型態與供應狀態探索。狀態僅表示能否索樣或洽詢。</p>
           </div>
           <p class="result-count" id="result-count" aria-live="polite">${items.length} 項</p>
         </div>
@@ -225,17 +220,17 @@
           <label class="visually-hidden" for="q">搜尋材料</label>
           <input id="q" type="search" placeholder="搜尋名稱、用途、料源…" value="${escapeHtml(state.filters.q)}" />
         </div>
-        <button type="button" class="btn btn-line filter-toggle" id="filter-toggle" aria-expanded="${
+        <button type="button" class="filter-toggle" id="filter-toggle" aria-expanded="${
           state.filtersOpen ? "true" : "false"
         }" aria-controls="filter-panel">
           篩選${filterN ? ` · ${filterN}` : ""}
         </button>
       </div>
       ${filterPanelHtml(forms, statuses)}
-      <div class="catalog-grid fade-in" id="catalog-grid">
+      <div class="catalog-grid catalog-grid-plates fade-in" id="catalog-grid">
         ${
           items.length
-            ? items.map(cardHtml).join("")
+            ? items.map((m) => cardHtml(m, { compact: true })).join("")
             : '<div class="empty">沒有符合條件的材料。<button type="button" class="text-btn" id="clear-filters">清除篩選</button></div>'
         }
       </div>
@@ -315,12 +310,21 @@
                   .join("")}</ul></section>`
               : ""
           }
-          <div class="detail-actions">
+          <div class="detail-actions detail-actions-inline">
             <a class="btn btn-ink" href="#/request/${encodeURIComponent(m.id)}">索樣／洽詢此材料</a>
             <a class="btn btn-line" href="#/catalog">返回圖鑑</a>
           </div>
         </div>
       </article>
+      <div class="detail-bar" role="region" aria-label="材料行動">
+        <div class="detail-bar-inner">
+          <div class="detail-bar-copy">
+            <strong>${escapeHtml(m.name)}</strong>
+            <span>${escapeHtml(m.supplyStatus)} · ${escapeHtml(m.form)}</span>
+          </div>
+          <a class="btn btn-ink" href="#/request/${encodeURIComponent(m.id)}">索樣／洽詢</a>
+        </div>
+      </div>
     `;
   }
 
@@ -384,6 +388,7 @@
         <section class="spec-block">
           <h2>據點與聯絡</h2>
           <p>營運與展示據點｜南投中興新村</p>
+          <p class="form-hint">正式線上收件尚未開放；目前可瀏覽材料並以來信洽詢。</p>
           <div class="form-actions">
             <a class="btn btn-ink" href="mailto:contact@hoyao.com">contact@hoyao.com</a>
             <a class="btn btn-line" href="#/request">提出需求</a>
@@ -414,7 +419,7 @@
     const items = filteredMaterials();
     if (count) count.textContent = `${items.length} 項`;
     grid.innerHTML = items.length
-      ? items.map(cardHtml).join("")
+      ? items.map((m) => cardHtml(m, { compact: true })).join("")
       : '<div class="empty">沒有符合條件的材料。<button type="button" class="text-btn" id="clear-filters">清除篩選</button></div>';
     document.querySelector("#clear-filters")?.addEventListener("click", () => {
       state.filters = { q: "", form: "全部", status: "全部" };
@@ -485,6 +490,7 @@
     setActiveNav(state.route.name);
     closeMenu();
     const { name, params } = state.route;
+    syncShellMode(name);
     let html = "";
     if (name === "home") html = renderHome();
     else if (name === "catalog") html = renderCatalog();
@@ -512,21 +518,14 @@
   }
 
   function initNote() {
-    try {
-      if (localStorage.getItem(NOTE_KEY)) return;
-    } catch {
-      /* ignore */
-    }
+    /* Soft note stays hidden by default; quiet notice lives in About / footer only. */
     if (!el.softNote) return;
-    el.softNote.hidden = false;
-    el.softNoteClose?.addEventListener("click", () => {
-      el.softNote.hidden = true;
-      try {
-        localStorage.setItem(NOTE_KEY, "1");
-      } catch {
-        /* ignore */
-      }
-    });
+    el.softNote.hidden = true;
+  }
+
+  function syncShellMode(name) {
+    document.body.classList.toggle("is-detail", name === "material");
+    document.body.classList.toggle("is-home", name === "home");
   }
 
   async function init() {

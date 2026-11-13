@@ -212,7 +212,7 @@
       : "";
     var intro =
       opts.intro ||
-      "設計預覽用。工單只保存在此瀏覽器，重整後可在「我的工單」查到同一筆紀錄。";
+      "示範流程：工單只保存在此瀏覽器。正式收件請走「正式洽詢」並同意留下聯絡資料。";
 
     this.show(
       badge +
@@ -226,7 +226,8 @@
         processSelectHtml(opts.process || processOptions[0]) +
         "<label>需求數量<input name='qty' required placeholder='例如：試樣 5 公斤'></label>" +
         "<label>預計交期（選填）<input name='due' type='date'></label>" +
-        '<button class="cta" type="submit">建立示範工單</button></form>'
+        '<button class="cta" type="submit">建立示範工單</button>' +
+        '<p class="note"><a href="/materials/inquire.html">改走正式洽詢收件 ↗</a></p></form>'
     );
 
     var f = this.root.querySelector("#atlas-form");

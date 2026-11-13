@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>工單進度｜和曜地方循環材料圖鑑</title>
+<link rel="stylesheet" href="atlas.css">
+<style>
+  .panel{max-width:720px}
+  .events{margin-top:18px}
+  .event{border-top:1px solid #d2d8ca;padding:10px 0}
+  .meta{font-size:13px;color:#536756}
+</style>
+</head>
+<body>
+<header>
+  <b class="brand">和曜 HOYAO</b>
+  <nav>
+    <a href="./">材料圖鑑</a>
+    <a href="inquire.html">正式洽詢</a>
+  </nav>
+</header>
+
+<main>
+  <section class="panel">
+    <small>CUSTOMER TRACKING</small>
+    <h2>查詢我的工單</h2>
+    <p class="note">僅能查看自己的工單、適用批次與報告摘要。內部成本與來源窗口不會顯示於此。</p>
+
+    <form id="lookup">
+      <label>工單編號<input name="orderId" required placeholder="HY-…"></label>
+      <label>存取權杖<input name="accessToken" required placeholder="專屬連結中的 accessToken"></label>
+      <button class="cta" type="submit">查詢進度</button>
+    </form>
+
+    <div id="status" class="note" hidden></div>
+    <div id="view" hidden></div>
+  </section>
+</main>
+
+<footer>和曜應用科技股份有限公司　／　客戶專屬進度</footer>
+
+<script src="config.js"></script>
+<script src="intake.js"></script>
+<script>
+(function () {
+  var form = document.querySelector("#lookup");
+  var statusEl = document.querySelector("#status");
+  var view = document.querySelector("#view");
+  var params = new URLSearchParams(location.search);
+  if (params.get("orderId")) form.orderId.value = params.get("orderId");
+  if (params.get("accessToken")) form.accessToken.value = params.get("accessToken");
+
+  function showError(msg) {
+    statusEl.hidden = false;
+    statusEl.textContent = msg;
+    view.hidden = true;
+  }
+
+  function render(data) {
+    var o = data.order || {};
+    statusEl.hidden = true;
+    view.hidden = false;
+    var moisture = o.materialMoisture || {};
+    var env = o.warehouseTempHumidity || {};
+    view.innerHTML =
+      "<div class='rows'>" +
+      row("工單編號", o.orderId) +
+      row("狀態", HoyaoMaterialsIntake.statusLabel(o.status)) +
+      row("材料", o.material) +
+      row("規格", o.spec) +
+      row("數量", o.qty) +
+      row("加工需求", o.processNeed || "—") +
+      row("用途", o.useCase || "—") +
+      row("交期", o.due || "—") +
+      row("適用批次", o.batchId || "尚無適用批次建檔") +
+      row("報告摘要", o.reportSummary || "尚無報告") +
+      row(
+        "倉儲溫濕度",
+        formatMeasure(env)
+      ) +
+      row(
+        "材料含水率",
+        formatMeasure(moisture)
+      ) +
+      "</div>" +
+      "<div class='events'><small>PROGRESS</small><h2 style='font-size:22px'>進度紀錄</h2>" +
+      (data.events && data.events.length
+        ? data.events
+            .map(function (ev) {
+              return (
+                "<div class='event'><strong>" +
+                HoyaoMaterialsIntake.escapeHtml(HoyaoMaterialsIntake.statusLabel(ev.status)) +
+                "</strong><div>" +
+                HoyaoMaterialsIntake.escapeHtml(ev.note || "") +
+                "</div><div class='meta'>" +
+                HoyaoMaterialsIntake.escapeHtml(String(ev.createdAt || "")) +
+                "</div></div>"
+              );
+            })
+            .join("")
+        : "<p class='note'>尚無進度事件。</p>") +
+      "</div>";
+  }
+
+  function row(k, v) {
+    return (
+      "<div class='row'><strong>" +
+      HoyaoMaterialsIntake.escapeHtml(k) +
+      "</strong><div>" +
+      HoyaoMaterialsIntake.escapeHtml(v == null ? "—" : v) +
+      "</div></div>"
+    );
+  }
+
+  function formatMeasure(m) {
+    if (!m || m.status === "pending" || !m.value) {
+      return "待建檔（來源與量測方法未登錄）";
+    }
+    return (
+      m.value +
+      "／來源：" +
+      (m.source || "未填") +
+      "／方法：" +
+      (m.method || "未填")
+    );
+  }
+
+  function lookup() {
+    var orderId = form.orderId.value.trim();
+    var accessToken = form.accessToken.value.trim();
+    if (!HoyaoMaterialsIntake.apiBase()) {
+      showError("正式收件 API 尚未設定。");
+      return;
+    }
+    statusEl.hidden = false;
+    statusEl.textContent = "查詢中…";
+    HoyaoMaterialsIntake.getOrder(orderId, accessToken)
+      .then(function (data) {
+        if (!data.ok) throw new Error(data.error || "failed");
+        render(data);
+      })
+      .catch(function (err) {
+        var code = err && err.message;
+        showError(
+          code === "unauthorized"
+            ? "無權查看此工單。"
+            : code === "not_found"
+              ? "找不到工單。"
+              : "查詢失敗，請稍後再試。"
+        );
+      });
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    lookup();
+  });
+
+  if (form.orderId.value && form.accessToken.value) lookup();
+})();
+</script>
+</body>
+</html>

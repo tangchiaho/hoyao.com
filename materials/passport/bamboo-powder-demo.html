@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-Hant" class="page-passport">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>竹粉批次護照示範｜和曜地方循環材料圖鑑</title>
+<link rel="stylesheet" href="../atlas.css">
+</head>
+<body>
+<header>
+  <b class="brand">和曜 HOYAO</b>
+  <nav>
+    <a href="../">材料圖鑑</a>
+    <button type="button" id="track">我的工單</button>
+    <button type="button" id="reuse">沿用規格洽詢</button>
+  </nav>
+</header>
+
+<main>
+  <div class="hero">
+    <div>
+      <span class="badge">試單需求示範</span>
+      <small>MATERIAL PASSPORT</small>
+      <h1>竹粉批次護照</h1>
+      <p>此頁為現場展示用公開示範資料。2000 目、50 公斤屬客戶需求；試單尚未交付。</p>
+      <button class="cta" type="button" id="reuse-main">沿用規格洽詢 ↗</button>
+      <a class="cta outline" href="../">回材料圖鑑</a>
+    </div>
+  </div>
+
+  <section>
+    <figure class="passport-hero">
+      <img
+        src="../assets/bamboo-processing-residue.webp"
+        width="560"
+        height="560"
+        alt="竹粉相關材料形態示意：竹加工剩料質感"
+        decoding="async">
+    </figure>
+
+    <div id="passport-rows"></div>
+    <p class="note">批次編號、來源、實測值、檢測報告及保存資料依建檔狀態呈現，未自行補數字。倉儲溫濕度與材料含水率分開記錄。</p>
+
+    <div class="case">
+      <div>
+        <small>沿用規格</small>
+        <strong>帶入材料、粒徑與數量</strong>
+        可修改用途、加工需求、數量與交期後建立示範工單。
+      </div>
+      <div class="case-actions">
+        <button class="cta" type="button" id="reuse-case">沿用規格洽詢</button>
+      </div>
+    </div>
+
+    <div class="qr-panel" id="qr-panel" aria-label="本頁示範網址 QR Code"></div>
+  </section>
+</main>
+
+<footer>和曜應用科技股份有限公司　／　公開示範資料，非正式客戶工單</footer>
+
+<dialog id="dlg">
+  <button class="close" type="button" aria-label="關閉">×</button>
+  <div class="sheet" id="sheet"></div>
+</dialog>
+
+<script src="/assets/js/qrcode-generator.js"></script>
+<script src="../atlas.js"></script>
+<script>
+(function () {
+  var ui = new HoyaoAtlas.AtlasUI({ mode: "passport", assetBase: "../" });
+  ui.bindClose();
+
+  document.querySelector("#passport-rows").innerHTML = ui.passportSummary();
+  HoyaoAtlas.mountQrPanel(
+    document.querySelector("#qr-panel"),
+    HoyaoAtlas.PASSPORT_URL
+  );
+
+  function openReuse() {
+    ui.reuseSpecForm();
+  }
+
+  document.querySelector("#reuse").onclick = openReuse;
+  document.querySelector("#reuse-main").onclick = openReuse;
+  document.querySelector("#reuse-case").onclick = openReuse;
+  document.querySelector("#track").onclick = function () {
+    ui.tracking("我的工單");
+  };
+
+  var params = new URLSearchParams(location.search);
+  if (params.get("reuse") === "1") openReuse();
+  if (params.get("track") === "1") ui.tracking("我的工單");
+})();
+</script>
+</body>
+</html>

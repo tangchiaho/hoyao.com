@@ -593,6 +593,9 @@ body.page-projects .progress-body p{
   display:block;
   transition:transform .7s ease;
 }
+.update-thumb img[src*="zhushan-award-card"]{
+  object-position:left 28% top 22%;
+}
 .update-row--media:hover .update-thumb img{
   transform:scale(1.03);
 }
